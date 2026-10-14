@@ -1,10 +1,12 @@
 import SwiftUI
 import FoldKit
+import FoldL10n
 import TestsKit
 
 struct InspectionFlowView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.foldStateProvider) private var foldStateProvider
+    @Environment(\.appLanguage) private var language
     
     @State private var session: InspectionSession
     @State private var currentTestIndex = 0
@@ -37,11 +39,11 @@ struct InspectionFlowView: View {
                     testView(for: applicableTests[currentTestIndex])
                 }
             }
-            .navigationTitle("Inspection")
+            .navigationTitle(L10nKey.inspectionTitle.text(in: language))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button(L10nKey.inspectionCancel.text(in: language)) {
                         dismiss()
                     }
                 }
@@ -58,14 +60,14 @@ struct InspectionFlowView: View {
             .tint(.green)
             
             HStack {
-                Text("Test \(currentTestIndex + 1) of \(applicableTests.count)")
+                Text(L10nKey.inspectionProgress.text(in: language, currentTestIndex + 1, applicableTests.count))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 
                 Spacer()
                 
                 if !isCompleted && currentTestIndex < applicableTests.count {
-                    Text(applicableTests[currentTestIndex].displayName)
+                    Text(applicableTests[currentTestIndex].localizedName(in: language))
                         .font(.caption.bold())
                 }
             }
@@ -109,6 +111,7 @@ struct TestContainerView: View {
     let testID: TestID
     let onComplete: (TestResult) -> Void
     let onSkip: () -> Void
+    @Environment(\.appLanguage) private var language
     
     var body: some View {
         VStack(spacing: 20) {
@@ -119,10 +122,10 @@ struct TestContainerView: View {
                     .font(.system(size: 60))
                     .foregroundStyle(.tint)
                 
-                Text(testID.displayName)
+                Text(testID.localizedName(in: language))
                     .font(.title2.bold())
                 
-                Text(testID.testDescription)
+                Text(testID.localizedDescription(in: language))
                     .font(.body)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -143,7 +146,7 @@ struct TestContainerView: View {
                     )
                     onComplete(result)
                 } label: {
-                    Text("Start Test")
+                    Text(L10nKey.inspectionStartTest.text(in: language))
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -154,7 +157,7 @@ struct TestContainerView: View {
                 Button {
                     onSkip()
                 } label: {
-                    Text("Skip")
+                    Text(L10nKey.inspectionSkip.text(in: language))
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }

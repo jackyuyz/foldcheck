@@ -15,12 +15,13 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../FoldKit"),
+        .package(path: "../FoldL10n"),
         .package(path: "../TestsKit")
     ],
     targets: [
         .target(
             name: "ReportKit",
-            dependencies: ["FoldKit", "TestsKit"]
+            dependencies: ["FoldKit", "FoldL10n", "TestsKit"]
         ),
         .testTarget(
             name: "ReportKitTests",

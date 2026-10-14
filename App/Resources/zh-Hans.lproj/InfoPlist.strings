@@ -1,0 +1,2 @@
+"NSCameraUsageDescription" = "FoldCheck 会测试摄像头并扫描报告二维码。测试照片不会保存，除非你把它附到报告里。";
+"NSMicrophoneUsageDescription" = "用一段短录音测试麦克风，录音只留在这台 iPhone 上。";

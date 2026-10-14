@@ -1,9 +1,11 @@
 import SwiftUI
 import FoldKit
+import FoldL10n
 import TestsKit
 
 struct ContentView: View {
     @Environment(\.foldStateProvider) private var foldStateProvider
+    @Environment(\.appLanguage) private var language
     @State private var currentFoldState: FoldState = .noHinge
     @State private var selectedTab: Tab = .home
     
@@ -20,7 +22,7 @@ struct ContentView: View {
                 HomeView()
             }
             .tabItem {
-                Label("Home", systemImage: "house.fill")
+                Label(L10nKey.tabHome.text(in: language), systemImage: "house.fill")
             }
             .tag(Tab.home)
             
@@ -28,7 +30,7 @@ struct ContentView: View {
                 HistoryView()
             }
             .tabItem {
-                Label("History", systemImage: "clock.fill")
+                Label(L10nKey.tabHistory.text(in: language), systemImage: "clock.fill")
             }
             .tag(Tab.history)
             
@@ -36,7 +38,7 @@ struct ContentView: View {
                 VerifyView()
             }
             .tabItem {
-                Label("Verify", systemImage: "qrcode.viewfinder")
+                Label(L10nKey.tabVerify.text(in: language), systemImage: "qrcode.viewfinder")
             }
             .tag(Tab.verify)
             
@@ -44,7 +46,7 @@ struct ContentView: View {
                 SettingsView()
             }
             .tabItem {
-                Label("Settings", systemImage: "gear")
+                Label(L10nKey.tabSettings.text(in: language), systemImage: "gear")
             }
             .tag(Tab.settings)
         }

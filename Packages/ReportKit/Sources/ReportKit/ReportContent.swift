@@ -1,4 +1,5 @@
 import Foundation
+import FoldL10n
 import TestsKit
 
 /// Assembled content for PDF report generation.
@@ -119,21 +120,28 @@ public struct ReportContentAssembler {
         timeFormatter.timeStyle = .medium
     }
     
-    /// Assemble report content from a session and envelope
+    /// Assemble report content from a session and envelope.
+    /// `language` defaults to English. Pass the app language, or English when the user wants a resale report.
     public func assemble(
         session: InspectionSession,
-        envelope: ReportEnvelope?
+        envelope: ReportEnvelope?,
+        language: AppLanguage = .en
     ) -> ReportContent {
-        let deviceType = session.hasHinge ? "iPhone Duo" : "iPhone"
+        dateFormatter.locale = Locale(identifier: language.localeIdentifier)
+        timeFormatter.locale = Locale(identifier: language.localeIdentifier)
+
+        let deviceType = session.hasHinge
+            ? L10nKey.reportIphoneDuo.text(in: language)
+            : L10nKey.reportIphone.text(in: language)
         
         let testResults = session.results.map { result in
             TestResultContent(
-                testName: result.id.displayName,
-                outcome: result.outcome.displayName,
+                testName: localizedCopy("test.\(result.id.rawValue)", language: language),
+                outcome: localizedCopy("outcome.\(result.outcome.rawValue)", language: language),
                 outcomeColor: result.outcome.colorName,
-                metrics: formatMetrics(result.metrics, for: result.id),
+                metrics: formatMetrics(result.metrics, language: language),
                 notes: result.notes.isEmpty ? nil : result.notes,
-                display: result.display?.rawValue.capitalized
+                display: result.display.map { localizedCopy("display.\($0.rawValue)", language: language) }
             )
         }
         
@@ -142,19 +150,19 @@ public struct ReportContentAssembler {
         
         if let env = envelope {
             if env.isDevelopmentBuild {
-                signatureStatus = "Development build (unsigned)"
+                signatureStatus = L10nKey.reportDevUnsigned.text(in: language)
                 keyFingerprint = nil
             } else {
-                signatureStatus = "Signed on this device"
+                signatureStatus = L10nKey.reportSignedOnDevice.text(in: language)
                 keyFingerprint = env.keyFingerprint
             }
         } else {
-            signatureStatus = "Not signed"
+            signatureStatus = L10nKey.reportNotSigned.text(in: language)
             keyFingerprint = nil
         }
         
         return ReportContent(
-            title: "FoldCheck Inspection Report",
+            title: L10nKey.reportTitle.text(in: language),
             reportID: envelope?.reportID.uuidString ?? session.id.uuidString,
             generatedAt: timeFormatter.string(from: Date()),
             timeZone: session.timeZoneIdentifier,
@@ -164,42 +172,42 @@ public struct ReportContentAssembler {
             deviceType: deviceType,
             inspectionDate: dateFormatter.string(from: session.startedAt),
             inspectionDuration: session.durationString,
-            overallStatus: session.overallStatus.displayName,
+            overallStatus: localizedCopy("outcome.\(session.overallStatus.rawValue)", language: language),
             overallScore: session.overallScore.map { "\($0)/100" },
             testResults: testResults,
-            disclaimer: Self.disclaimer,
+            disclaimer: L10nKey.reportDisclaimer.text(in: language),
             signatureStatus: signatureStatus,
             keyFingerprint: keyFingerprint,
             qrPayload: try? envelope?.toQRPayload()
         )
     }
     
-    private func formatMetrics(_ metrics: [String: Double], for testID: TestID) -> [(name: String, value: String)] {
+    private func formatMetrics(_ metrics: [String: Double], language: AppLanguage) -> [(name: String, value: String)] {
         metrics.map { key, value in
             let formattedValue: String
             let displayName: String
             
             switch key {
             case TestMetricKey.coveragePercent:
-                displayName = "Coverage"
+                displayName = L10nKey.metricCoverage.text(in: language)
                 formattedValue = String(format: "%.1f%%", value)
             case TestMetricKey.maxGapDegrees:
-                displayName = "Max Gap"
+                displayName = L10nKey.metricMaxGap.text(in: language)
                 formattedValue = String(format: "%.1f°", value)
             case TestMetricKey.monotonicFraction:
-                displayName = "Continuity"
+                displayName = L10nKey.metricContinuity.text(in: language)
                 formattedValue = String(format: "%.0f%%", value * 100)
             case TestMetricKey.sampleRate:
-                displayName = "Sample Rate"
+                displayName = L10nKey.metricSampleRate.text(in: language)
                 formattedValue = String(format: "%.0f Hz", value)
             case TestMetricKey.creaseRating:
-                displayName = "Crease Rating"
+                displayName = L10nKey.metricCreaseRating.text(in: language)
                 formattedValue = String(format: "%.0f/5", value)
             case TestMetricKey.observedMinAngle:
-                displayName = "Min Angle"
+                displayName = L10nKey.metricMinAngle.text(in: language)
                 formattedValue = String(format: "%.1f°", value)
             case TestMetricKey.observedMaxAngle:
-                displayName = "Max Angle"
+                displayName = L10nKey.metricMaxAngle.text(in: language)
                 formattedValue = String(format: "%.1f°", value)
             default:
                 displayName = key.replacingOccurrences(of: "([A-Z])", with: " $1", options: .regularExpression).capitalized
@@ -210,16 +218,8 @@ public struct ReportContentAssembler {
         }.sorted { $0.name < $1.name }
     }
     
-    /// Standard disclaimer text
-    public static let disclaimer = """
-    DISCLAIMER: This report is a user-generated inspection snapshot created by FoldCheck. \
-    It is NOT an official certification from Apple or any authorized service provider. \
-    The digital signature proves only that this PDF has not been modified since creation by \
-    this specific FoldCheck installation. It does not verify device authenticity, ownership, \
-    or repair history. FoldCheck cannot access battery health, cycle counts, serial numbers, \
-    or lifetime fold counts. The fold counter tracks only folds observed while the app was \
-    running in the foreground. Hinge test results reflect continuity and consistency of \
-    angle readings, not absolute mechanical accuracy. Use this report as supplementary \
-    information only.
-    """
+    /// English disclaimer. Localized reports use `L10nKey.reportDisclaimer`.
+    public static var disclaimer: String {
+        L10nKey.reportDisclaimer.text(in: .en)
+    }
 }

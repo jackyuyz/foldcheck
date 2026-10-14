@@ -15,13 +15,15 @@ foldcheck-ios/
 │   ├── History/                # Session history
 │   ├── Verify/                 # QR/PDF verification
 │   ├── Paywall/                # StoreKit purchase
-│   ├── Settings/               # App settings & FAQ
-│   └── Resources/              # Assets, privacy manifest
+│   ├── Settings/               # App settings, language, FAQ
+│   ├── Localization/           # In-app language (default English)
+│   └── Resources/              # Assets, privacy manifest, permission strings
 ├── Packages/                   # Swift Packages (platform-independent)
 │   ├── FoldKit/                # Fold state management
 │   ├── HingeAnalysis/          # Hinge sweep analysis
 │   ├── TestsKit/               # Test definitions & session model
-│   └── ReportKit/              # Report generation & signing
+│   ├── ReportKit/              # Report generation & signing
+│   └── FoldL10n/               # UI and report copy (en, es, fr, ja, zh-Hans, zh-Hant)
 ├── Tests/                      # XCTest integration tests
 ├── UITests/                    # XCUITest UI tests
 └── docs/
@@ -67,6 +69,7 @@ cd Packages/FoldKit && swift test
 cd Packages/HingeAnalysis && swift test
 cd Packages/TestsKit && swift test
 cd Packages/ReportKit && swift test
+cd Packages/FoldL10n && swift test
 ```
 
 **App tests (requires Xcode):**
@@ -99,6 +102,7 @@ All business logic is in Swift Packages that build and test on Linux:
 - **HingeAnalysis**: Hinge sweep analysis (`HingeSample`, `HingeSweepAnalyzer`, `HingeSweepReport` with quality assessment)
 - **TestsKit**: Test definitions (`TestID`, `TestOutcome`, `TestResult`, `InspectionSession`, `FoldCounter`)
 - **ReportKit**: Report generation (`CanonicalReport`, `ReportEnvelope`, `ReportSigner` protocol, PDF content assembly, device names)
+- **FoldL10n**: String catalogs and `AppLanguage`. English is the default. Spanish, French, Japanese, Simplified Chinese, and Traditional Chinese are selected in Settings.
 
 ### App Layer (iOS-Only)
 
@@ -128,7 +132,7 @@ The following APIs are marked as unverified in the spec and wrapped in protocols
 
 2. **Crease rating scale**: Is 1-5 sufficient? Should we provide reference images for each rating?
 
-3. **Report language**: Should users be able to generate reports in English even if their device is in Chinese (for international resale)?
+3. **Report language**: Resolved. The app UI defaults to English and can be switched in Settings. PDF language can match the app or stay English for resale.
 
 4. **Touch grid density**: Current spec says ~7mm cells with ½ size near crease. Need real-device testing to calibrate.
 
@@ -140,14 +144,15 @@ The following APIs are marked as unverified in the spec and wrapped in protocols
 
 ## Test Results (Linux)
 
-All 125 unit tests pass on Linux:
+Unit tests pass on Linux:
 
 | Package | Tests | Status |
 |---------|-------|--------|
 | FoldKit | 35 | ✅ Pass |
 | HingeAnalysis | 21 | ✅ Pass |
 | TestsKit | 36 | ✅ Pass |
-| ReportKit | 33 | ✅ Pass |
+| ReportKit | 34 | ✅ Pass |
+| FoldL10n | 8 | ✅ Pass |
 
 ## Implemented Milestones
 
@@ -165,7 +170,24 @@ All 125 unit tests pass on Linux:
 - Hardware tests (M4)
 - PDF reports with signing (M5)
 - History, reminders, Store (M6)
-- Polish & localization (M7)
+- Polish (M7). In-app language switching is in place; remaining work is visual polish.
+
+## Languages
+
+FoldCheck opens in **English**. Settings → Language switches the interface among:
+
+| Code | Name in the picker |
+|------|--------------------|
+| `en` | English (default) |
+| `es` | Español |
+| `fr` | Français |
+| `ja` | 日本語 |
+| `zh-Hans` | 简体中文 |
+| `zh-Hant` | 繁體中文 |
+
+The choice is stored on the device (`foldcheck.appLanguage`). It does not follow the iPhone language, so a Chinese phone can still show an English app. Camera and microphone system prompts use `InfoPlist.strings` and still follow the iPhone language.
+
+**Report language** is separate. “Match app language” writes the PDF in the UI language. “English (for resale)” keeps the PDF in English. `ReportContentAssembler.assemble(session:envelope:language:)` defaults to English.
 
 ## License
 

@@ -1,9 +1,11 @@
 import SwiftUI
 import FoldKit
+import FoldL10n
 import TestsKit
 
 struct HomeView: View {
     @Environment(\.foldStateProvider) private var foldStateProvider
+    @Environment(\.appLanguage) private var language
     @State private var lastSession: InspectionSession?
     @State private var showingInspection = false
     
@@ -34,10 +36,10 @@ struct HomeView: View {
                 .font(.system(size: 60))
                 .foregroundStyle(.tint)
             
-            Text("Foldable Inspector")
+            Text(L10nKey.homeHeadline.text(in: language))
                 .font(.title2.bold())
             
-            Text("Complete health check for your foldable iPhone")
+            Text(L10nKey.homeSubtitle.text(in: language))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -49,7 +51,7 @@ struct HomeView: View {
         Button {
             showingInspection = true
         } label: {
-            Label("Start Inspection", systemImage: "play.fill")
+            Label(L10nKey.homeStart.text(in: language), systemImage: "play.fill")
                 .font(.headline)
                 .frame(maxWidth: .infinity)
                 .padding()
@@ -61,7 +63,7 @@ struct HomeView: View {
     @ViewBuilder
     private func lastResultSection(_ session: InspectionSession) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Last Inspection")
+            Text(L10nKey.homeLastInspection.text(in: language))
                 .font(.headline)
             
             HStack {
@@ -84,7 +86,7 @@ struct HomeView: View {
                 
                 NavigationLink {
                     // TODO: Session detail view
-                    Text("Session Details")
+                    Text(L10nKey.homeSessionDetails.text(in: language))
                 } label: {
                     Image(systemName: "chevron.right")
                         .foregroundStyle(.secondary)
@@ -97,7 +99,7 @@ struct HomeView: View {
     
     private var quickActionsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Quick Actions")
+            Text(L10nKey.homeQuickActions.text(in: language))
                 .font(.headline)
             
             LazyVGrid(columns: [
@@ -105,33 +107,33 @@ struct HomeView: View {
                 GridItem(.flexible())
             ], spacing: 12) {
                 QuickActionCard(
-                    title: "Hinge Check",
+                    title: L10nKey.homeHingeCheck.text(in: language),
                     icon: "arrow.triangle.2.circlepath",
-                    description: "Test hinge only"
+                    description: L10nKey.homeHingeCheckDetail.text(in: language)
                 ) {
                     // TODO: Quick hinge test
                 }
                 
                 QuickActionCard(
-                    title: "Touch Test",
+                    title: L10nKey.homeTouchTest.text(in: language),
                     icon: "hand.tap.fill",
-                    description: "Test touch grid"
+                    description: L10nKey.homeTouchTestDetail.text(in: language)
                 ) {
                     // TODO: Quick touch test
                 }
                 
                 QuickActionCard(
-                    title: "Screen Test",
+                    title: L10nKey.homeScreenTest.text(in: language),
                     icon: "rectangle.fill",
-                    description: "Check pixels"
+                    description: L10nKey.homeScreenTestDetail.text(in: language)
                 ) {
                     // TODO: Quick screen test
                 }
                 
                 QuickActionCard(
-                    title: "Fold Stats",
+                    title: L10nKey.homeFoldStats.text(in: language),
                     icon: "chart.bar.fill",
-                    description: "View session stats"
+                    description: L10nKey.homeFoldStatsDetail.text(in: language)
                 ) {
                     // TODO: Fold stats view
                 }
@@ -144,11 +146,12 @@ struct HomeView: View {
 
 struct ResultBadge: View {
     let outcome: TestOutcome
+    @Environment(\.appLanguage) private var language
     
     var body: some View {
         HStack(spacing: 4) {
             Image(systemName: outcome.iconName)
-            Text(outcome.displayName)
+            Text(outcome.localizedName(in: language))
         }
         .font(.caption.bold())
         .padding(.horizontal, 8)

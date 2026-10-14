@@ -1,0 +1,2 @@
+"NSCameraUsageDescription" = "FoldCheck prueba las cámaras y escanea los códigos QR de los informes. Las imágenes de prueba no se guardan, salvo que las adjuntes a un informe.";
+"NSMicrophoneUsageDescription" = "Prueba el micrófono con una grabación corta que se queda en tu iPhone.";

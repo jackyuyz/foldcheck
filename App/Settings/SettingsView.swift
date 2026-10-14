@@ -1,91 +1,117 @@
 import SwiftUI
+import FoldL10n
 
 struct SettingsView: View {
+    @Environment(AppSettings.self) private var settings
     @AppStorage("monthlyReminders") private var monthlyReminders = false
     @AppStorage("hapticFeedback") private var hapticFeedback = true
-    
+
+    private var language: AppLanguage { settings.appLanguage }
+
     var body: some View {
+        @Bindable var settings = settings
         List {
-            Section("Notifications") {
-                Toggle("Monthly Check-up Reminders", isOn: $monthlyReminders)
+            Section {
+                Picker(L10nKey.settingsLanguage.text(in: language), selection: $settings.appLanguage) {
+                    ForEach(AppLanguage.allCases) { option in
+                        Text(option.nativeName).tag(option)
+                    }
+                }
+            } footer: {
+                Text(L10nKey.settingsLanguageFooter.text(in: language))
             }
-            
-            Section("Preferences") {
-                Toggle("Haptic Feedback", isOn: $hapticFeedback)
+
+            Section {
+                Picker(L10nKey.settingsReportLanguage.text(in: language), selection: $settings.reportUsesEnglish) {
+                    Text(L10nKey.settingsReportMatch.text(in: language)).tag(false)
+                    Text(L10nKey.settingsReportEnglish.text(in: language)).tag(true)
+                }
+            } footer: {
+                Text(L10nKey.settingsReportFooter.text(in: language))
             }
-            
-            Section("Purchases") {
-                Button("Restore Purchases") {
+
+            Section(L10nKey.settingsNotifications.text(in: language)) {
+                Toggle(L10nKey.settingsMonthly.text(in: language), isOn: $monthlyReminders)
+            }
+
+            Section(L10nKey.settingsPreferences.text(in: language)) {
+                Toggle(L10nKey.settingsHaptics.text(in: language), isOn: $hapticFeedback)
+            }
+
+            Section(L10nKey.settingsPurchases.text(in: language)) {
+                Button(L10nKey.paywallRestore.text(in: language)) {
                     // TODO: AppStore.sync()
                 }
             }
-            
-            Section("About") {
+
+            Section(L10nKey.settingsAbout.text(in: language)) {
                 HStack {
-                    Text("Version")
+                    Text(L10nKey.settingsVersion.text(in: language))
                     Spacer()
                     Text("1.0.0")
                         .foregroundStyle(.secondary)
                 }
-                
-                NavigationLink("Help & FAQ") {
+
+                NavigationLink(L10nKey.settingsHelp.text(in: language)) {
                     HelpView()
                 }
-                
-                Link("Privacy Policy", destination: URL(string: "https://example.com/privacy")!)
-                
-                Link("Terms of Service", destination: URL(string: "https://example.com/terms")!)
+
+                Link(L10nKey.paywallPrivacy.text(in: language), destination: URL(string: "https://example.com/privacy")!)
+
+                Link(L10nKey.paywallTerms.text(in: language), destination: URL(string: "https://example.com/terms")!)
             }
-            
+
             Section {
-                NavigationLink("Debug Info") {
+                NavigationLink(L10nKey.settingsDebug.text(in: language)) {
                     DebugInfoView()
                 }
             } header: {
-                Text("Developer")
+                Text(L10nKey.settingsDeveloper.text(in: language))
             } footer: {
-                Text("FoldCheck is not affiliated with Apple Inc. This app cannot access battery health, serial numbers, or lifetime fold counts.")
+                Text(L10nKey.settingsFooter.text(in: language))
             }
         }
-        .navigationTitle("Settings")
+        .navigationTitle(L10nKey.settingsTitle.text(in: language))
     }
 }
 
 struct HelpView: View {
+    @Environment(\.appLanguage) private var language
+
     var body: some View {
         List {
-            Section("Frequently Asked Questions") {
+            Section(L10nKey.settingsFaq.text(in: language)) {
                 FAQItem(
-                    question: "Why can't FoldCheck read battery health?",
-                    answer: "Apple does not provide battery health data to third-party apps. Only Settings > Battery can show this information."
+                    question: L10nKey.faqBatteryQ.text(in: language),
+                    answer: L10nKey.faqBatteryA.text(in: language)
                 )
-                
+
                 FAQItem(
-                    question: "Is the fold counter accurate?",
-                    answer: "The fold counter only tracks folds while FoldCheck is running in the foreground. Apple doesn't expose a lifetime fold count to apps."
+                    question: L10nKey.faqFoldsQ.text(in: language),
+                    answer: L10nKey.faqFoldsA.text(in: language)
                 )
-                
+
                 FAQItem(
-                    question: "What does the digital signature prove?",
-                    answer: "It proves the PDF hasn't been edited after creation by that specific FoldCheck installation. It does NOT prove device authenticity."
+                    question: L10nKey.faqSignatureQ.text(in: language),
+                    answer: L10nKey.faqSignatureA.text(in: language)
                 )
-                
+
                 FAQItem(
-                    question: "Why does the hinge test show 'Attention'?",
-                    answer: "The hinge test checks for smooth, continuous angle readings. Gaps or inconsistencies may indicate sensor issues, but could also be normal variation."
+                    question: L10nKey.faqHingeQ.text(in: language),
+                    answer: L10nKey.faqHingeA.text(in: language)
                 )
-                
+
                 FAQItem(
-                    question: "Can I verify a report from another device?",
-                    answer: "Yes! The signature will show as 'Unknown Key' but will still verify the PDF wasn't modified. Each FoldCheck installation has its own signing key."
+                    question: L10nKey.faqOtherDeviceQ.text(in: language),
+                    answer: L10nKey.faqOtherDeviceA.text(in: language)
                 )
             }
-            
-            Section("Contact") {
-                Link("Email Support", destination: URL(string: "mailto:support@example.com")!)
+
+            Section(L10nKey.settingsContact.text(in: language)) {
+                Link(L10nKey.settingsEmail.text(in: language), destination: URL(string: "mailto:support@example.com")!)
             }
         }
-        .navigationTitle("Help")
+        .navigationTitle(L10nKey.settingsHelp.text(in: language))
     }
 }
 
@@ -93,7 +119,7 @@ struct FAQItem: View {
     let question: String
     let answer: String
     @State private var isExpanded = false
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Button {
@@ -111,7 +137,7 @@ struct FAQItem: View {
                 }
             }
             .buttonStyle(.plain)
-            
+
             if isExpanded {
                 Text(answer)
                     .font(.subheadline)
@@ -122,61 +148,63 @@ struct FAQItem: View {
 }
 
 struct DebugInfoView: View {
+    @Environment(\.appLanguage) private var language
+
     var body: some View {
         List {
-            Section("Device") {
+            Section(L10nKey.debugDevice.text(in: language)) {
                 HStack {
-                    Text("Model")
+                    Text(L10nKey.debugModel.text(in: language))
                     Spacer()
-                    Text("Unknown")
+                    Text(L10nKey.debugUnknown.text(in: language))
                         .foregroundStyle(.secondary)
                 }
                 HStack {
-                    Text("iOS Version")
+                    Text(L10nKey.debugIos.text(in: language))
                     Spacer()
-                    Text("Unknown")
+                    Text(L10nKey.debugUnknown.text(in: language))
                         .foregroundStyle(.secondary)
                 }
                 HStack {
-                    Text("Has Hinge")
+                    Text(L10nKey.debugHinge.text(in: language))
                     Spacer()
-                    Text("Unknown")
+                    Text(L10nKey.debugUnknown.text(in: language))
                         .foregroundStyle(.secondary)
                 }
             }
-            
-            Section("Signing Key") {
+
+            Section(L10nKey.debugSigning.text(in: language)) {
                 HStack {
-                    Text("Key Type")
+                    Text(L10nKey.debugKeyType.text(in: language))
                     Spacer()
-                    Text("Software (Dev)")
+                    Text(L10nKey.debugSoftware.text(in: language))
                         .foregroundStyle(.secondary)
                 }
                 HStack {
-                    Text("Fingerprint")
+                    Text(L10nKey.debugFingerprint.text(in: language))
                     Spacer()
                     Text("abc12345")
                         .font(.caption.monospaced())
                         .foregroundStyle(.secondary)
                 }
             }
-            
-            Section("Storage") {
+
+            Section(L10nKey.debugStorage.text(in: language)) {
                 HStack {
-                    Text("Sessions")
+                    Text(L10nKey.debugSessions.text(in: language))
                     Spacer()
                     Text("0")
                         .foregroundStyle(.secondary)
                 }
                 HStack {
-                    Text("Reports")
+                    Text(L10nKey.debugReports.text(in: language))
                     Spacer()
                     Text("0")
                         .foregroundStyle(.secondary)
                 }
             }
         }
-        .navigationTitle("Debug Info")
+        .navigationTitle(L10nKey.debugTitle.text(in: language))
     }
 }
 
@@ -184,4 +212,6 @@ struct DebugInfoView: View {
     NavigationStack {
         SettingsView()
     }
+    .environment(AppSettings())
+    .environment(\.appLanguage, AppLanguage.en)
 }

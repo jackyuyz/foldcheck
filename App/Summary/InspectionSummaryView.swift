@@ -1,9 +1,11 @@
 import SwiftUI
+import FoldL10n
 import TestsKit
 import ReportKit
 
 struct InspectionSummaryView: View {
     let session: InspectionSession
+    @Environment(\.appLanguage) private var language
     @State private var showingPaywall = false
     @State private var showingReport = false
     
@@ -34,11 +36,11 @@ struct InspectionSummaryView: View {
                 .font(.system(size: 60))
                 .foregroundStyle(statusColor)
             
-            Text("Inspection Complete")
+            Text(L10nKey.summaryComplete.text(in: language))
                 .font(.title2.bold())
             
             if let duration = session.durationString {
-                Text("Completed in \(duration)")
+                Text(L10nKey.summaryCompletedIn.text(in: language, duration))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -52,15 +54,15 @@ struct InspectionSummaryView: View {
                     .font(.system(size: 48, weight: .bold, design: .rounded))
                     .foregroundStyle(statusColor)
                 
-                Text("out of 100")
+                Text(L10nKey.summaryOutOf100.text(in: language))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
             
             HStack(spacing: 20) {
-                ScoreStatView(count: session.passCount, label: "Pass", color: .green)
-                ScoreStatView(count: session.attentionCount, label: "Attention", color: .orange)
-                ScoreStatView(count: session.failCount, label: "Fail", color: .red)
+                ScoreStatView(count: session.passCount, label: L10nKey.outcomePass.text(in: language), color: .green)
+                ScoreStatView(count: session.attentionCount, label: L10nKey.outcomeAttention.text(in: language), color: .orange)
+                ScoreStatView(count: session.failCount, label: L10nKey.outcomeFail.text(in: language), color: .red)
             }
         }
         .padding()
@@ -69,7 +71,7 @@ struct InspectionSummaryView: View {
     
     private var resultsList: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Test Results")
+            Text(L10nKey.summaryResults.text(in: language))
                 .font(.headline)
             
             ForEach(session.results) { result in
@@ -84,7 +86,7 @@ struct InspectionSummaryView: View {
                 // TODO: Check if user has purchased reports
                 showingPaywall = true
             } label: {
-                Label("Create PDF Report", systemImage: "doc.fill")
+                Label(L10nKey.summaryCreateReport.text(in: language), systemImage: "doc.fill")
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -95,7 +97,7 @@ struct InspectionSummaryView: View {
             Button {
                 // TODO: Save session
             } label: {
-                Label("Save to History", systemImage: "clock.fill")
+                Label(L10nKey.summarySaveHistory.text(in: language), systemImage: "clock.fill")
                     .font(.subheadline)
                     .foregroundStyle(.tint)
             }
@@ -133,15 +135,16 @@ struct ScoreStatView: View {
 
 struct TestResultRow: View {
     let result: TestResult
+    @Environment(\.appLanguage) private var language
     
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text(result.id.displayName)
+                Text(result.id.localizedName(in: language))
                     .font(.subheadline.bold())
                 
                 if let display = result.display {
-                    Text(display.rawValue.capitalized + " display")
+                    Text(display.localizedName(in: language))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

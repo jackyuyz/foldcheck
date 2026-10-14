@@ -1,7 +1,9 @@
 import SwiftUI
+import FoldL10n
 import TestsKit
 
 struct HistoryView: View {
+    @Environment(\.appLanguage) private var language
     @State private var sessions: [InspectionSession] = []
     @State private var selectedSessions: Set<UUID> = []
     @State private var isComparing = false
@@ -14,11 +16,11 @@ struct HistoryView: View {
                 sessionsList
             }
         }
-        .navigationTitle("History")
+        .navigationTitle(L10nKey.historyTitle.text(in: language))
         .toolbar {
             if sessions.count >= 2 {
                 ToolbarItem(placement: .primaryAction) {
-                    Button(isComparing ? "Done" : "Compare") {
+                    Button(isComparing ? L10nKey.historyDone.text(in: language) : L10nKey.historyCompare.text(in: language)) {
                         withAnimation {
                             isComparing.toggle()
                             if !isComparing {
@@ -33,9 +35,9 @@ struct HistoryView: View {
     
     private var emptyState: some View {
         ContentUnavailableView(
-            "No Inspections Yet",
+            L10nKey.historyEmptyTitle.text(in: language),
             systemImage: "clock",
-            description: Text("Complete an inspection to see it here")
+            description: Text(L10nKey.historyEmptyDetail.text(in: language))
         )
     }
     
@@ -66,7 +68,7 @@ struct HistoryView: View {
         Button {
             // TODO: Show comparison view
         } label: {
-            Label("Compare Selected", systemImage: "arrow.left.arrow.right")
+            Label(L10nKey.historyCompareSelected.text(in: language), systemImage: "arrow.left.arrow.right")
                 .font(.headline)
                 .frame(maxWidth: .infinity)
                 .padding()

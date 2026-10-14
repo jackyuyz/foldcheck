@@ -1,5 +1,6 @@
 import SwiftUI
 import FoldKit
+import FoldL10n
 import TestsKit
 import ReportKit
 
@@ -7,6 +8,7 @@ import ReportKit
 struct FoldCheckApp: App {
     @State private var foldStateProvider = SystemFoldStateProvider()
     @State private var mockFoldStateProvider: MockFoldStateProvider?
+    @State private var settings = AppSettings()
     
     init() {
         configureMockProviderIfNeeded()
@@ -16,6 +18,9 @@ struct FoldCheckApp: App {
         WindowGroup {
             ContentView()
                 .environment(\.foldStateProvider, currentProvider)
+                .environment(settings)
+                .environment(\.appLanguage, settings.appLanguage)
+                .environment(\.reportLanguage, settings.reportLanguage)
                 .modifier(HingeBridgeModifier(provider: foldStateProvider))
         }
     }

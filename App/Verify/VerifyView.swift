@@ -1,7 +1,9 @@
 import SwiftUI
+import FoldL10n
 import ReportKit
 
 struct VerifyView: View {
+    @Environment(\.appLanguage) private var language
     @State private var verificationResult: VerificationResult?
     @State private var isScanning = false
     @State private var showingDocumentPicker = false
@@ -27,14 +29,14 @@ struct VerifyView: View {
             }
             .padding()
         }
-        .navigationTitle("Verify Report")
+        .navigationTitle(L10nKey.verifyTitle.text(in: language))
         .sheet(isPresented: $isScanning) {
             // TODO: QR Scanner view
-            Text("QR Scanner")
+            Text(L10nKey.verifyScan.text(in: language))
         }
         .sheet(isPresented: $showingDocumentPicker) {
             // TODO: Document picker
-            Text("Document Picker")
+            Text(L10nKey.verifyImport.text(in: language))
         }
     }
     
@@ -44,10 +46,10 @@ struct VerifyView: View {
                 .font(.system(size: 60))
                 .foregroundStyle(.tint)
             
-            Text("Verify a FoldCheck Report")
+            Text(L10nKey.verifyHeadline.text(in: language))
                 .font(.title3.bold())
             
-            Text("Scan the QR code or import a PDF to verify its authenticity")
+            Text(L10nKey.verifySubtitle.text(in: language))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -59,7 +61,7 @@ struct VerifyView: View {
             Button {
                 isScanning = true
             } label: {
-                Label("Scan QR Code", systemImage: "qrcode.viewfinder")
+                Label(L10nKey.verifyScan.text(in: language), systemImage: "qrcode.viewfinder")
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -70,7 +72,7 @@ struct VerifyView: View {
             Button {
                 showingDocumentPicker = true
             } label: {
-                Label("Import PDF", systemImage: "doc.fill")
+                Label(L10nKey.verifyImport.text(in: language), systemImage: "doc.fill")
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -88,15 +90,15 @@ struct VerifyView: View {
                     .font(.system(size: 48))
                     .foregroundStyle(.green)
                 
-                Text("Valid Report")
+                Text(L10nKey.verifyValid.text(in: language))
                     .font(.title3.bold())
                     .foregroundStyle(.green)
                 
                 VStack(alignment: .leading, spacing: 8) {
-                    InfoRow(label: "Report ID", value: envelope.reportID.uuidString.prefix(8) + "...")
-                    InfoRow(label: "Signed by", value: "This device")
+                    InfoRow(label: L10nKey.verifyReportID.text(in: language), value: envelope.reportID.uuidString.prefix(8) + "...")
+                    InfoRow(label: L10nKey.verifySignedBy.text(in: language), value: L10nKey.verifyThisDevice.text(in: language))
                     if envelope.isDevelopmentBuild {
-                        InfoRow(label: "Note", value: "Development build")
+                        InfoRow(label: L10nKey.verifyDevNote.text(in: language), value: L10nKey.reportDevUnsigned.text(in: language))
                             .foregroundStyle(.orange)
                     }
                 }
@@ -108,7 +110,7 @@ struct VerifyView: View {
                     .font(.system(size: 48))
                     .foregroundStyle(.red)
                 
-                Text("Invalid Report")
+                Text(L10nKey.verifyInvalid.text(in: language))
                     .font(.title3.bold())
                     .foregroundStyle(.red)
                 
@@ -124,15 +126,15 @@ struct VerifyView: View {
                     .font(.system(size: 48))
                     .foregroundStyle(.orange)
                 
-                Text("Valid Signature, Unknown Key")
+                Text(L10nKey.verifyUnknownKey.text(in: language))
                     .font(.title3.bold())
                     .foregroundStyle(.orange)
                 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("This report was signed by a different FoldCheck installation.")
+                    Text(L10nKey.verifyUnknownExplain.text(in: language))
                         .font(.subheadline)
                     
-                    InfoRow(label: "Key Fingerprint", value: fingerprint)
+                    InfoRow(label: L10nKey.verifyFingerprint.text(in: language), value: fingerprint)
                 }
                 .padding()
                 .background(.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
@@ -142,14 +144,14 @@ struct VerifyView: View {
     
     private var explanationSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("What does this verify?")
+            Text(L10nKey.verifyWhat.text(in: language))
                 .font(.headline)
             
             VStack(alignment: .leading, spacing: 8) {
-                BulletPoint(text: "The PDF hasn't been modified since creation")
-                BulletPoint(text: "The report was created by a specific FoldCheck installation")
-                BulletPoint(icon: "xmark.circle", color: .red, text: "Does NOT verify device authenticity")
-                BulletPoint(icon: "xmark.circle", color: .red, text: "Does NOT verify test accuracy")
+                BulletPoint(text: L10nKey.verifyCheckUnmodified.text(in: language))
+                BulletPoint(text: L10nKey.verifyCheckInstall.text(in: language))
+                BulletPoint(icon: "xmark.circle", color: .red, text: L10nKey.verifyNotGenuine.text(in: language))
+                BulletPoint(icon: "xmark.circle", color: .red, text: L10nKey.verifyNotAccuracy.text(in: language))
             }
             .font(.subheadline)
         }

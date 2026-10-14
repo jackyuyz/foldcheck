@@ -1,6 +1,7 @@
 import Testing
 import Foundation
 @testable import ReportKit
+import FoldL10n
 import TestsKit
 
 @Suite("ReportContent Tests")
@@ -110,6 +111,30 @@ struct ReportContentTests {
         #expect(!content.qrPayload!.isEmpty)
     }
     
+    @Test("Reports follow the selected language and default to English")
+    func testLocalizedAssemble() {
+        let assembler = ReportContentAssembler()
+        var session = InspectionSession(
+            deviceModel: "iPhone 19 Duo",
+            osVersion: "iOS 27.0",
+            hasHinge: true
+        )
+        session.setResult(TestResult(id: .hingeSweep, outcome: .pass))
+
+        let english = assembler.assemble(session: session, envelope: nil)
+        #expect(english.title == "FoldCheck Inspection Report")
+        #expect(english.testResults.first?.testName == "Hinge Sweep")
+        #expect(english.overallStatus == "Pass")
+
+        let chinese = assembler.assemble(session: session, envelope: nil, language: .zhHans)
+        #expect(chinese.title == "FoldCheck 体检报告")
+        #expect(chinese.title != english.title)
+        #expect(chinese.disclaimer.contains("声明"))
+        #expect(chinese.testResults.first?.testName == "铰链扫掠")
+        #expect(chinese.overallStatus == "通过")
+        #expect(chinese.deviceType == "iPhone Duo")
+    }
+
     @Test("Disclaimer text is not empty")
     func testDisclaimerText() {
         #expect(!ReportContentAssembler.disclaimer.isEmpty)

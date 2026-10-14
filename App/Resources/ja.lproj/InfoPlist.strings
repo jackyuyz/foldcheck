@@ -1,0 +1,2 @@
+"NSCameraUsageDescription" = "FoldCheck はカメラの動作確認と、レポートの QR コードの読み取りにカメラを使います。テスト画像は、レポートに添付しない限り保存しません。";
+"NSMicrophoneUsageDescription" = "短い録音でマイクを確認します。録音はこの iPhone の中だけに残ります。";

@@ -1,10 +1,12 @@
 import SwiftUI
+import FoldL10n
 import TestsKit
 import ReportKit
 
 struct ReportPreviewView: View {
     let session: InspectionSession
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.reportLanguage) private var language
     
     @State private var isGenerating = true
     @State private var reportContent: ReportContent?
@@ -22,18 +24,18 @@ struct ReportPreviewView: View {
                     errorView(error)
                 }
             }
-            .navigationTitle("Report Preview")
+            .navigationTitle(L10nKey.reportPreviewTitle.text(in: language))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") {
+                    Button(L10nKey.paywallClose.text(in: language)) {
                         dismiss()
                     }
                 }
                 
                 if pdfData != nil {
                     ToolbarItem(placement: .primaryAction) {
-                        ShareLink(item: pdfData!, preview: SharePreview("FoldCheck Report"))
+                        ShareLink(item: pdfData!, preview: SharePreview(L10nKey.reportShareName.text(in: language)))
                     }
                 }
             }
@@ -48,10 +50,10 @@ struct ReportPreviewView: View {
             ProgressView()
                 .scaleEffect(1.5)
             
-            Text("Generating Report...")
+            Text(L10nKey.reportGenerating.text(in: language))
                 .font(.headline)
             
-            Text("Signing with Secure Enclave")
+            Text(L10nKey.reportSigning.text(in: language))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
@@ -65,11 +67,11 @@ struct ReportPreviewView: View {
                     Text(content.title)
                         .font(.title2.bold())
                     
-                    Text("Report ID: \(content.reportID.prefix(8))...")
+                    Text(L10nKey.reportIdPrefix.text(in: language, String(content.reportID.prefix(8))))
                         .font(.caption.monospaced())
                         .foregroundStyle(.secondary)
                     
-                    Text("Generated: \(content.generatedAt)")
+                    Text(L10nKey.reportGenerated.text(in: language, content.generatedAt))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -78,14 +80,14 @@ struct ReportPreviewView: View {
                 
                 // Device Info
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Device Information")
+                    Text(L10nKey.reportDeviceInfo.text(in: language))
                         .font(.headline)
                     
                     InfoGrid(items: [
-                        ("Model", content.deviceModel),
-                        ("Type", content.deviceType),
-                        ("iOS Version", content.osVersion),
-                        ("Storage", content.storageCapacity ?? "Unknown")
+                        (L10nKey.reportModel.text(in: language), content.deviceModel),
+                        (L10nKey.reportType.text(in: language), content.deviceType),
+                        (L10nKey.debugIos.text(in: language), content.osVersion),
+                        (L10nKey.reportStorage.text(in: language), content.storageCapacity ?? L10nKey.reportUnknown.text(in: language))
                     ])
                 }
                 
@@ -93,7 +95,7 @@ struct ReportPreviewView: View {
                 
                 // Summary
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Inspection Summary")
+                    Text(L10nKey.reportSummary.text(in: language))
                         .font(.headline)
                     
                     HStack(spacing: 20) {
@@ -101,7 +103,7 @@ struct ReportPreviewView: View {
                             Text(content.overallStatus)
                                 .font(.title3.bold())
                                 .foregroundStyle(statusColor(for: content.overallStatus))
-                            Text("Status")
+                            Text(L10nKey.reportStatus.text(in: language))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -110,7 +112,7 @@ struct ReportPreviewView: View {
                             VStack {
                                 Text(score)
                                     .font(.title3.bold())
-                                Text("Score")
+                                Text(L10nKey.reportScore.text(in: language))
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
@@ -120,7 +122,7 @@ struct ReportPreviewView: View {
                             VStack {
                                 Text(duration)
                                     .font(.title3.bold())
-                                Text("Duration")
+                                Text(L10nKey.reportDuration.text(in: language))
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
@@ -132,7 +134,7 @@ struct ReportPreviewView: View {
                 
                 // Test Results
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Test Results")
+                    Text(L10nKey.reportResults.text(in: language))
                         .font(.headline)
                     
                     ForEach(Array(content.testResults.enumerated()), id: \.offset) { _, result in
@@ -144,7 +146,7 @@ struct ReportPreviewView: View {
                 
                 // Signature
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Digital Signature")
+                    Text(L10nKey.reportSignature.text(in: language))
                         .font(.headline)
                     
                     HStack {
@@ -155,7 +157,7 @@ struct ReportPreviewView: View {
                     }
                     
                     if let fingerprint = content.keyFingerprint {
-                        Text("Key: \(fingerprint)")
+                        Text(L10nKey.reportKeyPrefix.text(in: language, fingerprint))
                             .font(.caption.monospaced())
                             .foregroundStyle(.secondary)
                     }
@@ -174,7 +176,7 @@ struct ReportPreviewView: View {
     
     private func errorView(_ error: Error) -> some View {
         ContentUnavailableView(
-            "Generation Failed",
+            L10nKey.reportFailed.text(in: language),
             systemImage: "exclamationmark.triangle",
             description: Text(error.localizedDescription)
         )
@@ -188,7 +190,7 @@ struct ReportPreviewView: View {
             let report = CanonicalReport.from(session: session)
             let envelope = try await signReport(report, signer: signer)
             
-            let content = assembler.assemble(session: session, envelope: envelope)
+            let content = assembler.assemble(session: session, envelope: envelope, language: language)
             
             // TODO: Generate actual PDF data using PDFKit/UIGraphicsPDFRenderer
             // For now, we just show the preview
@@ -206,10 +208,10 @@ struct ReportPreviewView: View {
     }
     
     private func statusColor(for status: String) -> Color {
-        switch status.lowercased() {
-        case "pass": return .green
-        case "attention": return .orange
-        case "fail": return .red
+        switch status {
+        case L10nKey.outcomePass.text(in: language): return .green
+        case L10nKey.outcomeAttention.text(in: language): return .orange
+        case L10nKey.outcomeFail.text(in: language): return .red
         default: return .gray
         }
     }

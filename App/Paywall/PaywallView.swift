@@ -1,7 +1,9 @@
 import SwiftUI
+import FoldL10n
 
 struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.appLanguage) private var language
     @State private var isPurchasing = false
     @State private var isRestoring = false
     @State private var errorMessage: String?
@@ -20,17 +22,17 @@ struct PaywallView: View {
                 }
                 .padding()
             }
-            .navigationTitle("FoldCheck Reports")
+            .navigationTitle(L10nKey.paywallTitle.text(in: language))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") {
+                    Button(L10nKey.paywallClose.text(in: language)) {
                         dismiss()
                     }
                 }
             }
-            .alert("Error", isPresented: .constant(errorMessage != nil)) {
-                Button("OK") {
+            .alert(L10nKey.paywallError.text(in: language), isPresented: .constant(errorMessage != nil)) {
+                Button(L10nKey.paywallOk.text(in: language)) {
                     errorMessage = nil
                 }
             } message: {
@@ -47,10 +49,10 @@ struct PaywallView: View {
                 .font(.system(size: 60))
                 .foregroundStyle(.tint)
             
-            Text("Unlock PDF Reports")
+            Text(L10nKey.paywallHeadline.text(in: language))
                 .font(.title2.bold())
             
-            Text("Create professional inspection reports with tamper-evident signatures")
+            Text(L10nKey.paywallSubtitle.text(in: language))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -61,38 +63,38 @@ struct PaywallView: View {
         VStack(alignment: .leading, spacing: 16) {
             FeatureRow(
                 icon: "doc.richtext",
-                title: "PDF Reports",
-                description: "Generate detailed reports with all test results and charts"
+                title: L10nKey.paywallPdfTitle.text(in: language),
+                description: L10nKey.paywallPdfDetail.text(in: language)
             )
             
             FeatureRow(
                 icon: "signature",
-                title: "Digital Signature",
-                description: "Tamper-evident signing using your device's Secure Enclave"
+                title: L10nKey.paywallSignTitle.text(in: language),
+                description: L10nKey.paywallSignDetail.text(in: language)
             )
             
             FeatureRow(
                 icon: "qrcode",
-                title: "QR Verification",
-                description: "Each report includes a QR code for instant verification"
+                title: L10nKey.paywallQrTitle.text(in: language),
+                description: L10nKey.paywallQrDetail.text(in: language)
             )
             
             FeatureRow(
                 icon: "clock.arrow.circlepath",
-                title: "History & Compare",
-                description: "Track changes over time and compare inspections"
+                title: L10nKey.paywallHistoryTitle.text(in: language),
+                description: L10nKey.paywallHistoryDetail.text(in: language)
             )
             
             FeatureRow(
                 icon: "bell.badge",
-                title: "Monthly Reminders",
-                description: "Get notified to run regular check-ups"
+                title: L10nKey.paywallReminderTitle.text(in: language),
+                description: L10nKey.paywallReminderDetail.text(in: language)
             )
             
             FeatureRow(
                 icon: "chart.bar.fill",
-                title: "Fold Statistics",
-                description: "View detailed fold counter stats per session"
+                title: L10nKey.paywallStatsTitle.text(in: language),
+                description: L10nKey.paywallStatsDetail.text(in: language)
             )
         }
         .padding()
@@ -105,7 +107,7 @@ struct PaywallView: View {
                 Text("$2.99")
                     .font(.system(size: 36, weight: .bold, design: .rounded))
                 
-                Text("One-time purchase")
+                Text(L10nKey.paywallOneTime.text(in: language))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -117,7 +119,7 @@ struct PaywallView: View {
                     ProgressView()
                         .tint(.white)
                 } else {
-                    Text("Purchase")
+                    Text(L10nKey.paywallPurchase.text(in: language))
                 }
             }
             .font(.headline)
@@ -133,7 +135,7 @@ struct PaywallView: View {
                 if isRestoring {
                     ProgressView()
                 } else {
-                    Text("Restore Purchases")
+                    Text(L10nKey.paywallRestore.text(in: language))
                 }
             }
             .font(.subheadline)
@@ -143,16 +145,16 @@ struct PaywallView: View {
     
     private var termsSection: some View {
         VStack(spacing: 8) {
-            Text("All tests are always free. PDF reports, history, and comparison features require this one-time purchase.")
+            Text(L10nKey.paywallLegal.text(in: language))
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
             
             HStack(spacing: 16) {
-                Button("Terms of Service") {
+                Button(L10nKey.paywallTerms.text(in: language)) {
                     // TODO: Open terms
                 }
-                Button("Privacy Policy") {
+                Button(L10nKey.paywallPrivacy.text(in: language)) {
                     // TODO: Open privacy
                 }
             }
