@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', 'Helvetica Neue', sans-serif; background: #f5f5f7; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+.iphone { width: 390px; height: 844px; background: #000; border-radius: 50px; padding: 15px; }
+.screen { width: 100%; height: 100%; background: #000; border-radius: 40px; overflow: hidden; position: relative; }
+.header { position: absolute; top: 60px; left: 20px; right: 20px; z-index: 10; }
+.progress { height: 4px; background: #333; border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; width: 60%; background: #fff; }
+.hint { color: #666; font-size: 12px; margin-top: 8px; }
+.grid-container { padding: 100px 20px 20px; }
+.grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; }
+.cell { aspect-ratio: 1; background: #333; border-radius: 3px; }
+.cell.filled { background: #34c759; }
+.cell.crease { background: #fbbf24; height: 15px; }
+.cell.crease.filled { background: #34c759; }
+.crease-hint { color: #fbbf24; text-align: center; font-size: 13px; margin-top: 20px; }
+.skip-btn { position: absolute; bottom: 80px; right: 20px; background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 20px; color: white; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="iphone">
+<div class="screen">
+<div class="header">
+<div class="progress"><div class="progress-fill"></div></div>
+<div class="hint">Swipe to fill all cells</div>
+</div>
+<div class="grid-container">
+<div class="grid">
+<!-- Row 1 -->
+<div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+<!-- Row 2 -->
+<div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+<!-- Row 3 -->
+<div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+<!-- Row 4 -->
+<div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell"></div><div class="cell"></div>
+<!-- Crease band -->
+<div class="cell crease filled"></div><div class="cell crease filled"></div><div class="cell crease filled"></div><div class="cell crease filled"></div><div class="cell crease"></div><div class="cell crease"></div><div class="cell crease"></div><div class="cell crease"></div><div class="cell crease"></div><div class="cell crease"></div>
+<!-- Row 6 -->
+<div class="cell filled"></div><div class="cell filled"></div><div class="cell filled"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+<!-- Row 7 -->
+<div class="cell filled"></div><div class="cell filled"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+<!-- Row 8 -->
+<div class="cell filled"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+<!-- Row 9 -->
+<div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+<!-- Row 10 -->
+<div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+</div>
+<div class="crease-hint">⚠️ Dense crease band highlighted in yellow</div>
+</div>
+<div class="skip-btn">Skip</div>
+</div>
+</div>
+</body>
+</html>
