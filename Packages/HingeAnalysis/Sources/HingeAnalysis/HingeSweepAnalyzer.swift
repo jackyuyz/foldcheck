@@ -17,7 +17,7 @@ public struct HingeSweepAnalyzer: Sendable {
     /// Gap threshold above which we flag as potentially problematic (degrees)
     public static let gapWarningThreshold: Double = 15.0
     
-    /// Gap threshold above which we flag as a significant issue (degrees)
+    /// Kept as a named constant. Spec AC2 does not Fail a sweep for this gap.
     public static let gapFailThreshold: Double = 25.0
     
     public init() {}
@@ -168,18 +168,14 @@ public extension HingeSweepReport {
             return .unavailable
         }
         
-        // Check for significant gaps
-        if maxGapDegrees >= HingeSweepAnalyzer.gapFailThreshold {
-            return .fail
-        }
-        
-        // Check for poor monotonicity (too many direction changes)
-        if monotonicFraction < 0.7 {
+        // Spec AC2: a 25° gap is Attention, not Fail. No-data stays Unavailable.
+        // Gaps at or above the warning threshold, including 25°, are Attention.
+        if maxGapDegrees >= HingeSweepAnalyzer.gapWarningThreshold {
             return .attention
         }
-        
-        // Check for warning-level gaps
-        if maxGapDegrees >= HingeSweepAnalyzer.gapWarningThreshold {
+
+        // Check for poor monotonicity (too many direction changes)
+        if monotonicFraction < 0.7 {
             return .attention
         }
         
@@ -209,7 +205,7 @@ public extension HingeSweepReport {
             }
             return "Hinge sweep completed with some concerns: \(issues.joined(separator: ", "))."
         case .fail:
-            return "Hinge sweep showed significant gaps (\(String(format: "%.1f", maxGapDegrees))°) suggesting potential issues."
+            return "Hinge sweep failed for a reason other than a data gap. A 25° gap is Attention, not Fail."
         case .unavailable:
             return "Not enough hinge data was collected to assess."
         }

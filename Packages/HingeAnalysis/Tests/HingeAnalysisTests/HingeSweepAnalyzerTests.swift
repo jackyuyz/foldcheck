@@ -67,8 +67,8 @@ struct HingeSweepAnalyzerTests {
     
     // MARK: - Gappy Sweep Tests
     
-    @Test("Sweep with 25° gap produces Fail quality")
-    func testGappySweepFail() {
+    @Test("Sweep with 25° gap produces Attention, not Fail")
+    func testGappySweepAttentionAt25() {
         var collection = HingeSampleCollection()
         
         // 0 to 90, then jump to 115 (25° gap), then to 180
@@ -83,7 +83,8 @@ struct HingeSweepAnalyzerTests {
         let report = analyzer.analyze(collection)
         
         #expect(report.maxGapDegrees >= 25.0)
-        #expect(report.assessQuality() == .fail)
+        #expect(report.assessQuality() == .attention)
+        #expect(report.assessQuality() != .fail)
     }
     
     @Test("Sweep with 15° gap produces Attention quality")
@@ -302,12 +303,13 @@ struct HingeSweepReportTests {
         )
         #expect(gapReport.qualityDescription.contains("gaps"))
         
-        let failReport = HingeSweepReport(
+        let wideGapReport = HingeSweepReport(
             observedMin: 0, observedMax: 180, maxGapDegrees: 30,
             restJitterDegrees: 0.5, estimatedHz: 30, monotonicFraction: 1.0,
             statusSequence: [.closed, .partiallyOpen, .fullyOpen], sampleCount: 100
         )
-        #expect(failReport.qualityDescription.contains("significant"))
+        #expect(wideGapReport.assessQuality() == .attention)
+        #expect(wideGapReport.qualityDescription.contains("gaps"))
         
         let unavailableReport = HingeSweepReport(
             observedMin: 0, observedMax: 0, maxGapDegrees: 0,

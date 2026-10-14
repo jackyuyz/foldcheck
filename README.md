@@ -139,7 +139,7 @@ Crease width, point sizes, and `UIScreen.scale` are still unknown. They are `nil
 
 ## Open Questions for Product Manager
 
-1. **Hinge thresholds**: What gap size (degrees) should trigger "Attention" vs "Fail"? Currently: 15° = Attention, 25° = Fail.
+1. **Hinge thresholds**: Spec AC2. A gap of 15° or more, including 25°, is Attention. No hinge data is Unavailable, never Fail.
 
 2. **Crease rating scale**: Is 1-5 sufficient? Should we provide reference images for each rating?
 
