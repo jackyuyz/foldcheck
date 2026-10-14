@@ -44,6 +44,11 @@ struct InspectionSummaryView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
+
+            Text(verbatim: "\(session.deviceModel) · \(session.osVersion)")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .accessibilityIdentifier("summary.device")
         }
     }
     
@@ -148,6 +153,18 @@ struct TestResultRow: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+
+                if let metrics = ResultMetricsFormatter.summary(for: result, language: language) {
+                    Text(metrics)
+                        .font(.caption.monospacedDigit())
+                }
+
+                if !result.notes.isEmpty {
+                    Text(result.notes)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(3)
+                }
             }
             
             Spacer()
@@ -156,6 +173,8 @@ struct TestResultRow: View {
         }
         .padding()
         .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("summary.row.\(result.id.rawValue)")
     }
 }
 

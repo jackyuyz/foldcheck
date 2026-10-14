@@ -149,7 +149,8 @@ struct DeviceNamesTests {
     @Test("Known devices return friendly names")
     func testKnownDevices() {
         #expect(DeviceNames.friendlyName(for: "iPhone19,1") == "iPhone 19 Duo")
-        #expect(DeviceNames.friendlyName(for: "iPhone17,1") == "iPhone 17")
+        #expect(DeviceNames.friendlyName(for: "iPhone17,1") == "iPhone 16 Pro")
+        #expect(DeviceNames.friendlyName(for: "iPhone18,1") == "iPhone 17 Pro")
         #expect(DeviceNames.friendlyName(for: "x86_64") == "Simulator (Intel)")
     }
     

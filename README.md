@@ -159,9 +159,9 @@ Unit tests pass on Linux:
 
 | Package | Tests | Status |
 |---------|-------|--------|
-| FoldKit | 41 | ✅ Pass |
+| FoldKit | 42 | ✅ Pass |
 | HingeAnalysis | 21 | ✅ Pass |
-| TestsKit | 36 | ✅ Pass |
+| TestsKit | 67 | ✅ Pass |
 | ReportKit | 34 | ✅ Pass |
 | FoldL10n | 8 | ✅ Pass |
 
@@ -175,13 +175,20 @@ Unit tests pass on Linux:
 - XcodeGen project structure
 - SwiftUI app shell with navigation
 
-### M2-M7: Pending
-- Display & touch tests (M2)
+### M2: Display & touch tests ✅
+- T1 touch grid: ~7 mm cells, half-size cells within ±10 mm of the crease on the Duo inner display, multi-touch count, misses shown in red (AC3 covered by a scripted UI test)
+- T2 pixels: six solid colors at full brightness; tapped spots stored as normalized points
+- T3 crease visibility: 1–5 rating at three guided viewing angles, optional imported photo
+- Logic in TestsKit (`TouchGridLayout`, `TouchGridSession`, `PixelTestSession`, `CreaseVisibilitySession`, `InspectionPlan`); screens in `App/Tests/`
+- The cell size assumes iPhone-like density (~6 pt/mm) and the crease at the center; both need checking on a real Duo (`reservedRegions(.division)`)
+
+### M3-M7: Pending
 - Hinge test & fold counter (M3)
 - Hardware tests (M4)
 - PDF reports with signing (M5)
 - History, reminders, Store (M6)
 - Polish (M7). In-app language switching is in place; remaining work is visual polish.
+
 
 ## Languages
 

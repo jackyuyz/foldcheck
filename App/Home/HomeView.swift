@@ -7,7 +7,7 @@ struct HomeView: View {
     @Environment(\.foldStateProvider) private var foldStateProvider
     @Environment(\.appLanguage) private var language
     @State private var lastSession: InspectionSession?
-    @State private var showingInspection = false
+    @State private var inspectionRequest: InspectionRequest?
     
     var body: some View {
         ScrollView {
@@ -25,8 +25,13 @@ struct HomeView: View {
             .padding()
         }
         .navigationTitle("FoldCheck")
-        .sheet(isPresented: $showingInspection) {
-            InspectionFlowView()
+        .fullScreenCover(item: $inspectionRequest) { request in
+            InspectionFlowView(request: request) { session in
+                // Only a full inspection becomes the "last inspection" on Home.
+                if request.tests == TestID.defaultOrder {
+                    lastSession = session
+                }
+            }
         }
     }
     
@@ -49,7 +54,7 @@ struct HomeView: View {
     
     private var startInspectionButton: some View {
         Button {
-            showingInspection = true
+            start(TestID.defaultOrder)
         } label: {
             Label(L10nKey.homeStart.text(in: language), systemImage: "play.fill")
                 .font(.headline)
@@ -58,6 +63,13 @@ struct HomeView: View {
                 .background(.tint, in: RoundedRectangle(cornerRadius: 12))
                 .foregroundStyle(.white)
         }
+        .accessibilityIdentifier("home.start")
+    }
+
+    /// Starts a flow with the device context (model, OS, fold state) as it is right now,
+    /// so `-FoldMock` launch arguments decide which tests apply.
+    private func start(_ tests: [TestID]) {
+        inspectionRequest = .current(tests: tests, foldState: foldStateProvider.state)
     }
     
     @ViewBuilder
@@ -106,37 +118,42 @@ struct HomeView: View {
                 GridItem(.flexible()),
                 GridItem(.flexible())
             ], spacing: 12) {
+                // Hinge test (T4) arrives in M3.
                 QuickActionCard(
                     title: L10nKey.homeHingeCheck.text(in: language),
                     icon: "arrow.triangle.2.circlepath",
-                    description: L10nKey.homeHingeCheckDetail.text(in: language)
-                ) {
-                    // TODO: Quick hinge test
-                }
+                    description: L10nKey.homeComingSoon.text(in: language),
+                    isEnabled: false
+                ) {}
+                .accessibilityIdentifier("home.quick.hinge")
                 
                 QuickActionCard(
                     title: L10nKey.homeTouchTest.text(in: language),
                     icon: "hand.tap.fill",
                     description: L10nKey.homeTouchTestDetail.text(in: language)
                 ) {
-                    // TODO: Quick touch test
+                    let context = DeviceInfo.context(foldState: foldStateProvider.state)
+                    start([InspectionPlan.quickTouchTest(for: context)])
                 }
+                .accessibilityIdentifier("home.quick.touch")
                 
                 QuickActionCard(
                     title: L10nKey.homeScreenTest.text(in: language),
                     icon: "rectangle.fill",
                     description: L10nKey.homeScreenTestDetail.text(in: language)
                 ) {
-                    // TODO: Quick screen test
+                    start([.pixels])
                 }
+                .accessibilityIdentifier("home.quick.screen")
                 
+                // Fold counter stats (F5) arrive in M3.
                 QuickActionCard(
                     title: L10nKey.homeFoldStats.text(in: language),
                     icon: "chart.bar.fill",
-                    description: L10nKey.homeFoldStatsDetail.text(in: language)
-                ) {
-                    // TODO: Fold stats view
-                }
+                    description: L10nKey.homeComingSoon.text(in: language),
+                    isEnabled: false
+                ) {}
+                .accessibilityIdentifier("home.quick.foldStats")
             }
         }
     }
@@ -161,6 +178,10 @@ struct ResultBadge: View {
     }
     
     private var outcomeColor: Color {
+        Self.color(for: outcome)
+    }
+
+    static func color(for outcome: TestOutcome) -> Color {
         switch outcome {
         case .pass: return .green
         case .attention: return .orange
@@ -174,6 +195,7 @@ struct QuickActionCard: View {
     let title: String
     let icon: String
     let description: String
+    var isEnabled = true
     let action: () -> Void
     
     var body: some View {
@@ -193,8 +215,10 @@ struct QuickActionCard: View {
             .frame(maxWidth: .infinity)
             .padding()
             .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
+            .opacity(isEnabled ? 1 : 0.5)
         }
         .buttonStyle(.plain)
+        .disabled(!isEnabled)
     }
 }
 

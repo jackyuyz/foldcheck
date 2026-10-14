@@ -6,12 +6,14 @@ import ReportKit
 
 @main
 struct FoldCheckApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @State private var foldStateProvider = SystemFoldStateProvider()
     @State private var mockFoldStateProvider: MockFoldStateProvider?
     @State private var settings = AppSettings()
     
     init() {
-        configureMockProviderIfNeeded()
+        // Assigning a @State property inside init is ignored; seed its initial value instead.
+        _mockFoldStateProvider = State(initialValue: Self.makeMockProviderIfRequested())
     }
     
     var body: some Scene {
@@ -29,28 +31,24 @@ struct FoldCheckApp: App {
         mockFoldStateProvider ?? foldStateProvider
     }
     
-    private mutating func configureMockProviderIfNeeded() {
+    /// `-FoldMock <value>` swaps in the mock provider (DEBUG builds only).
+    private static func makeMockProviderIfRequested() -> MockFoldStateProvider? {
         #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("-UITestMode") ||
-           CommandLine.arguments.contains("-FoldMock") {
-            if let mockValue = getMockValue() {
-                let (posture, angle, script) = MockFoldStateProvider.parseArgument(mockValue)
-                let initialState = FoldState(posture: posture, angleDegrees: angle)
-                let mock = MockFoldStateProvider(initialState: initialState)
-                
-                if let script = script {
-                    Task {
-                        await mock.play(script)
-                    }
-                }
-                
-                mockFoldStateProvider = mock
+        guard let mockValue = getMockValue() else { return nil }
+        let (posture, angle, script) = MockFoldStateProvider.parseArgument(mockValue)
+        let mock = MockFoldStateProvider(initialState: FoldState(posture: posture, angleDegrees: angle))
+        if let script {
+            Task {
+                await mock.play(script)
             }
         }
+        return mock
+        #else
+        return nil
         #endif
     }
     
-    private func getMockValue() -> String? {
+    private static func getMockValue() -> String? {
         let args = CommandLine.arguments
         if let index = args.firstIndex(of: "-FoldMock"), index + 1 < args.count {
             return args[index + 1]
