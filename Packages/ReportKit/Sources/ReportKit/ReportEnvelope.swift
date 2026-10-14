@@ -59,20 +59,8 @@ public struct ReportEnvelope: Codable, Sendable, Equatable {
         guard let data = Data(base64Encoded: publicKey) else {
             return "unknown"
         }
-        let hashData = sha256Hash(data: data)
+        let hashData = ReportHash.sha256(data)
         return hashData.prefix(8).map { String(format: "%02x", $0) }.joined()
-    }
-    
-    /// Compute SHA-256 hash of data
-    private func sha256Hash(data: Data) -> [UInt8] {
-        // Simple SHA-256 would use CryptoKit on real iOS
-        // For cross-platform testing, we use a placeholder
-        var hash = [UInt8](repeating: 0, count: 32)
-        let bytes = [UInt8](data)
-        for (i, byte) in bytes.enumerated() {
-            hash[i % 32] ^= byte
-        }
-        return hash
     }
 }
 

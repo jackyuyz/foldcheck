@@ -14,6 +14,7 @@ let package = Package(
         ),
     ],
     dependencies: [
+        .package(url: "https://github.com/apple/swift-crypto.git", from: "3.12.0"),
         .package(path: "../FoldKit"),
         .package(path: "../FoldL10n"),
         .package(path: "../TestsKit")
@@ -21,11 +22,22 @@ let package = Package(
     targets: [
         .target(
             name: "ReportKit",
-            dependencies: ["FoldKit", "FoldL10n", "TestsKit"]
+            dependencies: [
+                .product(name: "Crypto", package: "swift-crypto"),
+                "FoldKit",
+                "FoldL10n",
+                "TestsKit"
+            ],
+            linkerSettings: [
+                .linkedLibrary("stdc++", .when(platforms: [.linux]))
+            ]
         ),
         .testTarget(
             name: "ReportKitTests",
-            dependencies: ["ReportKit"]
+            dependencies: ["ReportKit"],
+            linkerSettings: [
+                .linkedLibrary("stdc++", .when(platforms: [.linux]))
+            ]
         ),
     ]
 )

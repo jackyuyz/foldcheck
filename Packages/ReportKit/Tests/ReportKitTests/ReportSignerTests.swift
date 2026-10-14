@@ -61,7 +61,7 @@ struct ReportSignerTests {
         let publicKey = try await signer.getPublicKey()
         
         #expect(!publicKey.isEmpty)
-        #expect(publicKey.count == 32)
+        #expect(publicKey.count == 64)
     }
     
     @Test("SoftwareReportSigner is deterministic with same seed")
@@ -72,13 +72,12 @@ struct ReportSignerTests {
         
         let sig1 = try await signer1.sign(data)
         let sig2 = try await signer2.sign(data)
-        
-        #expect(sig1 == sig2)
-        
         let key1 = try await signer1.getPublicKey()
         let key2 = try await signer2.getPublicKey()
-        
+
         #expect(key1 == key2)
+        #expect(try await signer1.verify(data, signature: sig2))
+        #expect(try await signer2.verify(data, signature: sig1))
     }
     
     @Test("SoftwareReportSigner is development key")

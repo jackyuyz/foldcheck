@@ -1,153 +1,106 @@
+import Crypto
 import Foundation
 
 /// Protocol for signing and verifying reports.
 ///
-/// The production implementation uses the Secure Enclave (P-256),
-/// while the mock uses a software key for testing.
+/// Production uses `SecureEnclaveReportSigner` (CryptoKit `SecureEnclave.P256`).
+/// Tests and the simulator use `SoftwareReportSigner`, a real P-256 key from swift-crypto.
 public protocol ReportSigner: Sendable {
-    /// Sign the given data and return the signature
     func sign(_ data: Data) async throws -> Data
-    
-    /// Verify a signature against data
     func verify(_ data: Data, signature: Data) async throws -> Bool
-    
-    /// Get the public key in a portable format
     func getPublicKey() async throws -> Data
-    
-    /// Whether this signer uses a development/software key
     var isDevelopmentKey: Bool { get }
 }
 
-/// Software-based signer for testing and simulator use.
-///
-/// This implementation uses a simple XOR-based "signature" for demonstration.
-/// In production, this would be replaced with actual P-256 cryptography.
-public actor SoftwareReportSigner: ReportSigner {
-    private let keyData: Data
-    public nonisolated let isDevelopmentKey: Bool = true
-    
-    public init(seed: String = "FoldCheck-Dev-Key") {
-        // Create a deterministic key from the seed for testing
-        var keyBytes = [UInt8](repeating: 0, count: 32)
-        let seedBytes = Array(seed.utf8)
-        for (i, byte) in seedBytes.enumerated() {
-            keyBytes[i % 32] ^= byte
-        }
-        self.keyData = Data(keyBytes)
+enum ReportHash {
+    static func sha256(_ data: Data) -> Data {
+        Data(SHA256.hash(data: data))
     }
-    
-    public func sign(_ data: Data) async throws -> Data {
-        // Simple XOR-based "signature" for testing
-        // Real implementation would use CryptoKit with P-256
-        let hash = sha256(data)
-        var signature = [UInt8](repeating: 0, count: 64)
-        let keyBytes = [UInt8](keyData)
-        
-        for i in 0..<32 {
-            signature[i] = hash[i] ^ keyBytes[i % keyBytes.count]
-            signature[i + 32] = hash[i] ^ keyBytes[(i + 16) % keyBytes.count]
-        }
-        
-        return Data(signature)
-    }
-    
-    public func verify(_ data: Data, signature: Data) async throws -> Bool {
-        // Verify by re-signing and comparing
-        let expectedSignature = try await sign(data)
-        return signature == expectedSignature
-    }
-    
-    public func getPublicKey() async throws -> Data {
-        // For the software signer, the "public key" is derived from the key
-        var publicBytes = [UInt8](repeating: 0, count: 32)
-        let keyBytes = [UInt8](keyData)
-        
-        for i in 0..<32 {
-            publicBytes[i] = keyBytes[i] ^ 0xAA
-        }
-        
-        return Data(publicBytes)
-    }
-    
-    private func sha256(_ data: Data) -> [UInt8] {
-        // Simple hash for testing (not cryptographically secure)
-        var hash = [UInt8](repeating: 0, count: 32)
-        let bytes = [UInt8](data)
-        
-        for (i, byte) in bytes.enumerated() {
-            hash[i % 32] = hash[i % 32] &+ byte
-            hash[(i + 1) % 32] ^= byte
-        }
-        
-        return hash
+
+    static func hex(_ data: Data) -> String {
+        data.map { String(format: "%02x", $0) }.joined()
     }
 }
 
-// MARK: - Report Signing Functions
+enum P256Signature {
+    static func isValid(message: Data, signature: Data, publicKey: Data) -> Bool {
+        guard let key = try? P256.Signing.PublicKey(rawRepresentation: publicKey),
+              let parsed = try? P256.Signing.ECDSASignature(rawRepresentation: signature) else {
+            return false
+        }
+        return key.isValidSignature(parsed, for: message)
+    }
+}
 
-/// Sign a canonical report and create an envelope
+/// Real P-256 software key. The seed selects the scalar so tests are deterministic.
+/// This is not the Secure Enclave. `isDevelopmentKey` stays true.
+public actor SoftwareReportSigner: ReportSigner {
+    private let privateKey: P256.Signing.PrivateKey
+    public nonisolated let isDevelopmentKey: Bool = true
+
+    public init(seed: String = "FoldCheck-Dev-Key") {
+        privateKey = Self.key(from: seed)
+    }
+
+    public func sign(_ data: Data) async throws -> Data {
+        try privateKey.signature(for: data).rawRepresentation
+    }
+
+    public func verify(_ data: Data, signature: Data) async throws -> Bool {
+        guard let parsed = try? P256.Signing.ECDSASignature(rawRepresentation: signature) else {
+            return false
+        }
+        return privateKey.publicKey.isValidSignature(parsed, for: data)
+    }
+
+    public func getPublicKey() async throws -> Data {
+        privateKey.publicKey.rawRepresentation
+    }
+
+    private static func key(from seed: String) -> P256.Signing.PrivateKey {
+        var material = Array(SHA256.hash(data: Data(seed.utf8)))
+        for _ in 0..<32 {
+            if let key = try? P256.Signing.PrivateKey(rawRepresentation: material) {
+                return key
+            }
+            material = Array(SHA256.hash(data: Data(material)))
+        }
+        // A SHA-256 digest is a valid scalar except for a negligible set.
+        return P256.Signing.PrivateKey()
+    }
+}
+
 public func signReport(_ report: CanonicalReport, signer: any ReportSigner) async throws -> ReportEnvelope {
-    // Encode to canonical JSON
     let jsonData = try report.toCanonicalJSON()
-    
-    // Compute hash
-    let hashBytes = sha256(jsonData)
-    let hashHex = hashBytes.map { String(format: "%02x", $0) }.joined()
-    
-    // Sign the hash
-    let signature = try await signer.sign(Data(hashBytes))
-    let signatureB64 = signature.base64EncodedString()
-    
-    // Get public key
+    let hash = ReportHash.sha256(jsonData)
+    let signature = try await signer.sign(hash)
     let publicKey = try await signer.getPublicKey()
-    let publicKeyB64 = publicKey.base64EncodedString()
-    
+
     return ReportEnvelope(
         reportID: report.reportID,
-        sha256: hashHex,
-        signature: signatureB64,
-        publicKey: publicKeyB64,
+        sha256: ReportHash.hex(hash),
+        signature: signature.base64EncodedString(),
+        publicKey: publicKey.base64EncodedString(),
         version: 1,
         isDevelopmentBuild: signer.isDevelopmentKey
     )
 }
 
-/// Verify a report against its envelope
+/// Verifies the embedded hash and the P-256 signature. The public key in the
+/// envelope is what is checked, so another install can verify without the private key.
 public func verifyReport(_ report: CanonicalReport, envelope: ReportEnvelope, signer: any ReportSigner) async throws -> Bool {
-    // Encode to canonical JSON
     let jsonData = try report.toCanonicalJSON()
-    
-    // Compute and verify hash
-    let hashBytes = sha256(jsonData)
-    let hashHex = hashBytes.map { String(format: "%02x", $0) }.joined()
-    
-    guard hashHex == envelope.sha256 else {
+    let hash = ReportHash.sha256(jsonData)
+    guard ReportHash.hex(hash) == envelope.sha256 else {
         throw ReportError.hashMismatch
     }
-    
-    // Verify signature
-    guard let signatureData = Data(base64Encoded: envelope.signature) else {
+    guard let signature = Data(base64Encoded: envelope.signature),
+          let publicKey = Data(base64Encoded: envelope.publicKey) else {
         throw ReportError.invalidSignature
     }
-    
-    let isValid = try await signer.verify(Data(hashBytes), signature: signatureData)
-    
-    if !isValid {
+    guard P256Signature.isValid(message: hash, signature: signature, publicKey: publicKey) else {
         throw ReportError.verificationFailed
     }
-    
+    _ = signer
     return true
-}
-
-/// Simple SHA-256 hash function (for testing; real impl would use CryptoKit)
-private func sha256(_ data: Data) -> [UInt8] {
-    var hash = [UInt8](repeating: 0, count: 32)
-    let bytes = [UInt8](data)
-    
-    for (i, byte) in bytes.enumerated() {
-        hash[i % 32] = hash[i % 32] &+ byte
-        hash[(i + 1) % 32] ^= byte
-    }
-    
-    return hash
 }
