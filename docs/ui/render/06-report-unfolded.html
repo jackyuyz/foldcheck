@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<title>FoldCheck · Report</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1040px; height: 680px; overflow: hidden; background: #e4e7ee; }
+  body { font-family: "WenQuanYi Micro Hei", "DejaVu Sans", sans-serif; color: #1c1e21; }
+  .caption { height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; }
+  .caption h1 { font-size: 15px; font-weight: 700; }
+  .caption span { font-size: 12px; color: #5c6370; }
+  .stage { height: 628px; display: flex; align-items: center; justify-content: center; }
+  .device { width: 980px; height: 560px; background: linear-gradient(180deg, #3a3d44, #1e2024); border-radius: 36px; padding: 12px; box-shadow: 0 18px 40px rgba(20,24,32,0.28); }
+  .screen { width: 100%; height: 100%; background: #eceff3; border-radius: 26px; position: relative; overflow: hidden; display: flex; }
+  .crease { position: absolute; top: 0; bottom: 0; left: 50%; width: 10px; transform: translateX(-50%); background: linear-gradient(90deg, rgba(0,0,0,0), rgba(0,0,0,0.18), rgba(255,255,255,0.45), rgba(0,0,0,0.18), rgba(0,0,0,0)); z-index: 4; }
+  .half { width: 50%; padding: 18px 28px; }
+  .page { background: #fff; height: 100%; border-radius: 8px; padding: 16px 16px 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); display: flex; flex-direction: column; }
+  .page h2 { font-size: 18px; }
+  .id { font-family: "DejaVu Sans Mono", monospace; font-size: 11px; color: #6b7280; margin: 4px 0 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  td { padding: 5px 0; border-bottom: 1px solid #eee; }
+  td:last-child { text-align: right; font-weight: 700; }
+  .ok { color: #0e7a45; } .attn { color: #a16207; }
+  .disc { margin-top: auto; font-size: 10px; color: #6b7280; line-height: 1.45; }
+  .side h3 { font-size: 14px; margin-bottom: 8px; }
+  .qr { width: 148px; height: 148px; margin: 8px 0 12px; background: #fff; border: 8px solid #fff; box-shadow: 0 0 0 1px #ddd; }
+  .card { background: #fff; border-radius: 12px; padding: 12px; margin-bottom: 10px; border: 1px solid #e6e8ee; font-size: 13px; }
+  .card b { display: block; margin-bottom: 4px; }
+  .sig { color: #0e7a45; font-weight: 700; }
+  .btn { background: #1c1e21; color: #fff; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-top: 8px; }
+</style>
+</head>
+<body>
+  <div class="caption">
+    <h1>FoldCheck · 报告预览</h1>
+    <span>iPhone Duo · 完全展开 · 左半报告，右半二维码与签名</span>
+  </div>
+  <div class="stage">
+    <div class="device"><div class="screen">
+      <div class="crease"></div>
+      <div class="half"><div class="page">
+        <h2>FoldCheck 体检报告</h2>
+        <div class="id">ID a1b2c3d4 · 2026-10-14 09:48 PDT</div>
+        <table>
+          <tr><td>机型</td><td>iPhone Duo</td></tr>
+          <tr><td>系统</td><td>iOS 27.0 · 256 GB</td></tr>
+          <tr><td>外屏触控</td><td class="ok">通过</td></tr>
+          <tr><td>内屏触控 / 折痕带</td><td class="ok">通过</td></tr>
+          <tr><td>铰链扫掠</td><td class="attn">留意 · 间隙 12°</td></tr>
+          <tr><td>折痕可见度</td><td class="ok">4 / 5</td></tr>
+          <tr><td>摄像头 / 音频 / Touch ID</td><td class="ok">通过</td></tr>
+        </table>
+        <div class="disc">声明：这是用户自行生成的检查快照，不是官方认证。签名只证明此 PDF 在这份 FoldCheck 安装上生成后没有被改过，不能证明机器真伪、电池健康或终身折叠次数。</div>
+      </div></div>
+      <div class="half side">
+        <h3>离线核验</h3>
+        <svg class="qr" viewBox="0 0 25 25" shape-rendering="crispEdges">
+          <rect width="25" height="25" fill="#fff"/>
+          <g fill="#111">
+            <rect x="0" y="0" width="7" height="7"/><rect x="1" y="1" width="5" height="5" fill="#fff"/><rect x="2" y="2" width="3" height="3"/>
+            <rect x="18" y="0" width="7" height="7"/><rect x="19" y="1" width="5" height="5" fill="#fff"/><rect x="20" y="2" width="3" height="3"/>
+            <rect x="0" y="18" width="7" height="7"/><rect x="1" y="19" width="5" height="5" fill="#fff"/><rect x="2" y="20" width="3" height="3"/>
+            <rect x="8" y="0" width="1" height="1"/><rect x="10" y="0" width="1" height="1"/><rect x="12" y="1" width="1" height="1"/><rect x="9" y="2" width="2" height="1"/>
+            <rect x="8" y="4" width="1" height="1"/><rect x="11" y="4" width="1" height="1"/><rect x="14" y="3" width="1" height="2"/><rect x="16" y="5" width="1" height="1"/>
+            <rect x="8" y="8" width="1" height="1"/><rect x="10" y="8" width="2" height="1"/><rect x="13" y="8" width="1" height="1"/><rect x="15" y="9" width="1" height="1"/>
+            <rect x="18" y="8" width="1" height="1"/><rect x="20" y="8" width="2" height="1"/><rect x="23" y="9" width="1" height="1"/><rect x="9" y="10" width="1" height="1"/>
+            <rect x="11" y="11" width="1" height="1"/><rect x="13" y="10" width="1" height="2"/><rect x="16" y="11" width="2" height="1"/><rect x="19" y="11" width="1" height="1"/>
+            <rect x="21" y="12" width="1" height="1"/><rect x="8" y="13" width="1" height="1"/><rect x="10" y="14" width="2" height="1"/><rect x="14" y="13" width="1" height="1"/>
+            <rect x="17" y="14" width="1" height="1"/><rect x="19" y="14" width="2" height="1"/><rect x="22" y="15" width="1" height="1"/><rect x="8" y="16" width="1" height="1"/>
+            <rect x="11" y="16" width="1" height="1"/><rect x="13" y="16" width="2" height="1"/><rect x="18" y="17" width="1" height="1"/><rect x="21" y="16" width="1" height="1"/>
+            <rect x="9" y="18" width="1" height="1"/><rect x="11" y="19" width="2" height="1"/><rect x="14" y="18" width="1" height="1"/><rect x="16" y="20" width="1" height="1"/>
+            <rect x="18" y="19" width="1" height="1"/><rect x="20" y="20" width="2" height="1"/><rect x="23" y="19" width="1" height="1"/><rect x="9" y="22" width="1" height="1"/>
+            <rect x="12" y="22" width="1" height="1"/><rect x="15" y="23" width="2" height="1"/><rect x="19" y="23" width="1" height="1"/><rect x="22" y="22" width="1" height="1"/>
+          </g>
+        </svg>
+        <div class="card"><b class="sig">已在这台 Duo 上签名</b>密钥指纹 7f3a 91c2 · 开发机构建会标明未签名</div>
+        <div class="card"><b>二维码内容</b>reportID、sha256、signature、publicKey。不上传服务器。</div>
+        <div class="btn">存储并分享 PDF</div>
+      </div>
+    </div></div>
+  </div>
+</body>
+</html>

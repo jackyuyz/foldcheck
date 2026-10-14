@@ -26,8 +26,10 @@ foldcheck-ios/
 ├── UITests/                    # XCUITest UI tests
 └── docs/
     ├── foldcheck-spec.md       # Full implementation spec
-    └── ui/                     # UI mockups
+    └── ui/                     # Duo mockups (unfolded inner, partial, cover)
 ```
+
+UI mockups in `docs/ui/png/` are drawn for iPhone Duo: a wide inner display with a center crease when fully open, two panels split by the hinge when partially open, and the outer cover when closed.
 
 ## Building on Mac
 

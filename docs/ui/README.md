@@ -1,69 +1,18 @@
-# FoldCheck UI Mockups
+# FoldCheck UI mockups
 
-This directory contains UI mockups for the FoldCheck app covering key screens on both inner (unfolded) and outer (cover) displays.
+这些图按 iPhone Duo 的三种姿态画，不是普通竖屏 iPhone。
 
-## Viewing the Mockups
+| 文件 | 姿态 | 画面 |
+|---|---|---|
+| `png/01-home-unfolded.png` | 完全展开，内屏 | 首页：左半开始体检，右半上次结果和快捷测试，中间是折痕 |
+| `png/02-test-intro-unfolded.png` | 完全展开，内屏 | 测试介绍：左半说明，右半示意，按钮不压折痕 |
+| `png/03-hinge-sweep-unfolded.png` | 完全展开，内屏 | 铰链扫掠全屏：左半角度，右半曲线 |
+| `png/04-touch-grid-unfolded.png` | 完全展开，内屏 | 触控网格横跨两半内屏，折痕处是半尺寸加密格 |
+| `png/05-summary-unfolded.png` | 完全展开，内屏 | 小结：左半总分，右半各项结果 |
+| `png/06-report-unfolded.png` | 完全展开，内屏 | 报告：左半 PDF，右半二维码和签名 |
+| `png/07-verify-unfolded.png` | 完全展开，内屏 | 核验：左半扫描/导入，右半签名结果 |
+| `png/08-paywall-unfolded.png` | 完全展开，内屏 | 报告解锁：左半功能，右半价格 |
+| `png/09-crease-partial.png` | 半折 | 两块屏被铰链分开；左半评分，右半折痕图案 |
+| `png/10-cover-folded.png` | 合盖 | 外屏。右侧画出折叠铰链的厚度 |
 
-The mockups are provided in two formats:
-
-1. **Interactive HTML** (`mockup-generator.html`) - Open in a web browser for the best viewing experience with full styling and emoji icons
-2. **SVG Files** - Individual screen mockups (note: some characters may not render correctly in all SVG viewers)
-
-## Screens Covered
-
-### Inner Display (Unfolded)
-
-| Screen | File | Description |
-|--------|------|-------------|
-| Home | `home-inner.svg` | Main home screen with inspection start, last result, and quick actions |
-| Hinge Sweep | `hinge-sweep.svg` | Live hinge angle display during sweep test with chart |
-| Summary | `summary.svg` | Inspection completion summary with score and test results |
-| Report Preview | `report-preview.svg` | PDF report preview showing device info, results, and signature |
-| Verify | `verify.svg` | Report verification screen with QR scanner and validity display |
-
-### Outer Display (Cover - Folded)
-
-| Screen | File | Description |
-|--------|------|-------------|
-| Cover Home | `cover-outer.svg` | Compact home for cover display with last check and quick test button |
-
-### Split View (Partially Folded)
-
-See `mockup-generator.html` for the crease test split view showing instructions on one half and test pattern on the other.
-
-## Key UI Components
-
-### Color Scheme
-- **Pass**: Green (#34c759 / #d1fae5 background)
-- **Attention**: Amber/Orange (#f59e0b / #fef3c7 background)
-- **Fail**: Red (#dc2626 / #fee2e2 background)
-- **Primary Action**: Blue (#007aff)
-
-### Typography
-- SF Pro (system font)
-- SF Mono for IDs and technical data
-- Dynamic Type support (all non-canvas screens)
-
-### Components
-- `ResultBadge` - Pass/Attention/Fail indicator with icon
-- `QuickActionCard` - Grid card for quick actions
-- `TestResultRow` - List item showing test outcome
-- `InfoRow` - Label/value pair for report details
-- `ProgressBar` - Test progress indicator
-- `SignatureBadge` - Digital signature status
-
-## Design Principles
-
-1. **Clinical but friendly** - Clean, precise UI with trust colors
-2. **Full-bleed test canvases** - Tests use the entire screen
-3. **Split layout on fold** - Instructions left, visuals right when partially open
-4. **Accessibility first** - VoiceOver support, high contrast, large touch targets
-5. **Honest limitations** - Clear disclaimers about what the app can/cannot verify
-
-## Screenshots for App Store
-
-Recommended screenshots based on these mockups:
-1. Touch grid along the crease (showing dense crease band)
-2. Hinge sweep chart with live angle
-3. PDF report with QR code
-4. History compare view
+源文件在 `render/`，用无头 Chrome 导出到 `png/`。完全展开时折痕宽度为零，图上只留一条浅折痕；半折才把两块屏分开。

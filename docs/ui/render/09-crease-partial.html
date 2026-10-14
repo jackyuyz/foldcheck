@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<title>FoldCheck · Partially open</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1100px; height: 700px; overflow: hidden; background: #e4e7ee; }
+  body { font-family: "WenQuanYi Micro Hei", "DejaVu Sans", sans-serif; color: #1c1e21; }
+  .caption { height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; }
+  .caption h1 { font-size: 15px; font-weight: 700; }
+  .caption span { font-size: 12px; color: #5c6370; }
+  .stage { height: 644px; display: flex; align-items: center; justify-content: center; gap: 0; }
+  .leaf { width: 470px; height: 560px; background: linear-gradient(180deg, #3a3d44, #1e2024); padding: 12px; box-shadow: 0 18px 40px rgba(20,24,32,0.28); }
+  .leaf.l { border-radius: 36px 10px 10px 36px; }
+  .leaf.r { border-radius: 10px 36px 36px 10px; }
+  .hinge { width: 28px; height: 520px; background: linear-gradient(90deg, #1a1c20, #6a707a, #1a1c20); border-radius: 6px; box-shadow: inset 0 0 0 1px #111; }
+  .screen { width: 100%; height: 100%; border-radius: 22px; overflow: hidden; background: #f7f8fa; padding: 22px 20px; display: flex; flex-direction: column; }
+  .kicker { font-size: 12px; letter-spacing: 0.12em; color: #0e7a45; font-weight: 700; }
+  h2 { font-size: 26px; margin: 8px 0 10px; }
+  ol { margin-left: 18px; font-size: 14px; line-height: 1.7; color: #3a4150; }
+  .rate { margin-top: 18px; font-size: 13px; color: #5c6370; }
+  .pips { display: flex; gap: 8px; margin-top: 8px; }
+  .pip { width: 44px; height: 44px; border-radius: 12px; background: #fff; border: 1px solid #d5d8e0; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+  .pip.on { background: #1c1e21; color: #fff; border-color: #1c1e21; }
+  .angle { margin-top: auto; font-size: 13px; color: #5c6370; }
+  .pattern { background: linear-gradient(90deg, #d9d9d9, #8d8d8d 48%, #f2f2f2 50%, #8d8d8d 52%, #d9d9d9); border-radius: 18px; flex: 1; position: relative; }
+  .pattern:before { content: ""; position: absolute; inset: 24px; background: repeating-linear-gradient(90deg, transparent 0 14px, rgba(0,0,0,0.25) 14px 15px); }
+  .cap { margin-top: 12px; font-size: 13px; color: #3a4150; text-align: center; }
+</style>
+</head>
+<body>
+  <div class="caption">
+    <h1>FoldCheck · 折痕可见度</h1>
+    <span>iPhone Duo · 半折 partially open · 铰链把两块屏分开，说明在左，图案在右</span>
+  </div>
+  <div class="stage">
+    <div class="leaf l"><div class="screen">
+      <div class="kicker">CREASE · 视角 2 / 3</div>
+      <h2>折痕有多明显</h2>
+      <ol>
+        <li>把 Duo 折到大约 90°</li>
+        <li>侧光看中间折痕</li>
+        <li>选 1（几乎看不见）到 5</li>
+      </ol>
+      <div class="rate">这一角度的可见度</div>
+      <div class="pips"><div class="pip">1</div><div class="pip">2</div><div class="pip">3</div><div class="pip on">4</div><div class="pip">5</div></div>
+      <div class="angle">当前姿态 · partially open · 约 95°</div>
+    </div></div>
+    <div class="hinge"></div>
+    <div class="leaf r"><div class="screen" style="background:#111;color:#fff">
+      <div class="pattern"></div>
+      <div class="cap">灰阶渐变贴在折痕上。这一侧没有按钮。</div>
+    </div></div>
+  </div>
+</body>
+</html>

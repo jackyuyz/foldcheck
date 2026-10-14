@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<title>FoldCheck · Cover</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1040px; height: 680px; overflow: hidden; background: #e4e7ee; }
+  body { font-family: "WenQuanYi Micro Hei", "DejaVu Sans", sans-serif; color: #1c1e21; }
+  .caption { height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; }
+  .caption h1 { font-size: 15px; font-weight: 700; }
+  .caption span { font-size: 12px; color: #5c6370; }
+  .stage { height: 628px; display: flex; align-items: center; justify-content: center; gap: 36px; }
+  .notes { width: 300px; }
+  .notes h2 { font-size: 22px; margin-bottom: 8px; }
+  .notes p { color: #5c6370; font-size: 13px; line-height: 1.5; margin-bottom: 14px; }
+  .note { background: #fff; border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; font-size: 13px; border: 1px solid #e1e4ea; }
+  .note b { display: block; }
+  .folded { width: 250px; height: 520px; background: linear-gradient(180deg, #3a3d44, #1e2024); border-radius: 36px; padding: 10px 10px 10px 10px; box-shadow: 18px 0 0 #15171b, 26px 0 0 #2a2d33, 0 18px 40px rgba(20,24,32,0.28); position: relative; }
+  .spine { position: absolute; right: -18px; top: 40px; bottom: 40px; width: 16px; border-radius: 0 8px 8px 0; background: linear-gradient(90deg, #111, #8a909a 40%, #111); }
+  .screen { width: 100%; height: 100%; background: #f7f8fa; border-radius: 28px; padding: 16px 14px; display: flex; flex-direction: column; }
+  .time { font-size: 12px; font-weight: 700; }
+  .brand { margin-top: 28px; font-size: 11px; letter-spacing: 0.14em; color: #0e7a45; font-weight: 700; }
+  h3 { font-size: 22px; margin: 6px 0; }
+  .sub { font-size: 12px; color: #6b7280; line-height: 1.4; }
+  .card { margin-top: 16px; background: #fff; border: 1px solid #e6e8ee; border-radius: 12px; padding: 10px; font-size: 12px; }
+  .badge { display: inline-block; margin-top: 4px; background: #e5f6ec; color: #0e7a45; border-radius: 99px; padding: 2px 8px; font-weight: 700; }
+  .btn { margin-top: auto; background: #1c1e21; color: #fff; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+  .tiny { text-align: center; font-size: 11px; color: #6b7280; margin-top: 8px; }
+</style>
+</head>
+<body>
+  <div class="caption">
+    <h1>FoldCheck · 外屏</h1>
+    <span>iPhone Duo · 合盖 closed · 只有外屏，右侧是折叠铰链厚度</span>
+  </div>
+  <div class="stage">
+    <div class="notes">
+      <h2>合上之后</h2>
+      <p>姿态变成 closed。应用留在外屏，不会再开一块内屏窗口。</p>
+      <div class="note"><b>外屏触控 / 像素</b>合盖后跑。内屏测试会暂停并询问是否在这块屏继续。</div>
+      <div class="note"><b>铰链测试</b>提示「打开你的 Duo」，没有角度数据时记为不可用，不算失败。</div>
+      <div class="note"><b>内屏摄像头</b>合盖时标记为不适用。外屏前置摄像头可以测。</div>
+    </div>
+    <div class="folded">
+      <div class="spine"></div>
+      <div class="screen">
+        <div class="time">9:41 · 外屏</div>
+        <div class="brand">FOLDCHECK</div>
+        <h3>已合盖</h3>
+        <div class="sub">展开后继续完整体检。现在可以只测这块外屏。</div>
+        <div class="card">上次内屏结果<div class="badge">通过 92</div></div>
+        <div class="btn">外屏触控测试</div>
+        <div class="tiny">FoldCheck 观察到的开合：12</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
