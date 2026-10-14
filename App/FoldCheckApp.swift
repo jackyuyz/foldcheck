@@ -105,7 +105,7 @@ extension SystemFoldStateProvider {
     
     @MainActor
     func ingestNoHinge() async {
-        await updateState(.noHinge)
+        updateState(.noHinge)
     }
     
     // func ingest(_ hinge: DeviceHinge?) async {

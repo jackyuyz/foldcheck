@@ -74,7 +74,7 @@ cd Packages/FoldL10n && swift test
 
 **App tests (requires Xcode):**
 ```bash
-xcodebuild test -scheme FoldCheck -destination 'platform=iOS Simulator,name=iPhone 16'
+xcodebuild test -scheme FoldCheck -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
 ```
 
 ### Mock Hinge for Testing
@@ -148,7 +148,7 @@ Unit tests pass on Linux:
 
 | Package | Tests | Status |
 |---------|-------|--------|
-| FoldKit | 35 | ✅ Pass |
+| FoldKit | 38 | ✅ Pass |
 | HingeAnalysis | 21 | ✅ Pass |
 | TestsKit | 36 | ✅ Pass |
 | ReportKit | 34 | ✅ Pass |

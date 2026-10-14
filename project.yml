@@ -85,7 +85,6 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.jackyu.foldcheck.tests
-        INFOPLIST_FILE: Tests/Info.plist
         GENERATE_INFOPLIST_FILE: true
     dependencies:
       - target: FoldCheck
@@ -100,7 +99,6 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.jackyu.foldcheck.uitests
-        INFOPLIST_FILE: UITests/Info.plist
         GENERATE_INFOPLIST_FILE: true
     dependencies:
       - target: FoldCheck
