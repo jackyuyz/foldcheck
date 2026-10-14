@@ -1,0 +1,772 @@
+[
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 10.0,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 10.94,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 11.89,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 12.83,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 13.78,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 14.72,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 15.67,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 16.61,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 17.56,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 18.5,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 19.44,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 20.39,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 21.33,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 22.28,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 23.22,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 24.17,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 25.11,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 26.06,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 27.0,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 27.94,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 28.89,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 29.83,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 30.78,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 31.72,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 32.67,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 33.61,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 34.56,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 35.5,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 36.44,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 37.39,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 38.33,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 39.28,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 40.22,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 41.17,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 42.11,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 43.06,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 44.0,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 44.94,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 45.89,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 46.83,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 47.78,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 48.72,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 49.67,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 50.61,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 51.56,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 52.5,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 53.44,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 54.39,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 55.33,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 56.28,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 57.22,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 58.17,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 59.11,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 60.06,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 61.0,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 61.94,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 62.89,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 63.83,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 64.78,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 65.72,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 66.67,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 67.61,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 68.56,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 69.5,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 70.44,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 71.39,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 72.33,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 73.28,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 74.22,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 75.17,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 76.11,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 77.06,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 78.0,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 78.94,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 79.89,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 106.33,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 107.28,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 108.22,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 109.17,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 110.11,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 111.06,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 112.0,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 112.94,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 113.89,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 114.83,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 115.78,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 116.72,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 117.67,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 118.61,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 119.56,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 120.5,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 121.44,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 122.39,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 123.33,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 124.28,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 125.22,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 126.17,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 127.11,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 128.06,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 129.0,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 129.94,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 130.89,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 131.83,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 132.78,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 133.72,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 134.67,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 135.61,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 136.56,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 137.5,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 138.44,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 139.39,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 140.33,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 141.28,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 142.22,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 143.17,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 144.11,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 145.06,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 146.0,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 146.94,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 147.89,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 148.83,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 149.78,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 150.72,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 151.67,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 152.61,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 153.56,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 154.5,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 155.44,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 156.39,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 157.33,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 158.28,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 159.22,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 160.17,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 161.11,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 162.06,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 163.0,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 163.94,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 164.89,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 165.83,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 166.78,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 167.72,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 168.67,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "partiallyOpen",
+  "angleDegrees": 169.61,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "fullyOpen",
+  "angleDegrees": 170.56,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "fullyOpen",
+  "angleDegrees": 171.5,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "fullyOpen",
+  "angleDegrees": 172.44,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "fullyOpen",
+  "angleDegrees": 173.39,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "fullyOpen",
+  "angleDegrees": 174.33,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "fullyOpen",
+  "angleDegrees": 175.28,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "fullyOpen",
+  "angleDegrees": 176.22,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "fullyOpen",
+  "angleDegrees": 177.17,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "fullyOpen",
+  "angleDegrees": 178.11,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "fullyOpen",
+  "angleDegrees": 179.06,
+  "durationSeconds": 0.03333
+ },
+ {
+  "posture": "fullyOpen",
+  "angleDegrees": 180.0,
+  "durationSeconds": 0
+ }
+]

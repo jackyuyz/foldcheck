@@ -182,3 +182,57 @@ struct MockFoldStateProviderSyncStateTests {
         #expect(provider.state.angleDegrees == 180)
     }
 }
+
+@Suite("MockFoldStateProvider scripts")
+struct MockFoldStateProviderScriptTests {
+    @Test("script:<name> loads steps through the loader and starts at the first step")
+    func scriptArgument() throws {
+        let steps = [
+            FoldScriptStep(posture: .partiallyOpen, angleDegrees: 10, durationSeconds: 0.01),
+            FoldScriptStep(posture: .fullyOpen, angleDegrees: 180, durationSeconds: 0),
+        ]
+        let data = try JSONEncoder().encode(steps)
+        var requested: String?
+        let result = MockFoldStateProvider.parseArgument("script:Gappy") { name in
+            requested = name
+            return MockFoldStateProvider.decodeScript(data)
+        }
+        #expect(requested == "Gappy")
+        #expect(result.posture == .partiallyOpen)
+        #expect(result.angle == 10)
+        #expect(result.script?.count == 2)
+    }
+
+    @Test("Unknown script names fall back to no hinge")
+    func missingScript() {
+        let result = MockFoldStateProvider.parseArgument("script:missing")
+        #expect(result.posture == .noHinge)
+        #expect(result.script == nil)
+        #expect(MockFoldStateProvider.decodeScript(Data("nope".utf8)) == nil)
+    }
+
+    @Test("The launch script can be rewound and replayed")
+    func replay() async {
+        let script = FoldScriptStep.sweep(from: 10, to: 40, durationSeconds: 0.1, sampleRate: 100)
+        let provider = MockFoldStateProvider(initialState: FoldState(posture: .fullyOpen, angleDegrees: 180))
+        #expect(await provider.rewindLaunchScript() == false)
+        await provider.setLaunchScript(script)
+        #expect(await provider.rewindLaunchScript())
+        #expect(provider.state.angleDegrees == 10)
+        await provider.replayLaunchScript()
+        #expect(provider.state.angleDegrees == 40)
+    }
+}
+
+@Suite("SystemFoldStateProvider ingest")
+struct SystemFoldStateProviderIngestTests {
+    @Test("Readings become states; a missing hinge becomes noHinge")
+    func ingest() {
+        let provider = SystemFoldStateProvider()
+        provider.ingest(posture: .partiallyOpen, angleDegrees: 95)
+        #expect(provider.state.posture == .partiallyOpen)
+        #expect(provider.state.angleDegrees == 95)
+        provider.ingest(posture: nil, angleDegrees: 12)
+        #expect(provider.state == FoldState(posture: .noHinge, angleDegrees: nil, timestamp: provider.state.timestamp))
+    }
+}

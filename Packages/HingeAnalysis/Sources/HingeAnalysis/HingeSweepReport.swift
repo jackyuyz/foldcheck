@@ -20,8 +20,8 @@ public struct HingeSweepReport: Codable, Sendable, Equatable {
     /// Estimated sample rate (Hz)
     public var estimatedHz: Double
     
-    /// Fraction of the sweep that was monotonic (0.0 to 1.0)
-    /// A clean sweep should be close to 1.0
+    /// Fraction of the angle travel (degrees moved) that went in the direction of the sweep's
+    /// main legs (0.0 to 1.0). A clean "close, then open" sweep is close to 1.0.
     public var monotonicFraction: Double
     
     /// Sequence of posture states observed during the sweep
@@ -32,6 +32,23 @@ public struct HingeSweepReport: Codable, Sendable, Equatable {
     
     /// Duration of the sweep in seconds
     public var durationSeconds: Double
+
+    /// Number of direction legs found (a guided "close, then open" sweep has 2).
+    public var legCount: Int
+
+    /// Largest movement against the expected direction: short reversals outside the main legs,
+    /// or single backwards steps inside them (degrees).
+    public var maxBacktrackDegrees: Double
+
+    /// Fewest readings per 10° of travel in any main leg; `nil` without a leg. Below
+    /// `HingeSweepAnalyzer.minSamplesPer10Degrees` the user moved too fast for the gap check.
+    public var minSamplesPer10Degrees: Double?
+
+    /// Change in average angle between the first and last fifth of the ~90° hold, if recorded.
+    public var holdDriftDegrees: Double?
+
+    /// Readings during the hold.
+    public var holdSampleCount: Int
     
     public init(
         observedMin: Double,
@@ -42,7 +59,12 @@ public struct HingeSweepReport: Codable, Sendable, Equatable {
         monotonicFraction: Double,
         statusSequence: [FoldPosture],
         sampleCount: Int = 0,
-        durationSeconds: Double = 0
+        durationSeconds: Double = 0,
+        legCount: Int = 0,
+        maxBacktrackDegrees: Double = 0,
+        minSamplesPer10Degrees: Double? = nil,
+        holdDriftDegrees: Double? = nil,
+        holdSampleCount: Int = 0
     ) {
         self.observedMin = observedMin
         self.observedMax = observedMax
@@ -53,6 +75,11 @@ public struct HingeSweepReport: Codable, Sendable, Equatable {
         self.statusSequence = statusSequence
         self.sampleCount = sampleCount
         self.durationSeconds = durationSeconds
+        self.legCount = legCount
+        self.maxBacktrackDegrees = maxBacktrackDegrees
+        self.minSamplesPer10Degrees = minSamplesPer10Degrees
+        self.holdDriftDegrees = holdDriftDegrees
+        self.holdSampleCount = holdSampleCount
     }
     
     /// The observed range of motion

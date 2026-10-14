@@ -20,7 +20,7 @@ public struct HingeSample: Equatable, Sendable, Codable {
 }
 
 /// Collection of hinge samples for analysis.
-public struct HingeSampleCollection: Sendable {
+public struct HingeSampleCollection: Sendable, Equatable {
     public var samples: [HingeSample]
     
     public init(samples: [HingeSample] = []) {

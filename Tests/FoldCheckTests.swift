@@ -24,7 +24,7 @@ final class FoldCheckTests: XCTestCase {
 
         let open = InspectionRequest.current(foldState: FoldState(posture: .fullyOpen, angleDegrees: 180))
         let duoPlan = InspectionPlan(tests: open.tests, context: open.context, implemented: InspectionTestRegistry.implemented)
-        XCTAssertEqual(duoPlan.runnable, [.touchGridOuter, .touchGridInner, .pixels, .crease])
+        XCTAssertEqual(duoPlan.runnable, [.touchGridOuter, .touchGridInner, .pixels, .crease, .hingeSweep])
     }
 
     func testMetricsFormatterForTouchGrid() {

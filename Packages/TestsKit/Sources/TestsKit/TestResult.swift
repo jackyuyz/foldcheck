@@ -7,6 +7,21 @@ public enum DisplayKind: String, Codable, Sendable, Equatable {
     case inner
 }
 
+/// One point of a chart series stored with a result (e.g. hinge angle over time).
+public struct TestSeriesPoint: Codable, Sendable, Equatable {
+    /// Seconds since the series started.
+    public var t: Double
+    public var value: Double
+    /// Which part of the test the point belongs to (e.g. sweep 1, sweep 2, hold).
+    public var segment: Int
+
+    public init(t: Double, value: Double, segment: Int = 0) {
+        self.t = t
+        self.value = value
+        self.segment = segment
+    }
+}
+
 /// The result of a single inspection test.
 public struct TestResult: Codable, Sendable, Equatable, Identifiable {
     /// The test that produced this result
@@ -30,6 +45,9 @@ public struct TestResult: Codable, Sendable, Equatable, Identifiable {
     
     /// When the test was completed
     public var finishedAt: Date
+
+    /// Downsampled chart data (hinge sweep plot); empty for most tests.
+    public var series: [TestSeriesPoint]
     
     public init(
         id: TestID,
@@ -38,7 +56,8 @@ public struct TestResult: Codable, Sendable, Equatable, Identifiable {
         notes: String = "",
         display: DisplayKind? = nil,
         attachments: [String] = [],
-        finishedAt: Date = .now
+        finishedAt: Date = .now,
+        series: [TestSeriesPoint] = []
     ) {
         self.id = id
         self.outcome = outcome
@@ -47,6 +66,24 @@ public struct TestResult: Codable, Sendable, Equatable, Identifiable {
         self.display = display
         self.attachments = attachments
         self.finishedAt = finishedAt
+        self.series = series
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id, outcome, metrics, notes, display, attachments, finishedAt, series
+    }
+
+    /// Results saved before `series` existed decode with an empty series.
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(TestID.self, forKey: .id)
+        outcome = try container.decode(TestOutcome.self, forKey: .outcome)
+        metrics = try container.decode([String: Double].self, forKey: .metrics)
+        notes = try container.decode(String.self, forKey: .notes)
+        display = try container.decodeIfPresent(DisplayKind.self, forKey: .display)
+        attachments = try container.decode([String].self, forKey: .attachments)
+        finishedAt = try container.decode(Date.self, forKey: .finishedAt)
+        series = try container.decodeIfPresent([TestSeriesPoint].self, forKey: .series) ?? []
     }
     
     /// Create a result for a skipped test
@@ -110,6 +147,14 @@ public enum TestMetricKey {
     public static let monotonicFraction = "monotonicFraction"
     public static let sampleRate = "sampleRate"
     public static let restJitter = "restJitter"
+    public static let holdDrift = "holdDrift"
+    public static let holdAngle = "holdAngle"
+    public static let hingeSamples = "hingeSamples"
+    public static let legCount = "legCount"
+    public static let maxBacktrack = "maxBacktrack"
+    public static let samplesPer10Degrees = "samplesPer10Degrees"
+    /// 1 when any angle came from the on-screen slider instead of the hinge.
+    public static let manualInput = "manualInput"
     
     // Cameras
     public static let camerasAvailable = "camerasAvailable"

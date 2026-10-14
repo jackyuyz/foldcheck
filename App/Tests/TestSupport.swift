@@ -10,7 +10,7 @@ import ReportKit
 /// Which tests this build has real screens for. Everything else is recorded as Skipped
 /// ("not available in this version yet") instead of pretending to run.
 enum InspectionTestRegistry {
-    static let implemented: Set<TestID> = [.touchGridOuter, .touchGridInner, .pixels, .crease]
+    static let implemented: Set<TestID> = [.touchGridOuter, .touchGridInner, .pixels, .crease, .hingeSweep]
 }
 
 // MARK: - Device info
@@ -300,6 +300,28 @@ enum ResultMetricsFormatter {
         case .pixels:
             if let issues = m[TestMetricKey.issuesMarked] {
                 lines.append(Line(label: L10nKey.metricIssuesMarked.text(in: language), value: "\(Int(issues))"))
+            }
+        case .hingeSweep:
+            if let continuity = m[TestMetricKey.monotonicFraction] {
+                lines.append(Line(label: L10nKey.metricContinuity.text(in: language), value: "\(format((continuity * 1000).rounded() / 10))%"))
+            }
+            if let gap = m[TestMetricKey.maxGapDegrees] {
+                lines.append(Line(label: L10nKey.metricMaxGap.text(in: language), value: "\(format((gap * 10).rounded() / 10))°"))
+            }
+            if let low = m[TestMetricKey.observedMinAngle], let high = m[TestMetricKey.observedMaxAngle] {
+                lines.append(Line(label: L10nKey.metricObservedRange.text(in: language), value: "\(Int(low.rounded()))°–\(Int(high.rounded()))°"))
+            }
+            if let hz = m[TestMetricKey.sampleRate] {
+                lines.append(Line(label: L10nKey.metricSampleRate.text(in: language), value: "\(Int(hz.rounded())) Hz"))
+            }
+            if let jitter = m[TestMetricKey.restJitter] {
+                lines.append(Line(label: L10nKey.metricRestJitter.text(in: language), value: "\(format((jitter * 10).rounded() / 10))°"))
+            }
+            if let drift = m[TestMetricKey.holdDrift] {
+                lines.append(Line(label: L10nKey.metricHoldDrift.text(in: language), value: "\(format((drift * 10).rounded() / 10))°"))
+            }
+            if let count = m[TestMetricKey.hingeSamples] {
+                lines.append(Line(label: L10nKey.metricReadings.text(in: language), value: "\(Int(count))"))
             }
         case .crease:
             if let average = m[TestMetricKey.creaseRating] {

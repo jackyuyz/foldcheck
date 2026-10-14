@@ -41,6 +41,15 @@ public final class SystemFoldStateProvider: FoldStateProvider, @unchecked Sendab
         }
     }
 
+    /// Feeds one hinge reading from the platform bridge. `nil` posture means no hinge.
+    public func ingest(posture: FoldPosture?, angleDegrees: Double?, at time: Date = .now) {
+        guard let posture, posture != .noHinge else {
+            updateState(FoldState(posture: .noHinge, angleDegrees: nil, timestamp: time))
+            return
+        }
+        updateState(FoldState(posture: posture, angleDegrees: angleDegrees, timestamp: time))
+    }
+
     private func removeContinuation(id: UUID) {
         lock.withLock {
             _ = continuations.removeValue(forKey: id)
