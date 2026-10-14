@@ -1,6 +1,8 @@
 import Testing
 import Foundation
-import CoreGraphics
+#if canImport(CoreGraphics)
+import CoreGraphics  // Linux gets CGPoint/CGRect from Foundation
+#endif
 @testable import TestsKit
 
 @Suite("Touch grid layout")

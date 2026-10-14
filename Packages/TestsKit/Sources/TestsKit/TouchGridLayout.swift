@@ -1,5 +1,7 @@
 import Foundation
-import CoreGraphics
+#if canImport(CoreGraphics)
+import CoreGraphics  // Linux gets CGPoint/CGRect from Foundation
+#endif
 
 /// One cell of the touch grid.
 public struct TouchGridCell: Sendable, Equatable, Identifiable {

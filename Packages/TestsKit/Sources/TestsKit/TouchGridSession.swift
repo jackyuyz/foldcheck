@@ -1,5 +1,7 @@
 import Foundation
-import CoreGraphics
+#if canImport(CoreGraphics)
+import CoreGraphics  // Linux gets CGPoint/CGRect from Foundation
+#endif
 
 /// The user's explanation when they finish the touch grid with cells still missed.
 public enum TouchGridMissReason: String, Codable, Sendable, Equatable {
