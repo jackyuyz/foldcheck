@@ -11,3 +11,5 @@ public typealias _FoldStateProvider = FoldStateProvider
 public typealias _MockFoldStateProvider = MockFoldStateProvider
 public typealias _FoldScriptStep = FoldScriptStep
 public typealias _RelativeAngleTracker = RelativeAngleTracker
+public typealias _DuoDisplayPanel = DuoDisplayPanel
+public typealias _DuoDisplaySpec = DuoDisplaySpec

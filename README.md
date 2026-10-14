@@ -98,7 +98,7 @@ Or use the `FoldCheck-MockHinge` scheme which has mock arguments preconfigured.
 
 All business logic is in Swift Packages that build and test on Linux:
 
-- **FoldKit**: Core fold state primitives (`FoldState`, `FoldPosture`, `FoldStateProvider` protocol, `MockFoldStateProvider` for testing, `RelativeAngleTracker`)
+- **FoldKit**: Core fold state primitives (`FoldState`, `FoldPosture`, `FoldStateProvider` protocol, `MockFoldStateProvider` for testing, `RelativeAngleTracker`, `DuoDisplaySpec`)
 - **HingeAnalysis**: Hinge sweep analysis (`HingeSample`, `HingeSweepAnalyzer`, `HingeSweepReport` with quality assessment)
 - **TestsKit**: Test definitions (`TestID`, `TestOutcome`, `TestResult`, `InspectionSession`, `FoldCounter`)
 - **ReportKit**: Report generation (`CanonicalReport`, `ReportEnvelope`, `ReportSigner` protocol, PDF content assembly, device names)
@@ -125,6 +125,17 @@ The following APIs are marked as unverified in the spec and wrapped in protocols
 | Background hinge events | **Not available** | Count only in foreground |
 | `UIScreen.brightness` per display | **Unverified** | Query per-scene |
 | Proximity sensor on Duo | **Unverified** | Skip if unavailable |
+
+## Duo displays
+
+`DuoDisplaySpec` in FoldKit is the only place these numbers live. They come from public reporting and are not confirmed in Apple's documentation.
+
+| Panel | Diagonal | Pixels | Orientation | Ratio |
+|-------|----------|--------|-------------|-------|
+| Outer (cover) | 5.4" | 1398 × 2034 | Portrait | ~1:1.455 |
+| Inner (unfolded) | 7.6" | 2670 × 1878 | Landscape | ~1.42:1 |
+
+Crease width, point sizes, and `UIScreen.scale` are still unknown. They are `nil` on `DuoDisplaySpec.Assumption`. Do not invent them by dividing the pixel sizes by 2 or 3.
 
 ## Open Questions for Product Manager
 

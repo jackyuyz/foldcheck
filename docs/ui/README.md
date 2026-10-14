@@ -1,6 +1,6 @@
 # FoldCheck UI mockups
 
-These drawings are for iPhone Duo postures, not a portrait iPhone. The app opens in English. Settings can switch the interface to Español, Français, 日本語, 简体中文, or 繁體中文.
+These drawings are for iPhone Duo postures, not a portrait iPhone. The glass follows `DuoDisplaySpec`: the unfolded inner display is 2670×1878 px (~1.42:1) and the cover is 1398×2034 px (~1:1.455). Bezel is extra. The app opens in English. Settings can switch the interface to Español, Français, 日本語, 简体中文, or 繁體中文.
 
 | File | Posture | Screen |
 |---|---|---|
