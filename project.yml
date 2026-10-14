@@ -133,7 +133,13 @@ schemes:
         FoldCheck: all
     run:
       config: Debug
+      # XcodeGen maps each key to one argument string and the value to its checkbox,
+      # so the -FoldMock value must be part of the key. Tick one alternative at a time.
       commandLineArguments:
-        "-UITestMode": true
-        "-FoldMock": "sweep:10-180:6"
+        "-UITestMode 1": true
+        "-FoldMock sweep:10-180:6": true
+        "-FoldMock open": false
+        "-FoldMock closed": false
+        "-FoldMock half:95": false
+        "-FoldMock nohinge": false
         "-FoldDebugOverlay": true

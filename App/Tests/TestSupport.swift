@@ -1,0 +1,330 @@
+import SwiftUI
+import UIKit
+import FoldKit
+import FoldL10n
+import TestsKit
+import ReportKit
+
+// MARK: - Registry
+
+/// Which tests this build has real screens for. Everything else is recorded as Skipped
+/// ("not available in this version yet") instead of pretending to run.
+enum InspectionTestRegistry {
+    static let implemented: Set<TestID> = [.touchGridOuter, .touchGridInner, .pixels, .crease]
+}
+
+// MARK: - Device info
+
+/// Device model and OS for the session header, read from the device (not hardcoded).
+enum DeviceInfo {
+    /// `utsname.machine`, or the simulated model on the simulator (where `machine` is just "arm64").
+    static var modelIdentifier: String {
+        if let simulated = ProcessInfo.processInfo.environment["SIMULATOR_MODEL_IDENTIFIER"], !simulated.isEmpty {
+            return simulated
+        }
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        return withUnsafeBytes(of: &systemInfo.machine) { buffer in
+            String(decoding: buffer.prefix { $0 != 0 }, as: UTF8.self)
+        }
+    }
+
+    static var isSimulator: Bool {
+        #if targetEnvironment(simulator)
+        return true
+        #else
+        return false
+        #endif
+    }
+
+    /// Friendly model name, e.g. "iPhone 17 Pro (Simulator)".
+    static var displayName: String {
+        let name = DeviceNames.friendlyName(for: modelIdentifier)
+        return isSimulator ? "\(name) (Simulator)" : name
+    }
+
+    @MainActor
+    static var osVersion: String {
+        "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
+    }
+
+    /// Context for deciding which tests apply, from the current (possibly mocked) fold state.
+    @MainActor
+    static func context(foldState: FoldState) -> DeviceContext {
+        DeviceContext(
+            foldState: foldState,
+            modelIdentifier: modelIdentifier,
+            osVersion: osVersion
+        )
+    }
+}
+
+// MARK: - Fold state observation
+
+extension View {
+    /// Keeps `binding` in sync with the injected fold state provider (mock or system).
+    func observeFoldState(_ binding: Binding<FoldState>) -> some View {
+        modifier(FoldStateObserver(state: binding))
+    }
+}
+
+private struct FoldStateObserver: ViewModifier {
+    @Environment(\.foldStateProvider) private var provider
+    @Binding var state: FoldState
+
+    func body(content: Content) -> some View {
+        content.task {
+            state = provider.state
+            for await next in provider.states() {
+                state = next
+            }
+        }
+    }
+}
+
+/// Pauses a running test when the app moves between the outer and inner display
+/// ("Display changed: continue on this screen?"), and reports the new display on continue.
+struct DisplayChangePause: ViewModifier {
+    let foldState: FoldState
+    let onContinue: (DisplayKind?) -> Void
+    @Environment(\.appLanguage) private var language
+    @State private var baseline: DisplayKind?
+    @State private var hasBaseline = false
+    @State private var pendingDisplay: DisplayKind?
+    @State private var isPaused = false
+
+    func body(content: Content) -> some View {
+        content
+            .onAppear {
+                guard !hasBaseline else { return }
+                baseline = DisplayKind(posture: foldState.posture)
+                hasBaseline = true
+            }
+            .onChange(of: foldState.posture) { _, posture in
+                let display = DisplayKind(posture: posture)
+                // `unknown` is transient; only a real outer↔inner switch pauses.
+                guard let display, display != baseline else { return }
+                pendingDisplay = display
+                isPaused = true
+            }
+            .overlay {
+                if isPaused {
+                    ZStack {
+                        Color.black.opacity(0.75).ignoresSafeArea()
+                        VStack(spacing: 16) {
+                            Image(systemName: "rectangle.portrait.on.rectangle.portrait.angled")
+                                .font(.largeTitle)
+                            Text(L10nKey.testDisplayChangedTitle.text(in: language))
+                                .font(.title3.bold())
+                            Text(L10nKey.testDisplayChangedMessage.text(in: language))
+                                .multilineTextAlignment(.center)
+                            Button(L10nKey.testDisplayChangedContinue.text(in: language)) {
+                                baseline = pendingDisplay
+                                isPaused = false
+                                onContinue(pendingDisplay)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .accessibilityIdentifier("test.displayChanged.continue")
+                        }
+                        .foregroundStyle(.white)
+                        .padding(24)
+                        .frame(maxWidth: 360)
+                    }
+                }
+            }
+    }
+}
+
+// MARK: - Orientation lock
+
+/// Supplies the supported orientations so a running touch grid can lock rotation.
+final class AppDelegate: NSObject, UIApplicationDelegate {
+    @MainActor static var orientationMask: UIInterfaceOrientationMask = .allButUpsideDown
+
+    func application(
+        _ application: UIApplication,
+        supportedInterfaceOrientationsFor window: UIWindow?
+    ) -> UIInterfaceOrientationMask {
+        MainActor.assumeIsolated { Self.orientationMask }
+    }
+}
+
+@MainActor
+enum OrientationLock {
+    /// Locks to the current interface orientation.
+    static func lockCurrent() {
+        guard let scene = activeScene else { return }
+        let mask: UIInterfaceOrientationMask
+        let orientation: UIInterfaceOrientation
+        if #available(iOS 26.0, *) {
+            orientation = scene.effectiveGeometry.interfaceOrientation
+        } else {
+            orientation = scene.interfaceOrientation
+        }
+        switch orientation {
+        case .landscapeLeft: mask = .landscapeLeft
+        case .landscapeRight: mask = .landscapeRight
+        case .portraitUpsideDown: mask = .portraitUpsideDown
+        default: mask = .portrait
+        }
+        apply(mask, in: scene)
+    }
+
+    static func unlock() {
+        guard let scene = activeScene else {
+            AppDelegate.orientationMask = .allButUpsideDown
+            return
+        }
+        apply(.allButUpsideDown, in: scene)
+    }
+
+    private static var activeScene: UIWindowScene? {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first { $0.activationState == .foregroundActive }
+    }
+
+    private static func apply(_ mask: UIInterfaceOrientationMask, in scene: UIWindowScene) {
+        AppDelegate.orientationMask = mask
+        for window in scene.windows {
+            var controller = window.rootViewController
+            while let current = controller {
+                current.setNeedsUpdateOfSupportedInterfaceOrientations()
+                controller = current.presentedViewController
+            }
+        }
+    }
+}
+
+// MARK: - Brightness
+
+/// Raises the active display to full brightness for the pixel test and restores it afterwards.
+@MainActor
+final class BrightnessBoost {
+    private var saved: (screen: UIScreen, brightness: CGFloat)?
+
+    func begin() {
+        guard saved == nil,
+              let screen = UIApplication.shared.connectedScenes
+                .compactMap({ ($0 as? UIWindowScene)?.screen })
+                .first else { return }
+        saved = (screen, screen.brightness)
+        screen.brightness = 1
+    }
+
+    func end() {
+        guard let saved else { return }
+        saved.screen.brightness = saved.brightness
+        self.saved = nil
+    }
+}
+
+// MARK: - Floating controls
+
+/// Small floating control bar for full-bleed test canvases. It can jump between the top and
+/// bottom edge so it never permanently hides part of the canvas.
+struct FloatingTestBar<Content: View>: View {
+    var dark: Bool = true
+    let onCancel: () -> Void
+    @ViewBuilder let content: () -> Content
+    @State private var atTop = false
+
+    var body: some View {
+        VStack {
+            if !atTop { Spacer(minLength: 0) }
+            HStack(spacing: 12) {
+                Button(action: onCancel) {
+                    Image(systemName: "xmark")
+                        .frame(width: 32, height: 32)
+                }
+                .accessibilityLabel(Text(verbatim: "Cancel"))
+                .accessibilityIdentifier("test.cancel")
+
+                content()
+
+                Button {
+                    atTop.toggle()
+                } label: {
+                    Image(systemName: atTop ? "arrow.down.to.line" : "arrow.up.to.line")
+                        .frame(width: 32, height: 32)
+                }
+                .accessibilityIdentifier("test.moveBar")
+            }
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(dark ? Color.white : Color.black)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(
+                (dark ? Color.black : Color.white).opacity(0.6),
+                in: Capsule()
+            )
+            .padding(.horizontal, 12)
+            .padding(.vertical, 28)
+            if atTop { Spacer(minLength: 0) }
+        }
+    }
+}
+
+// MARK: - Metric formatting
+
+/// Human-readable metric lines for the result review screen and the summary.
+enum ResultMetricsFormatter {
+    struct Line: Hashable {
+        let label: String
+        let value: String
+    }
+
+    static func lines(for result: TestResult, language: AppLanguage) -> [Line] {
+        let m = result.metrics
+        var lines: [Line] = []
+        switch result.id {
+        case .touchGridOuter, .touchGridInner:
+            if let percent = m[TestMetricKey.coveragePercent],
+               let covered = m[TestMetricKey.cellsCovered],
+               let total = m[TestMetricKey.totalCells] {
+                lines.append(Line(
+                    label: L10nKey.metricCoverage.text(in: language),
+                    value: "\(format(percent))% (\(Int(covered))/\(Int(total)))"
+                ))
+            }
+            if let band = m[TestMetricKey.creaseBandCoverage], let cells = m[TestMetricKey.creaseBandCells] {
+                let missed = Int(m[TestMetricKey.creaseBandMissed] ?? 0)
+                lines.append(Line(
+                    label: L10nKey.metricCreaseBand.text(in: language),
+                    value: "\(format(band))% (\(Int(cells) - missed)/\(Int(cells)))"
+                ))
+            }
+            if let touches = m[TestMetricKey.maxTouches], touches > 0 {
+                lines.append(Line(label: L10nKey.metricMaxTouches.text(in: language), value: "\(Int(touches))"))
+            }
+        case .pixels:
+            if let issues = m[TestMetricKey.issuesMarked] {
+                lines.append(Line(label: L10nKey.metricIssuesMarked.text(in: language), value: "\(Int(issues))"))
+            }
+        case .crease:
+            if let average = m[TestMetricKey.creaseRating] {
+                var value = "\(format(average)) / 5"
+                if let worst = m[TestMetricKey.creaseRatingMax] {
+                    value += " (max \(Int(worst)))"
+                }
+                lines.append(Line(label: L10nKey.metricCreaseRating.text(in: language), value: value))
+            }
+            if m[TestMetricKey.photoAttached] == 1 {
+                lines.append(Line(label: L10nKey.metricPhoto.text(in: language), value: "✓"))
+            }
+        default:
+            break
+        }
+        return lines
+    }
+
+    static func summary(for result: TestResult, language: AppLanguage) -> String? {
+        let lines = lines(for: result, language: language)
+        guard !lines.isEmpty else { return nil }
+        return lines.map { "\($0.label) \($0.value)" }.joined(separator: " · ")
+    }
+
+    private static func format(_ value: Double) -> String {
+        value.rounded() == value ? String(Int(value)) : String(format: "%.1f", value)
+    }
+}

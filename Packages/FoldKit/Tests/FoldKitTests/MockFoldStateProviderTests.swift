@@ -169,3 +169,16 @@ struct FoldScriptStepTests {
         #expect(decoded.durationSeconds == original.durationSeconds)
     }
 }
+
+@Suite("MockFoldStateProvider synchronous state")
+struct MockFoldStateProviderSyncStateTests {
+    @Test("state is readable synchronously from the main actor and tracks set()")
+    @MainActor
+    func syncReadFromMainActor() async {
+        let provider = MockFoldStateProvider(initialState: FoldState(posture: .closed, angleDegrees: 0))
+        #expect(provider.state.posture == .closed)
+        await provider.set(.fullyOpen, angle: 180)
+        #expect(provider.state.posture == .fullyOpen)
+        #expect(provider.state.angleDegrees == 180)
+    }
+}

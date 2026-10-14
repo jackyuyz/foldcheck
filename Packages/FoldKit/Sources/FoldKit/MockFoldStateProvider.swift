@@ -35,6 +35,21 @@ public struct FoldScriptStep: Sendable, Codable {
     }
 }
 
+/// Thread-safe box holding the latest mock state for synchronous reads.
+private final class StateSnapshot: @unchecked Sendable {
+    private let lock = NSLock()
+    private var _value: FoldState
+
+    init(_ value: FoldState) {
+        _value = value
+    }
+
+    var value: FoldState {
+        get { lock.withLock { _value } }
+        set { lock.withLock { _value = newValue } }
+    }
+}
+
 /// Test / preview / UI-test provider. Driven by code or by launch arguments.
 ///
 /// Launch argument `-FoldMock <value>` values:
@@ -45,25 +60,22 @@ public struct FoldScriptStep: Sendable, Codable {
 /// - `sweep:<from>-<to>:<seconds>`: Animated sweep
 /// - `script:<bundled-json-name>`: Load script from bundle
 public actor MockFoldStateProvider: FoldStateProvider {
-    private var _state: FoldState
+    private var _state: FoldState {
+        didSet { snapshot.value = _state }
+    }
     private var continuations: [UUID: AsyncStream<FoldState>.Continuation] = [:]
     private var scriptTask: Task<Void, Never>?
+    /// Lock-protected copy of `_state` so `state` can be read synchronously from any context
+    /// (including the main actor) without hopping onto this actor.
+    private nonisolated let snapshot: StateSnapshot
     
     public init(initialState: FoldState = .noHinge) {
         self._state = initialState
+        self.snapshot = StateSnapshot(initialState)
     }
     
     nonisolated public var state: FoldState {
-        // For synchronous access, we return the last known state
-        // In practice, callers should use states() for reactive updates
-        let semaphore = DispatchSemaphore(value: 0)
-        var result: FoldState = .noHinge
-        Task {
-            result = await self._state
-            semaphore.signal()
-        }
-        semaphore.wait()
-        return result
+        snapshot.value
     }
     
     nonisolated public func states() -> AsyncStream<FoldState> {

@@ -79,13 +79,29 @@ public enum TestMetricKey {
     public static let coveragePercent = "coveragePercent"
     public static let creaseBandCoverage = "creaseBandCoverage"
     public static let maxTouches = "maxTouches"
+    public static let creaseBandCells = "creaseBandCells"
+    public static let creaseBandMissed = "creaseBandMissed"
+    public static let cellSizePoints = "cellSizePoints"
+    public static let orientationLandscape = "orientationLandscape"
+    /// 1 when the user said a case blocks the missed cells, 0 when they said areas don't respond.
+    public static let missReasonBlockedByCase = "missReasonBlockedByCase"
     
     // Pixels
     public static let issuesMarked = "issuesMarked"
+    public static let patternsShown = "patternsShown"
+    public static func pixelIssues(_ pattern: PixelTestPattern) -> String { "issues.\(pattern.rawValue)" }
+    public static func pixelMarkX(_ n: Int) -> String { "mark\(n).x" }
+    public static func pixelMarkY(_ n: Int) -> String { "mark\(n).y" }
+    /// Index into `PixelTestPattern.allCases`.
+    public static func pixelMarkPattern(_ n: Int) -> String { "mark\(n).pattern" }
     
     // Crease
     public static let creaseRating = "creaseRating"  // 1-5
     public static let viewingAngles = "viewingAngles"  // count
+    public static let creaseRatingMax = "creaseRatingMax"
+    public static let photoAttached = "photoAttached"
+    public static func creaseRating(_ view: CreaseViewingAngle) -> String { "creaseRating.view\(view.rawValue)" }
+    public static func creaseHingeAngle(_ view: CreaseViewingAngle) -> String { "hingeAngle.view\(view.rawValue)" }
     
     // Hinge
     public static let observedMinAngle = "observedMinAngle"
