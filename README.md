@@ -159,7 +159,7 @@ Unit tests pass on Linux:
 
 | Package | Tests | Status |
 |---------|-------|--------|
-| FoldKit | 38 | ✅ Pass |
+| FoldKit | 41 | ✅ Pass |
 | HingeAnalysis | 21 | ✅ Pass |
 | TestsKit | 36 | ✅ Pass |
 | ReportKit | 34 | ✅ Pass |
