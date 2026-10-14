@@ -1,0 +1,41 @@
+{
+  "": {
+    "swift-dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/master.swiftdeps"
+  },
+  "/workspace/Packages/ReportKit/Sources/ReportKit/CanonicalReport.swift": {
+    "dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/CanonicalReport.d",
+    "object": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/CanonicalReport.swift.o",
+    "swiftmodule": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/CanonicalReport~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/CanonicalReport.swiftdeps"
+  },
+  "/workspace/Packages/ReportKit/Sources/ReportKit/DeviceNames.swift": {
+    "dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/DeviceNames.d",
+    "object": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/DeviceNames.swift.o",
+    "swiftmodule": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/DeviceNames~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/DeviceNames.swiftdeps"
+  },
+  "/workspace/Packages/ReportKit/Sources/ReportKit/ReportContent.swift": {
+    "dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/ReportContent.d",
+    "object": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/ReportContent.swift.o",
+    "swiftmodule": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/ReportContent~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/ReportContent.swiftdeps"
+  },
+  "/workspace/Packages/ReportKit/Sources/ReportKit/ReportEnvelope.swift": {
+    "dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/ReportEnvelope.d",
+    "object": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/ReportEnvelope.swift.o",
+    "swiftmodule": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/ReportEnvelope~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/ReportEnvelope.swiftdeps"
+  },
+  "/workspace/Packages/ReportKit/Sources/ReportKit/ReportKit.swift": {
+    "dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/ReportKit.d",
+    "object": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/ReportKit.swift.o",
+    "swiftmodule": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/ReportKit~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/ReportKit.swiftdeps"
+  },
+  "/workspace/Packages/ReportKit/Sources/ReportKit/ReportSigner.swift": {
+    "dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/ReportSigner.d",
+    "object": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/ReportSigner.swift.o",
+    "swiftmodule": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/ReportSigner~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKit.build/ReportSigner.swiftdeps"
+  }
+}

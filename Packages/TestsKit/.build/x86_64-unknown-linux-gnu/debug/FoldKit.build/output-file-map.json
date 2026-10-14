@@ -1,0 +1,41 @@
+{
+  "": {
+    "swift-dependencies": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/master.swiftdeps"
+  },
+  "/workspace/Packages/FoldKit/Sources/FoldKit/FoldKit.swift": {
+    "dependencies": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldKit.d",
+    "object": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldKit.swift.o",
+    "swiftmodule": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldKit~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldKit.swiftdeps"
+  },
+  "/workspace/Packages/FoldKit/Sources/FoldKit/FoldPosture.swift": {
+    "dependencies": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldPosture.d",
+    "object": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldPosture.swift.o",
+    "swiftmodule": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldPosture~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldPosture.swiftdeps"
+  },
+  "/workspace/Packages/FoldKit/Sources/FoldKit/FoldState.swift": {
+    "dependencies": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldState.d",
+    "object": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldState.swift.o",
+    "swiftmodule": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldState~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldState.swiftdeps"
+  },
+  "/workspace/Packages/FoldKit/Sources/FoldKit/FoldStateProvider.swift": {
+    "dependencies": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldStateProvider.d",
+    "object": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldStateProvider.swift.o",
+    "swiftmodule": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldStateProvider~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldStateProvider.swiftdeps"
+  },
+  "/workspace/Packages/FoldKit/Sources/FoldKit/MockFoldStateProvider.swift": {
+    "dependencies": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/MockFoldStateProvider.d",
+    "object": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/MockFoldStateProvider.swift.o",
+    "swiftmodule": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/MockFoldStateProvider~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/MockFoldStateProvider.swiftdeps"
+  },
+  "/workspace/Packages/FoldKit/Sources/FoldKit/RelativeAngleTracker.swift": {
+    "dependencies": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/RelativeAngleTracker.d",
+    "object": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/RelativeAngleTracker.swift.o",
+    "swiftmodule": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/RelativeAngleTracker~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/RelativeAngleTracker.swiftdeps"
+  }
+}

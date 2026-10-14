@@ -1,0 +1,17 @@
+{
+  "": {
+    "swift-dependencies": "/workspace/Packages/HingeAnalysis/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysisTests.build/master.swiftdeps"
+  },
+  "/workspace/Packages/HingeAnalysis/Tests/HingeAnalysisTests/HingeSampleTests.swift": {
+    "dependencies": "/workspace/Packages/HingeAnalysis/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysisTests.build/HingeSampleTests.d",
+    "object": "/workspace/Packages/HingeAnalysis/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysisTests.build/HingeSampleTests.swift.o",
+    "swiftmodule": "/workspace/Packages/HingeAnalysis/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysisTests.build/HingeSampleTests~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/HingeAnalysis/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysisTests.build/HingeSampleTests.swiftdeps"
+  },
+  "/workspace/Packages/HingeAnalysis/Tests/HingeAnalysisTests/HingeSweepAnalyzerTests.swift": {
+    "dependencies": "/workspace/Packages/HingeAnalysis/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysisTests.build/HingeSweepAnalyzerTests.d",
+    "object": "/workspace/Packages/HingeAnalysis/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysisTests.build/HingeSweepAnalyzerTests.swift.o",
+    "swiftmodule": "/workspace/Packages/HingeAnalysis/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysisTests.build/HingeSweepAnalyzerTests~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/HingeAnalysis/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysisTests.build/HingeSweepAnalyzerTests.swiftdeps"
+  }
+}

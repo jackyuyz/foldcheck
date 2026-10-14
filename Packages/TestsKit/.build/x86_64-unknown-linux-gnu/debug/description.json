@@ -1,0 +1,1276 @@
+{
+  "builtTestProducts" : [
+    {
+      "binaryPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageTests.xctest",
+      "packagePath" : "/workspace/Packages/TestsKit",
+      "productName" : "TestsKitPackageTests"
+    }
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+    "TestsKitPackageDiscoveredTests"
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.FoldKit-x86_64-unknown-linux-gnu-debug.module" : {
+      "executable" : "/home/ubuntu/swift/swift-6.0.3-RELEASE-ubuntu24.04/usr/bin/swiftc",
+      "fileList" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/sources",
+      "importPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/FoldKit/Sources/FoldKit/FoldKit.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/FoldKit/Sources/FoldKit/FoldPosture.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/FoldKit/Sources/FoldKit/FoldState.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/FoldKit/Sources/FoldKit/FoldStateProvider.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/FoldKit/Sources/FoldKit/MockFoldStateProvider.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/FoldKit/Sources/FoldKit/RelativeAngleTracker.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/swift-version--4E4B9A78804E9ABF.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "FoldKit",
+      "moduleOutputPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules/FoldKit.swiftmodule",
+      "objects" : [
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldKit.swift.o",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldPosture.swift.o",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldState.swift.o",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldStateProvider.swift.o",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/MockFoldStateProvider.swift.o",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/RelativeAngleTracker.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "x86_64-unknown-linux-gnu",
+        "-enable-batch-mode",
+        "-index-store-path",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j4",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-module-cache-path",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-swift-version",
+        "6",
+        "-g",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "foldkit",
+        "-Xcc",
+        "-fno-omit-frame-pointer"
+      ],
+      "outputFileMapPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldKit.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldPosture.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldState.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldStateProvider.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/MockFoldStateProvider.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/RelativeAngleTracker.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules/FoldKit.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/workspace/Packages/FoldKit/Sources/FoldKit/FoldKit.swift",
+        "/workspace/Packages/FoldKit/Sources/FoldKit/FoldPosture.swift",
+        "/workspace/Packages/FoldKit/Sources/FoldKit/FoldState.swift",
+        "/workspace/Packages/FoldKit/Sources/FoldKit/FoldStateProvider.swift",
+        "/workspace/Packages/FoldKit/Sources/FoldKit/MockFoldStateProvider.swift",
+        "/workspace/Packages/FoldKit/Sources/FoldKit/RelativeAngleTracker.swift"
+      ],
+      "tempsPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.HingeAnalysis-x86_64-unknown-linux-gnu-debug.module" : {
+      "executable" : "/home/ubuntu/swift/swift-6.0.3-RELEASE-ubuntu24.04/usr/bin/swiftc",
+      "fileList" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysis.build/sources",
+      "importPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/HingeAnalysis/Sources/HingeAnalysis/HingeAnalysis.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/HingeAnalysis/Sources/HingeAnalysis/HingeSample.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/HingeAnalysis/Sources/HingeAnalysis/HingeSweepAnalyzer.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/HingeAnalysis/Sources/HingeAnalysis/HingeSweepReport.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/swift-version--4E4B9A78804E9ABF.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules/FoldKit.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysis.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "HingeAnalysis",
+      "moduleOutputPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules/HingeAnalysis.swiftmodule",
+      "objects" : [
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysis.build/HingeAnalysis.swift.o",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysis.build/HingeSample.swift.o",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysis.build/HingeSweepAnalyzer.swift.o",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysis.build/HingeSweepReport.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "x86_64-unknown-linux-gnu",
+        "-enable-batch-mode",
+        "-index-store-path",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j4",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-module-cache-path",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-swift-version",
+        "6",
+        "-g",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "hingeanalysis",
+        "-Xcc",
+        "-fno-omit-frame-pointer"
+      ],
+      "outputFileMapPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysis.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysis.build/HingeAnalysis.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysis.build/HingeSample.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysis.build/HingeSweepAnalyzer.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysis.build/HingeSweepReport.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules/HingeAnalysis.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/workspace/Packages/HingeAnalysis/Sources/HingeAnalysis/HingeAnalysis.swift",
+        "/workspace/Packages/HingeAnalysis/Sources/HingeAnalysis/HingeSample.swift",
+        "/workspace/Packages/HingeAnalysis/Sources/HingeAnalysis/HingeSweepAnalyzer.swift",
+        "/workspace/Packages/HingeAnalysis/Sources/HingeAnalysis/HingeSweepReport.swift"
+      ],
+      "tempsPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysis.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.TestsKit-x86_64-unknown-linux-gnu-debug.module" : {
+      "executable" : "/home/ubuntu/swift/swift-6.0.3-RELEASE-ubuntu24.04/usr/bin/swiftc",
+      "fileList" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/sources",
+      "importPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Sources/TestsKit/DeviceContext.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Sources/TestsKit/FoldCounter.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Sources/TestsKit/InspectionSession.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Sources/TestsKit/TestID.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Sources/TestsKit/TestOutcome.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Sources/TestsKit/TestResult.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Sources/TestsKit/TestsKit.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/swift-version--4E4B9A78804E9ABF.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules/FoldKit.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules/HingeAnalysis.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "TestsKit",
+      "moduleOutputPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules/TestsKit.swiftmodule",
+      "objects" : [
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/DeviceContext.swift.o",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/FoldCounter.swift.o",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/InspectionSession.swift.o",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestID.swift.o",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestOutcome.swift.o",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestResult.swift.o",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestsKit.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "x86_64-unknown-linux-gnu",
+        "-enable-batch-mode",
+        "-index-store-path",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j4",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-module-cache-path",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-swift-version",
+        "6",
+        "-g",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "testskit",
+        "-Xcc",
+        "-fno-omit-frame-pointer"
+      ],
+      "outputFileMapPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/DeviceContext.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/FoldCounter.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/InspectionSession.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestID.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestOutcome.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestResult.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestsKit.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules/TestsKit.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/workspace/Packages/TestsKit/Sources/TestsKit/DeviceContext.swift",
+        "/workspace/Packages/TestsKit/Sources/TestsKit/FoldCounter.swift",
+        "/workspace/Packages/TestsKit/Sources/TestsKit/InspectionSession.swift",
+        "/workspace/Packages/TestsKit/Sources/TestsKit/TestID.swift",
+        "/workspace/Packages/TestsKit/Sources/TestsKit/TestOutcome.swift",
+        "/workspace/Packages/TestsKit/Sources/TestsKit/TestResult.swift",
+        "/workspace/Packages/TestsKit/Sources/TestsKit/TestsKit.swift"
+      ],
+      "tempsPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.TestsKitPackageDiscoveredTests-x86_64-unknown-linux-gnu-debug.module" : {
+      "executable" : "/home/ubuntu/swift/swift-6.0.3-RELEASE-ubuntu24.04/usr/bin/swiftc",
+      "fileList" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/sources",
+      "importPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.derived/TestsKitTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.derived/all-discovered-tests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/swift-version--4E4B9A78804E9ABF.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules/TestsKitTests.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "TestsKitPackageDiscoveredTests",
+      "moduleOutputPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules/TestsKitPackageDiscoveredTests.swiftmodule",
+      "objects" : [
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/TestsKitTests.swift.o",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/all-discovered-tests.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "x86_64-unknown-linux-gnu",
+        "-enable-batch-mode",
+        "-index-store-path",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j4",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-module-cache-path",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-g",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "testskit",
+        "-Xcc",
+        "-fno-omit-frame-pointer"
+      ],
+      "outputFileMapPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/TestsKitTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/all-discovered-tests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules/TestsKitPackageDiscoveredTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.derived/TestsKitTests.swift",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.derived/all-discovered-tests.swift"
+      ],
+      "tempsPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.TestsKitPackageTests-x86_64-unknown-linux-gnu-debug.module" : {
+      "executable" : "/home/ubuntu/swift/swift-6.0.3-RELEASE-ubuntu24.04/usr/bin/swiftc",
+      "fileList" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageTests.build/sources",
+      "importPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageTests.derived/runner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/swift-version--4E4B9A78804E9ABF.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules/TestsKitTests.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules/TestsKitPackageDiscoveredTests.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "TestsKitPackageTests",
+      "moduleOutputPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules/TestsKitPackageTests.swiftmodule",
+      "objects" : [
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageTests.build/runner.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "x86_64-unknown-linux-gnu",
+        "-enable-batch-mode",
+        "-index-store-path",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j4",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-module-cache-path",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-g",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "testskit",
+        "-Xcc",
+        "-fno-omit-frame-pointer"
+      ],
+      "outputFileMapPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules/TestsKitPackageTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageTests.derived/runner.swift"
+      ],
+      "tempsPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageTests.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.TestsKitTests-x86_64-unknown-linux-gnu-debug.module" : {
+      "executable" : "/home/ubuntu/swift/swift-6.0.3-RELEASE-ubuntu24.04/usr/bin/swiftc",
+      "fileList" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/sources",
+      "importPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Tests/TestsKitTests/FoldCounterTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Tests/TestsKitTests/InspectionSessionTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Tests/TestsKitTests/TestIDTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Tests/TestsKitTests/TestOutcomeTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/swift-version--4E4B9A78804E9ABF.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules/TestsKit.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "TestsKitTests",
+      "moduleOutputPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules/TestsKitTests.swiftmodule",
+      "objects" : [
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/FoldCounterTests.swift.o",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/InspectionSessionTests.swift.o",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/TestIDTests.swift.o",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/TestOutcomeTests.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "x86_64-unknown-linux-gnu",
+        "-enable-batch-mode",
+        "-index-store-path",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j4",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-module-cache-path",
+        "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-swift-version",
+        "6",
+        "-g",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "testskit",
+        "-Xcc",
+        "-fno-omit-frame-pointer"
+      ],
+      "outputFileMapPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/FoldCounterTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/InspectionSessionTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/TestIDTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/TestOutcomeTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules/TestsKitTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/workspace/Packages/TestsKit/Tests/TestsKitTests/FoldCounterTests.swift",
+        "/workspace/Packages/TestsKit/Tests/TestsKitTests/InspectionSessionTests.swift",
+        "/workspace/Packages/TestsKit/Tests/TestsKitTests/TestIDTests.swift",
+        "/workspace/Packages/TestsKit/Tests/TestsKitTests/TestOutcomeTests.swift"
+      ],
+      "tempsPath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "FoldKit" : [
+      "/home/ubuntu/swift/swift-6.0.3-RELEASE-ubuntu24.04/usr/bin/swiftc",
+      "-module-name",
+      "FoldKit",
+      "-package-name",
+      "foldkit",
+      "-incremental",
+      "-c",
+      "/workspace/Packages/FoldKit/Sources/FoldKit/FoldKit.swift",
+      "/workspace/Packages/FoldKit/Sources/FoldKit/FoldPosture.swift",
+      "/workspace/Packages/FoldKit/Sources/FoldKit/FoldState.swift",
+      "/workspace/Packages/FoldKit/Sources/FoldKit/FoldStateProvider.swift",
+      "/workspace/Packages/FoldKit/Sources/FoldKit/MockFoldStateProvider.swift",
+      "/workspace/Packages/FoldKit/Sources/FoldKit/RelativeAngleTracker.swift",
+      "-I",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules",
+      "-target",
+      "x86_64-unknown-linux-gnu",
+      "-enable-batch-mode",
+      "-index-store-path",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j4",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-module-cache-path",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-swift-version",
+      "6",
+      "-g",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "foldkit",
+      "-Xcc",
+      "-fno-omit-frame-pointer",
+      "-driver-use-frontend-path",
+      "/home/ubuntu/swift/swift-6.0.3-RELEASE-ubuntu24.04/usr/bin/swiftc"
+    ],
+    "HingeAnalysis" : [
+      "/home/ubuntu/swift/swift-6.0.3-RELEASE-ubuntu24.04/usr/bin/swiftc",
+      "-module-name",
+      "HingeAnalysis",
+      "-package-name",
+      "hingeanalysis",
+      "-incremental",
+      "-c",
+      "/workspace/Packages/HingeAnalysis/Sources/HingeAnalysis/HingeAnalysis.swift",
+      "/workspace/Packages/HingeAnalysis/Sources/HingeAnalysis/HingeSample.swift",
+      "/workspace/Packages/HingeAnalysis/Sources/HingeAnalysis/HingeSweepAnalyzer.swift",
+      "/workspace/Packages/HingeAnalysis/Sources/HingeAnalysis/HingeSweepReport.swift",
+      "-I",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules",
+      "-target",
+      "x86_64-unknown-linux-gnu",
+      "-enable-batch-mode",
+      "-index-store-path",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j4",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-module-cache-path",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-swift-version",
+      "6",
+      "-g",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "hingeanalysis",
+      "-Xcc",
+      "-fno-omit-frame-pointer",
+      "-driver-use-frontend-path",
+      "/home/ubuntu/swift/swift-6.0.3-RELEASE-ubuntu24.04/usr/bin/swiftc"
+    ],
+    "TestsKit" : [
+      "/home/ubuntu/swift/swift-6.0.3-RELEASE-ubuntu24.04/usr/bin/swiftc",
+      "-module-name",
+      "TestsKit",
+      "-package-name",
+      "testskit",
+      "-incremental",
+      "-c",
+      "/workspace/Packages/TestsKit/Sources/TestsKit/DeviceContext.swift",
+      "/workspace/Packages/TestsKit/Sources/TestsKit/FoldCounter.swift",
+      "/workspace/Packages/TestsKit/Sources/TestsKit/InspectionSession.swift",
+      "/workspace/Packages/TestsKit/Sources/TestsKit/TestID.swift",
+      "/workspace/Packages/TestsKit/Sources/TestsKit/TestOutcome.swift",
+      "/workspace/Packages/TestsKit/Sources/TestsKit/TestResult.swift",
+      "/workspace/Packages/TestsKit/Sources/TestsKit/TestsKit.swift",
+      "-I",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules",
+      "-target",
+      "x86_64-unknown-linux-gnu",
+      "-enable-batch-mode",
+      "-index-store-path",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j4",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-module-cache-path",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-swift-version",
+      "6",
+      "-g",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "testskit",
+      "-Xcc",
+      "-fno-omit-frame-pointer",
+      "-driver-use-frontend-path",
+      "/home/ubuntu/swift/swift-6.0.3-RELEASE-ubuntu24.04/usr/bin/swiftc"
+    ],
+    "TestsKitPackageDiscoveredTests" : [
+      "/home/ubuntu/swift/swift-6.0.3-RELEASE-ubuntu24.04/usr/bin/swiftc",
+      "-module-name",
+      "TestsKitPackageDiscoveredTests",
+      "-package-name",
+      "testskit",
+      "-incremental",
+      "-c",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.derived/TestsKitTests.swift",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.derived/all-discovered-tests.swift",
+      "-I",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules",
+      "-target",
+      "x86_64-unknown-linux-gnu",
+      "-enable-batch-mode",
+      "-index-store-path",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j4",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-module-cache-path",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-g",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "testskit",
+      "-Xcc",
+      "-fno-omit-frame-pointer",
+      "-driver-use-frontend-path",
+      "/home/ubuntu/swift/swift-6.0.3-RELEASE-ubuntu24.04/usr/bin/swiftc"
+    ],
+    "TestsKitPackageTests" : [
+      "/home/ubuntu/swift/swift-6.0.3-RELEASE-ubuntu24.04/usr/bin/swiftc",
+      "-module-name",
+      "TestsKitPackageTests",
+      "-package-name",
+      "testskit",
+      "-incremental",
+      "-c",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageTests.derived/runner.swift",
+      "-I",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules",
+      "-target",
+      "x86_64-unknown-linux-gnu",
+      "-enable-batch-mode",
+      "-index-store-path",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j4",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-module-cache-path",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-g",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "testskit",
+      "-Xcc",
+      "-fno-omit-frame-pointer",
+      "-driver-use-frontend-path",
+      "/home/ubuntu/swift/swift-6.0.3-RELEASE-ubuntu24.04/usr/bin/swiftc"
+    ],
+    "TestsKitTests" : [
+      "/home/ubuntu/swift/swift-6.0.3-RELEASE-ubuntu24.04/usr/bin/swiftc",
+      "-module-name",
+      "TestsKitTests",
+      "-package-name",
+      "testskit",
+      "-incremental",
+      "-c",
+      "/workspace/Packages/TestsKit/Tests/TestsKitTests/FoldCounterTests.swift",
+      "/workspace/Packages/TestsKit/Tests/TestsKitTests/InspectionSessionTests.swift",
+      "/workspace/Packages/TestsKit/Tests/TestsKitTests/TestIDTests.swift",
+      "/workspace/Packages/TestsKit/Tests/TestsKitTests/TestOutcomeTests.swift",
+      "-I",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules",
+      "-target",
+      "x86_64-unknown-linux-gnu",
+      "-enable-batch-mode",
+      "-index-store-path",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j4",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-module-cache-path",
+      "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-swift-version",
+      "6",
+      "-g",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "testskit",
+      "-Xcc",
+      "-fno-omit-frame-pointer",
+      "-driver-use-frontend-path",
+      "/home/ubuntu/swift/swift-6.0.3-RELEASE-ubuntu24.04/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "FoldKit" : [
+
+    ],
+    "HingeAnalysis" : [
+      "FoldKit"
+    ],
+    "TestsKit" : [
+      "HingeAnalysis",
+      "FoldKit"
+    ],
+    "TestsKitPackageDiscoveredTests" : [
+      "TestsKitTests",
+      "TestsKit",
+      "HingeAnalysis",
+      "FoldKit"
+    ],
+    "TestsKitPackageTests" : [
+      "TestsKitPackageDiscoveredTests",
+      "TestsKitTests",
+      "TestsKit",
+      "HingeAnalysis",
+      "FoldKit"
+    ],
+    "TestsKitTests" : [
+      "TestsKit",
+      "HingeAnalysis",
+      "FoldKit"
+    ]
+  },
+  "testDiscoveryCommands" : {
+    "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.derived/all-discovered-tests.swift" : {
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/FoldCounterTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/InspectionSessionTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/TestIDTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/TestOutcomeTests.swift.o"
+        }
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.derived/TestsKitTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.derived/all-discovered-tests.swift"
+        }
+      ]
+    }
+  },
+  "testEntryPointCommands" : {
+    "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageTests.derived/runner.swift" : {
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/Modules/TestsKitPackageDiscoveredTests.swiftmodule"
+        }
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageTests.derived/runner.swift"
+        }
+      ]
+    }
+  },
+  "writeCommands" : {
+    "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/FoldKit/Sources/FoldKit/FoldKit.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/FoldKit/Sources/FoldKit/FoldPosture.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/FoldKit/Sources/FoldKit/FoldState.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/FoldKit/Sources/FoldKit/FoldStateProvider.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/FoldKit/Sources/FoldKit/MockFoldStateProvider.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/FoldKit/Sources/FoldKit/RelativeAngleTracker.swift"
+        }
+      ],
+      "outputFilePath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/sources"
+    },
+    "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysis.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/HingeAnalysis/Sources/HingeAnalysis/HingeAnalysis.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/HingeAnalysis/Sources/HingeAnalysis/HingeSample.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/HingeAnalysis/Sources/HingeAnalysis/HingeSweepAnalyzer.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/HingeAnalysis/Sources/HingeAnalysis/HingeSweepReport.swift"
+        }
+      ],
+      "outputFilePath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysis.build/sources"
+    },
+    "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Sources/TestsKit/DeviceContext.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Sources/TestsKit/FoldCounter.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Sources/TestsKit/InspectionSession.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Sources/TestsKit/TestID.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Sources/TestsKit/TestOutcome.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Sources/TestsKit/TestResult.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Sources/TestsKit/TestsKit.swift"
+        }
+      ],
+      "outputFilePath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/sources"
+    },
+    "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.derived/TestsKitTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.derived/all-discovered-tests.swift"
+        }
+      ],
+      "outputFilePath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/sources"
+    },
+    "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageTests.derived/runner.swift"
+        }
+      ],
+      "outputFilePath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageTests.build/sources"
+    },
+    "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageTests.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldKit.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldKit.swiftmodule.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldPosture.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldState.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/FoldStateProvider.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/MockFoldStateProvider.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/FoldKit.build/RelativeAngleTracker.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysis.build/HingeAnalysis.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysis.build/HingeAnalysis.swiftmodule.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysis.build/HingeSample.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysis.build/HingeSweepAnalyzer.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysis.build/HingeSweepReport.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/DeviceContext.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/FoldCounter.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/InspectionSession.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestID.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestOutcome.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestResult.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestsKit.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestsKit.swiftmodule.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/TestsKitPackageDiscoveredTests.swiftmodule.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/TestsKitTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/all-discovered-tests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageTests.build/TestsKitPackageTests.swiftmodule.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/FoldCounterTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/InspectionSessionTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/TestIDTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/TestOutcomeTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/TestsKitTests.swiftmodule.o"
+        }
+      ],
+      "outputFilePath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageTests.product/Objects.LinkFileList"
+    },
+    "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Tests/TestsKitTests/FoldCounterTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Tests/TestsKitTests/InspectionSessionTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Tests/TestsKitTests/TestIDTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/workspace/Packages/TestsKit/Tests/TestsKitTests/TestOutcomeTests.swift"
+        }
+      ],
+      "outputFilePath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitTests.build/sources"
+    },
+    "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/swift-version--4E4B9A78804E9ABF.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/home/ubuntu/swift/swift-6.0.3-RELEASE-ubuntu24.04/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/swift-version--4E4B9A78804E9ABF.txt"
+    }
+  }
+}

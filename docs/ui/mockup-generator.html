@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoldCheck UI Mockups</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', sans-serif; background: #f5f5f7; padding: 20px; }
+        .mockup-container { display: flex; flex-wrap: wrap; gap: 40px; justify-content: center; }
+        .mockup { background: white; border-radius: 40px; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        .mockup-title { text-align: center; margin-bottom: 10px; font-size: 14px; color: #666; }
+        
+        /* iPhone frame */
+        .iphone { width: 390px; height: 844px; background: #000; border-radius: 50px; padding: 15px; position: relative; }
+        .iphone-screen { width: 100%; height: 100%; background: #fff; border-radius: 40px; overflow: hidden; }
+        .iphone.outer { width: 200px; height: 300px; border-radius: 30px; padding: 10px; }
+        .iphone.outer .iphone-screen { border-radius: 25px; }
+        
+        /* Duo folded */
+        .duo-folded { display: flex; gap: 4px; }
+        .duo-folded .iphone { width: 195px; }
+        .hinge-line { width: 4px; background: linear-gradient(to bottom, #333, #555, #333); border-radius: 2px; }
+        
+        /* Status bar */
+        .status-bar { height: 44px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+        .time { font-size: 15px; font-weight: 600; }
+        .status-icons { display: flex; gap: 5px; }
+        
+        /* Navigation */
+        .nav-bar { height: 44px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #e5e5e5; }
+        .nav-title { font-size: 17px; font-weight: 600; }
+        
+        /* Tab bar */
+        .tab-bar { position: absolute; bottom: 34px; left: 0; right: 0; height: 49px; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-top: 1px solid #e5e5e5; display: flex; justify-content: space-around; align-items: center; }
+        .tab-item { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 10px; color: #8e8e93; }
+        .tab-item.active { color: #007aff; }
+        .tab-icon { width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        
+        /* Content area */
+        .content { padding: 16px; height: calc(100% - 44px - 49px - 34px); overflow: hidden; }
+        
+        /* Components */
+        .icon-large { font-size: 60px; text-align: center; margin: 20px 0; }
+        .title { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 8px; }
+        .subtitle { font-size: 15px; color: #8e8e93; text-align: center; margin-bottom: 20px; }
+        
+        .button-primary { background: #007aff; color: white; padding: 16px; border-radius: 12px; text-align: center; font-weight: 600; margin-bottom: 12px; }
+        .button-secondary { background: #f2f2f7; color: #007aff; padding: 16px; border-radius: 12px; text-align: center; font-weight: 600; margin-bottom: 12px; }
+        
+        .card { background: #f2f2f7; border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+        .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        
+        .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+        .badge.pass { background: #d1fae5; color: #059669; }
+        .badge.attention { background: #fef3c7; color: #d97706; }
+        .badge.fail { background: #fee2e2; color: #dc2626; }
+        
+        .progress-bar { height: 4px; background: #e5e5e5; border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #34c759; }
+        
+        .test-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f2f2f7; border-radius: 10px; margin-bottom: 8px; }
+        
+        .score-big { font-size: 48px; font-weight: 700; text-align: center; }
+        .score-label { font-size: 14px; color: #8e8e93; text-align: center; }
+        
+        /* Touch grid visualization */
+        .touch-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; margin: 20px 0; }
+        .touch-cell { aspect-ratio: 1; background: #e5e5e5; border-radius: 2px; }
+        .touch-cell.filled { background: #34c759; }
+        .touch-cell.crease { background: #fbbf24; height: 50%; }
+        
+        /* Hinge chart */
+        .hinge-chart { height: 120px; background: #f2f2f7; border-radius: 12px; position: relative; overflow: hidden; margin: 20px 0; }
+        .hinge-line-chart { position: absolute; bottom: 20px; left: 20px; right: 20px; height: 2px; background: #007aff; }
+        .hinge-point { position: absolute; width: 8px; height: 8px; background: #007aff; border-radius: 50%; }
+        
+        /* QR Code placeholder */
+        .qr-code { width: 120px; height: 120px; background: #000; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
+        .qr-code::after { content: "QR"; color: white; font-size: 24px; font-weight: bold; }
+        
+        .list-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #e5e5e5; }
+        .list-icon { width: 30px; margin-right: 12px; color: #007aff; }
+        
+        .feature-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+        .feature-icon { font-size: 24px; color: #007aff; }
+        .feature-text { flex: 1; }
+        .feature-title { font-weight: 600; font-size: 15px; }
+        .feature-desc { font-size: 13px; color: #8e8e93; }
+        
+        .price { font-size: 36px; font-weight: 700; text-align: center; }
+        .price-label { font-size: 14px; color: #8e8e93; text-align: center; }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; margin-bottom: 40px; color: #333;">FoldCheck UI Mockups</h1>
+    
+    <div class="mockup-container">
+        <!-- Home Screen (Inner Display) -->
+        <div class="mockup">
+            <div class="mockup-title">Home Screen (Inner Display - Unfolded)</div>
+            <div class="iphone">
+                <div class="iphone-screen">
+                    <div class="status-bar">
+                        <span class="time">9:41</span>
+                        <span class="status-icons">📶 📡 🔋</span>
+                    </div>
+                    <div class="nav-bar">
+                        <span class="nav-title">FoldCheck</span>
+                    </div>
+                    <div class="content">
+                        <div class="icon-large">🩺</div>
+                        <div class="title">Foldable Inspector</div>
+                        <div class="subtitle">Complete health check for your foldable iPhone</div>
+                        
+                        <div class="button-primary">▶ Start Inspection</div>
+                        
+                        <div class="card">
+                            <div style="font-weight: 600; margin-bottom: 8px;">Last Inspection</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="font-size: 14px;">Oct 13, 2026</div>
+                                    <span class="badge pass">✓ Pass</span>
+                                    <span style="font-size: 12px; color: #8e8e93; margin-left: 8px;">92/100</span>
+                                </div>
+                                <span style="color: #8e8e93;">›</span>
+                            </div>
+                        </div>
+                        
+                        <div style="font-weight: 600; margin: 16px 0 8px;">Quick Actions</div>
+                        <div class="card-grid">
+                            <div class="card" style="text-align: center; padding: 12px;">
+                                <div style="font-size: 24px;">🔄</div>
+                                <div style="font-size: 13px; font-weight: 600;">Hinge Check</div>
+                            </div>
+                            <div class="card" style="text-align: center; padding: 12px;">
+                                <div style="font-size: 24px;">👆</div>
+                                <div style="font-size: 13px; font-weight: 600;">Touch Test</div>
+                            </div>
+                            <div class="card" style="text-align: center; padding: 12px;">
+                                <div style="font-size: 24px;">📱</div>
+                                <div style="font-size: 13px; font-weight: 600;">Screen Test</div>
+                            </div>
+                            <div class="card" style="text-align: center; padding: 12px;">
+                                <div style="font-size: 24px;">📊</div>
+                                <div style="font-size: 13px; font-weight: 600;">Fold Stats</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-bar">
+                        <div class="tab-item active"><div class="tab-icon">🏠</div>Home</div>
+                        <div class="tab-item"><div class="tab-icon">🕐</div>History</div>
+                        <div class="tab-item"><div class="tab-icon">🔍</div>Verify</div>
+                        <div class="tab-item"><div class="tab-icon">⚙️</div>Settings</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Inspection Flow -->
+        <div class="mockup">
+            <div class="mockup-title">Inspection Flow - Test Intro</div>
+            <div class="iphone">
+                <div class="iphone-screen">
+                    <div class="status-bar">
+                        <span class="time">9:42</span>
+                        <span class="status-icons">📶 📡 🔋</span>
+                    </div>
+                    <div class="nav-bar">
+                        <span style="color: #007aff; position: absolute; left: 16px;">Cancel</span>
+                        <span class="nav-title">Inspection</span>
+                    </div>
+                    <div class="content">
+                        <div style="margin-bottom: 16px;">
+                            <div class="progress-bar"><div class="progress-fill" style="width: 30%;"></div></div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 4px; font-size: 12px; color: #8e8e93;">
+                                <span>Test 3 of 10</span>
+                                <span>Hinge Sweep</span>
+                            </div>
+                        </div>
+                        
+                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0;">
+                            <div class="icon-large">🔄</div>
+                            <div class="title">Hinge Sweep</div>
+                            <div class="subtitle" style="padding: 0 20px;">
+                                Tests hinge continuity by slowly opening and closing the device twice.
+                            </div>
+                            
+                            <div style="margin-top: 40px; width: 100%;">
+                                <div class="button-primary">Start Test</div>
+                                <div style="text-align: center; color: #8e8e93; font-size: 14px;">Skip</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Hinge Sweep Test Running -->
+        <div class="mockup">
+            <div class="mockup-title">Hinge Sweep Test (Running)</div>
+            <div class="iphone">
+                <div class="iphone-screen">
+                    <div class="status-bar">
+                        <span class="time">9:43</span>
+                        <span class="status-icons">📶 📡 🔋</span>
+                    </div>
+                    <div class="content" style="background: #1c1c1e; color: white; height: 100%; padding-top: 60px;">
+                        <div style="text-align: center; margin-bottom: 40px;">
+                            <div style="font-size: 64px; font-weight: 700;">127°</div>
+                            <div style="color: #8e8e93; margin-top: 8px;">Angle</div>
+                        </div>
+                        
+                        <div style="background: #2c2c2e; border-radius: 16px; padding: 20px; margin-bottom: 20px;">
+                            <div style="display: flex; justify-content: center; gap: 40px; margin-bottom: 20px;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 600;">5°</div>
+                                    <div style="font-size: 12px; color: #8e8e93;">Min</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 600;">175°</div>
+                                    <div style="font-size: 12px; color: #8e8e93;">Max</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 600;">30 Hz</div>
+                                    <div style="font-size: 12px; color: #8e8e93;">Rate</div>
+                                </div>
+                            </div>
+                            <div style="height: 60px; background: #3c3c3e; border-radius: 8px; position: relative; overflow: hidden;">
+                                <svg width="100%" height="60" style="position: absolute;">
+                                    <path d="M0,50 Q50,10 100,30 T200,20 T300,40 T360,15" 
+                                          stroke="#007aff" fill="none" stroke-width="2"/>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center; color: #8e8e93; font-size: 15px;">
+                            Close slowly, then open slowly...
+                        </div>
+                        
+                        <div style="position: absolute; bottom: 100px; left: 0; right: 0; text-align: center;">
+                            <div style="display: inline-block; background: #2c2c2e; padding: 12px 24px; border-radius: 20px;">
+                                Sweep 1 of 2
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Touch Grid Test -->
+        <div class="mockup">
+            <div class="mockup-title">Touch Grid Test (Inner Display)</div>
+            <div class="iphone">
+                <div class="iphone-screen">
+                    <div class="status-bar">
+                        <span class="time">9:44</span>
+                        <span class="status-icons">📶 📡 🔋</span>
+                    </div>
+                    <div class="content" style="background: #000; height: 100%; padding: 0;">
+                        <div style="position: absolute; top: 60px; left: 16px; right: 16px; z-index: 10;">
+                            <div class="progress-bar"><div class="progress-fill" style="width: 60%; background: white;"></div></div>
+                            <div style="color: #666; font-size: 12px; margin-top: 4px;">Swipe to fill all cells</div>
+                        </div>
+                        
+                        <div style="padding: 100px 20px 20px;">
+                            <div class="touch-grid">
+                                <!-- Generate touch cells -->
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell"></div>
+                                <div class="touch-cell"></div>
+                                <div class="touch-cell"></div>
+                                <div class="touch-cell"></div>
+                                <div class="touch-cell"></div>
+                                
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell"></div>
+                                <div class="touch-cell"></div>
+                                <div class="touch-cell"></div>
+                                <div class="touch-cell"></div>
+                                
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell"></div>
+                                <div class="touch-cell"></div>
+                                <div class="touch-cell"></div>
+                                
+                                <!-- Crease band (smaller cells) -->
+                                <div class="touch-cell crease filled"></div>
+                                <div class="touch-cell crease filled"></div>
+                                <div class="touch-cell crease filled"></div>
+                                <div class="touch-cell crease filled"></div>
+                                <div class="touch-cell crease"></div>
+                                <div class="touch-cell crease"></div>
+                                <div class="touch-cell crease"></div>
+                                <div class="touch-cell crease"></div>
+                                <div class="touch-cell crease"></div>
+                                <div class="touch-cell crease"></div>
+                                
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell filled"></div>
+                                <div class="touch-cell"></div>
+                                <div class="touch-cell"></div>
+                                <div class="touch-cell"></div>
+                                <div class="touch-cell"></div>
+                                <div class="touch-cell"></div>
+                                <div class="touch-cell"></div>
+                                <div class="touch-cell"></div>
+                            </div>
+                            
+                            <div style="color: #fbbf24; text-align: center; font-size: 13px; margin-top: 20px;">
+                                ⚠️ Dense crease band highlighted in yellow
+                            </div>
+                        </div>
+                        
+                        <div style="position: absolute; bottom: 80px; right: 20px;">
+                            <div style="background: rgba(255,255,255,0.2); padding: 10px 16px; border-radius: 20px; color: white; font-size: 14px;">
+                                Skip
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Summary Screen -->
+        <div class="mockup">
+            <div class="mockup-title">Inspection Summary</div>
+            <div class="iphone">
+                <div class="iphone-screen">
+                    <div class="status-bar">
+                        <span class="time">9:48</span>
+                        <span class="status-icons">📶 📡 🔋</span>
+                    </div>
+                    <div class="nav-bar">
+                        <span class="nav-title">Summary</span>
+                    </div>
+                    <div class="content" style="overflow-y: auto;">
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <div style="font-size: 48px;">✓</div>
+                            <div class="title">Inspection Complete</div>
+                            <div style="color: #8e8e93; font-size: 14px;">Completed in 5m 23s</div>
+                        </div>
+                        
+                        <div class="card" style="text-align: center;">
+                            <div class="score-big" style="color: #34c759;">87</div>
+                            <div class="score-label">out of 100</div>
+                            <div style="display: flex; justify-content: center; gap: 24px; margin-top: 16px;">
+                                <div><span style="color: #34c759; font-weight: 600;">7</span> Pass</div>
+                                <div><span style="color: #f59e0b; font-weight: 600;">2</span> Attention</div>
+                                <div><span style="color: #ef4444; font-weight: 600;">0</span> Fail</div>
+                            </div>
+                        </div>
+                        
+                        <div style="font-weight: 600; margin: 16px 0 8px;">Test Results</div>
+                        
+                        <div class="test-item">
+                            <div>
+                                <div style="font-weight: 600; font-size: 14px;">Touch Grid (Outer)</div>
+                                <div style="font-size: 12px; color: #8e8e93;">Outer display</div>
+                            </div>
+                            <span class="badge pass">✓ Pass</span>
+                        </div>
+                        
+                        <div class="test-item">
+                            <div>
+                                <div style="font-weight: 600; font-size: 14px;">Hinge Sweep</div>
+                                <div style="font-size: 12px; color: #8e8e93;">Max gap: 12°</div>
+                            </div>
+                            <span class="badge attention">⚠ Attention</span>
+                        </div>
+                        
+                        <div class="test-item">
+                            <div>
+                                <div style="font-weight: 600; font-size: 14px;">Crease Visibility</div>
+                                <div style="font-size: 12px; color: #8e8e93;">Rating: 4/5</div>
+                            </div>
+                            <span class="badge pass">✓ Pass</span>
+                        </div>
+                        
+                        <div style="margin-top: 20px;">
+                            <div class="button-primary">📄 Create PDF Report</div>
+                            <div style="text-align: center; color: #007aff; font-size: 14px;">Save to History</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Paywall -->
+        <div class="mockup">
+            <div class="mockup-title">Paywall</div>
+            <div class="iphone">
+                <div class="iphone-screen">
+                    <div class="status-bar">
+                        <span class="time">9:49</span>
+                        <span class="status-icons">📶 📡 🔋</span>
+                    </div>
+                    <div class="nav-bar">
+                        <span style="color: #007aff; position: absolute; left: 16px;">Close</span>
+                        <span class="nav-title">FoldCheck Reports</span>
+                    </div>
+                    <div class="content" style="overflow-y: auto;">
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <div style="font-size: 48px;">📄</div>
+                            <div class="title">Unlock PDF Reports</div>
+                            <div class="subtitle">Create professional inspection reports</div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="feature-row">
+                                <div class="feature-icon">📝</div>
+                                <div class="feature-text">
+                                    <div class="feature-title">PDF Reports</div>
+                                    <div class="feature-desc">Detailed reports with charts</div>
+                                </div>
+                            </div>
+                            <div class="feature-row">
+                                <div class="feature-icon">✍️</div>
+                                <div class="feature-text">
+                                    <div class="feature-title">Digital Signature</div>
+                                    <div class="feature-desc">Tamper-evident Secure Enclave signing</div>
+                                </div>
+                            </div>
+                            <div class="feature-row">
+                                <div class="feature-icon">📱</div>
+                                <div class="feature-text">
+                                    <div class="feature-title">QR Verification</div>
+                                    <div class="feature-desc">Instant verification code on each report</div>
+                                </div>
+                            </div>
+                            <div class="feature-row">
+                                <div class="feature-icon">📊</div>
+                                <div class="feature-text">
+                                    <div class="feature-title">History & Compare</div>
+                                    <div class="feature-desc">Track changes over time</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center; margin: 24px 0;">
+                            <div class="price">$2.99</div>
+                            <div class="price-label">One-time purchase</div>
+                        </div>
+                        
+                        <div class="button-primary">Purchase</div>
+                        <div style="text-align: center; color: #007aff; font-size: 14px;">Restore Purchases</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Report Preview -->
+        <div class="mockup">
+            <div class="mockup-title">PDF Report Preview</div>
+            <div class="iphone">
+                <div class="iphone-screen">
+                    <div class="status-bar">
+                        <span class="time">9:50</span>
+                        <span class="status-icons">📶 📡 🔋</span>
+                    </div>
+                    <div class="nav-bar">
+                        <span style="color: #007aff; position: absolute; left: 16px;">Close</span>
+                        <span class="nav-title">Report Preview</span>
+                        <span style="color: #007aff; position: absolute; right: 16px;">Share</span>
+                    </div>
+                    <div class="content" style="overflow-y: auto; background: #e5e5e5; padding: 12px;">
+                        <div style="background: white; padding: 20px; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                                <div>
+                                    <div style="font-size: 18px; font-weight: 700;">FoldCheck Report</div>
+                                    <div style="font-size: 10px; color: #666;">ID: a1b2c3d4...</div>
+                                    <div style="font-size: 10px; color: #666;">Oct 13, 2026 9:48 AM PDT</div>
+                                </div>
+                                <div class="qr-code" style="width: 60px; height: 60px;"></div>
+                            </div>
+                            
+                            <div style="border-top: 1px solid #e5e5e5; padding-top: 12px; margin-bottom: 12px;">
+                                <div style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">Device</div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 10px;">
+                                    <div><span style="color: #666;">Model:</span> iPhone 19 Duo</div>
+                                    <div><span style="color: #666;">iOS:</span> 27.0</div>
+                                    <div><span style="color: #666;">Storage:</span> 256 GB</div>
+                                    <div><span style="color: #666;">Type:</span> Foldable</div>
+                                </div>
+                            </div>
+                            
+                            <div style="border-top: 1px solid #e5e5e5; padding-top: 12px; margin-bottom: 12px;">
+                                <div style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">Summary</div>
+                                <div style="display: flex; justify-content: space-around; text-align: center;">
+                                    <div><div style="font-size: 20px; font-weight: 700; color: #34c759;">87</div><div style="font-size: 9px; color: #666;">Score</div></div>
+                                    <div><div style="font-size: 20px; font-weight: 700; color: #34c759;">Pass</div><div style="font-size: 9px; color: #666;">Status</div></div>
+                                    <div><div style="font-size: 20px; font-weight: 700;">5:23</div><div style="font-size: 9px; color: #666;">Duration</div></div>
+                                </div>
+                            </div>
+                            
+                            <div style="border-top: 1px solid #e5e5e5; padding-top: 12px; margin-bottom: 12px;">
+                                <div style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">Results</div>
+                                <div style="font-size: 9px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                        <span>Touch Grid (Outer)</span>
+                                        <span style="color: #34c759;">Pass</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                        <span>Hinge Sweep</span>
+                                        <span style="color: #f59e0b;">Attention</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                        <span>Cameras</span>
+                                        <span style="color: #34c759;">Pass</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="border-top: 1px solid #e5e5e5; padding-top: 12px;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                    <span style="color: #007aff;">✍️</span>
+                                    <span style="font-size: 11px;">Signed on this device</span>
+                                </div>
+                                <div style="font-size: 8px; color: #999; line-height: 1.4;">
+                                    DISCLAIMER: This report is a user-generated inspection snapshot. 
+                                    It is NOT an official certification. The signature proves only that 
+                                    this PDF hasn't been modified since creation.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Verify Screen -->
+        <div class="mockup">
+            <div class="mockup-title">Verify Report</div>
+            <div class="iphone">
+                <div class="iphone-screen">
+                    <div class="status-bar">
+                        <span class="time">9:51</span>
+                        <span class="status-icons">📶 📡 🔋</span>
+                    </div>
+                    <div class="nav-bar">
+                        <span class="nav-title">Verify Report</span>
+                    </div>
+                    <div class="content">
+                        <div style="text-align: center; margin-bottom: 24px;">
+                            <div style="font-size: 48px;">🔍</div>
+                            <div class="title">Verify a FoldCheck Report</div>
+                            <div class="subtitle">Scan QR or import PDF to verify</div>
+                        </div>
+                        
+                        <div class="button-primary">📷 Scan QR Code</div>
+                        <div class="button-secondary">📄 Import PDF</div>
+                        
+                        <div class="card" style="margin-top: 24px; background: #d1fae5;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 36px; color: #059669;">✓</div>
+                                <div style="font-weight: 600; color: #059669; margin-bottom: 8px;">Valid Report</div>
+                            </div>
+                            <div style="font-size: 12px; margin-top: 12px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                    <span style="color: #666;">Report ID</span>
+                                    <span style="font-family: monospace;">a1b2c3d4...</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: #666;">Signed by</span>
+                                    <span>This device</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card" style="margin-top: 12px;">
+                            <div style="font-weight: 600; margin-bottom: 8px;">What does this verify?</div>
+                            <div style="font-size: 12px; color: #666;">
+                                <div style="display: flex; gap: 8px; margin-bottom: 4px;">
+                                    <span style="color: #34c759;">✓</span>
+                                    <span>PDF hasn't been modified</span>
+                                </div>
+                                <div style="display: flex; gap: 8px; margin-bottom: 4px;">
+                                    <span style="color: #34c759;">✓</span>
+                                    <span>Created by specific installation</span>
+                                </div>
+                                <div style="display: flex; gap: 8px; margin-bottom: 4px;">
+                                    <span style="color: #ef4444;">✗</span>
+                                    <span>Does NOT verify device authenticity</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-bar">
+                        <div class="tab-item"><div class="tab-icon">🏠</div>Home</div>
+                        <div class="tab-item"><div class="tab-icon">🕐</div>History</div>
+                        <div class="tab-item active"><div class="tab-icon">🔍</div>Verify</div>
+                        <div class="tab-item"><div class="tab-icon">⚙️</div>Settings</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Outer Display (Cover) -->
+        <div class="mockup">
+            <div class="mockup-title">Home Screen (Outer/Cover Display - Folded)</div>
+            <div class="iphone outer">
+                <div class="iphone-screen">
+                    <div class="status-bar" style="height: 30px; font-size: 12px; padding: 0 10px;">
+                        <span class="time">9:41</span>
+                        <span class="status-icons" style="font-size: 10px;">📶🔋</span>
+                    </div>
+                    <div style="padding: 10px; text-align: center;">
+                        <div style="font-size: 28px; margin-bottom: 8px;">🩺</div>
+                        <div style="font-size: 14px; font-weight: 600;">FoldCheck</div>
+                        <div style="font-size: 10px; color: #8e8e93; margin-bottom: 12px;">Unfold to inspect</div>
+                        
+                        <div style="background: #f2f2f7; border-radius: 8px; padding: 8px; margin-bottom: 8px;">
+                            <div style="font-size: 10px; color: #8e8e93;">Last check</div>
+                            <div style="font-size: 12px; font-weight: 600;">Oct 13 • 87/100</div>
+                        </div>
+                        
+                        <div style="background: #007aff; color: white; padding: 8px; border-radius: 8px; font-size: 12px; font-weight: 600;">
+                            Quick Touch Test
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Duo Partially Folded -->
+        <div class="mockup">
+            <div class="mockup-title">Crease Test (Partially Folded - Split View)</div>
+            <div class="duo-folded">
+                <div class="iphone" style="width: 195px; border-radius: 40px 0 0 40px;">
+                    <div class="iphone-screen" style="border-radius: 35px 0 0 35px;">
+                        <div class="status-bar" style="font-size: 11px;">
+                            <span class="time">9:45</span>
+                            <span></span>
+                        </div>
+                        <div style="padding: 12px; font-size: 12px;">
+                            <div style="font-weight: 600; margin-bottom: 8px;">Instructions</div>
+                            <div style="color: #666; line-height: 1.4;">
+                                1. Look at the crease from different angles
+                                <br><br>
+                                2. Rate visibility (1-5)
+                                <br><br>
+                                3. Optionally attach a photo
+                            </div>
+                            
+                            <div style="margin-top: 20px;">
+                                <div style="font-size: 10px; color: #8e8e93; margin-bottom: 4px;">Viewing angle 1 of 3</div>
+                                <div style="font-weight: 600;">Rate crease visibility:</div>
+                                <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+                                    <span style="padding: 6px 10px; background: #f2f2f7; border-radius: 6px; font-size: 11px;">1</span>
+                                    <span style="padding: 6px 10px; background: #f2f2f7; border-radius: 6px; font-size: 11px;">2</span>
+                                    <span style="padding: 6px 10px; background: #007aff; color: white; border-radius: 6px; font-size: 11px;">3</span>
+                                    <span style="padding: 6px 10px; background: #f2f2f7; border-radius: 6px; font-size: 11px;">4</span>
+                                    <span style="padding: 6px 10px; background: #f2f2f7; border-radius: 6px; font-size: 11px;">5</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hinge-line"></div>
+                <div class="iphone" style="width: 195px; border-radius: 0 40px 40px 0;">
+                    <div class="iphone-screen" style="border-radius: 0 35px 35px 0; background: linear-gradient(to right, #333, #666, #999, #666, #333);">
+                        <div style="height: 100%; display: flex; align-items: center; justify-content: center;">
+                            <div style="color: white; text-align: center; font-size: 11px;">
+                                <div style="font-weight: 600;">Crease Test Pattern</div>
+                                <div style="opacity: 0.7; margin-top: 4px;">Gray gradient for visibility</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 40px; color: #666; font-size: 14px;">
+        FoldCheck UI Mockups v1.0 • October 2026
+    </div>
+</body>
+</html>

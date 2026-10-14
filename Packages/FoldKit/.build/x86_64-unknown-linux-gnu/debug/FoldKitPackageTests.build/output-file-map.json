@@ -1,0 +1,11 @@
+{
+  "": {
+    "swift-dependencies": "/workspace/Packages/FoldKit/.build/x86_64-unknown-linux-gnu/debug/FoldKitPackageTests.build/master.swiftdeps"
+  },
+  "/workspace/Packages/FoldKit/.build/x86_64-unknown-linux-gnu/debug/FoldKitPackageTests.derived/runner.swift": {
+    "dependencies": "/workspace/Packages/FoldKit/.build/x86_64-unknown-linux-gnu/debug/FoldKitPackageTests.build/runner.d",
+    "object": "/workspace/Packages/FoldKit/.build/x86_64-unknown-linux-gnu/debug/FoldKitPackageTests.build/runner.swift.o",
+    "swiftmodule": "/workspace/Packages/FoldKit/.build/x86_64-unknown-linux-gnu/debug/FoldKitPackageTests.build/runner~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/FoldKit/.build/x86_64-unknown-linux-gnu/debug/FoldKitPackageTests.build/runner.swiftdeps"
+  }
+}

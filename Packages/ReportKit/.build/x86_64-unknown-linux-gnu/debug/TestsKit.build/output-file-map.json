@@ -1,0 +1,47 @@
+{
+  "": {
+    "swift-dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/master.swiftdeps"
+  },
+  "/workspace/Packages/TestsKit/Sources/TestsKit/DeviceContext.swift": {
+    "dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/DeviceContext.d",
+    "object": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/DeviceContext.swift.o",
+    "swiftmodule": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/DeviceContext~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/DeviceContext.swiftdeps"
+  },
+  "/workspace/Packages/TestsKit/Sources/TestsKit/FoldCounter.swift": {
+    "dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/FoldCounter.d",
+    "object": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/FoldCounter.swift.o",
+    "swiftmodule": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/FoldCounter~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/FoldCounter.swiftdeps"
+  },
+  "/workspace/Packages/TestsKit/Sources/TestsKit/InspectionSession.swift": {
+    "dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/InspectionSession.d",
+    "object": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/InspectionSession.swift.o",
+    "swiftmodule": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/InspectionSession~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/InspectionSession.swiftdeps"
+  },
+  "/workspace/Packages/TestsKit/Sources/TestsKit/TestID.swift": {
+    "dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestID.d",
+    "object": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestID.swift.o",
+    "swiftmodule": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestID~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestID.swiftdeps"
+  },
+  "/workspace/Packages/TestsKit/Sources/TestsKit/TestOutcome.swift": {
+    "dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestOutcome.d",
+    "object": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestOutcome.swift.o",
+    "swiftmodule": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestOutcome~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestOutcome.swiftdeps"
+  },
+  "/workspace/Packages/TestsKit/Sources/TestsKit/TestResult.swift": {
+    "dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestResult.d",
+    "object": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestResult.swift.o",
+    "swiftmodule": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestResult~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestResult.swiftdeps"
+  },
+  "/workspace/Packages/TestsKit/Sources/TestsKit/TestsKit.swift": {
+    "dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestsKit.d",
+    "object": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestsKit.swift.o",
+    "swiftmodule": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestsKit~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/TestsKit.build/TestsKit.swiftdeps"
+  }
+}

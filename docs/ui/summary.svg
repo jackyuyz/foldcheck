@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 844" width="390" height="844">
+  <!-- iPhone Frame -->
+  <rect x="0" y="0" width="390" height="844" rx="50" fill="#000"/>
+  <rect x="15" y="15" width="360" height="814" rx="40" fill="#fff"/>
+  
+  <!-- Status Bar -->
+  <text x="35" y="42" font-family="SF Pro, -apple-system, sans-serif" font-size="15" font-weight="600" fill="#000">9:48</text>
+  <text x="320" y="42" font-family="SF Pro, -apple-system, sans-serif" font-size="12" fill="#000">=ö =á =</text>
+  
+  <!-- Nav Bar -->
+  <rect x="15" y="54" width="360" height="44" fill="#fff"/>
+  <line x1="15" y1="98" x2="375" y2="98" stroke="#e5e5e5" stroke-width="1"/>
+  <text x="195" y="82" font-family="SF Pro, -apple-system, sans-serif" font-size="17" font-weight="600" fill="#000" text-anchor="middle">Summary</text>
+  
+  <!-- Complete Icon -->
+  <text x="195" y="165" font-size="48" text-anchor="middle"></text>
+  <text x="195" y="200" font-family="SF Pro, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#000" text-anchor="middle">Inspection Complete</text>
+  <text x="195" y="225" font-family="SF Pro, -apple-system, sans-serif" font-size="14" fill="#8e8e93" text-anchor="middle">Completed in 5m 23s</text>
+  
+  <!-- Score Card -->
+  <rect x="30" y="245" width="330" height="120" rx="12" fill="#f2f2f7"/>
+  <text x="195" y="300" font-family="SF Pro, -apple-system, sans-serif" font-size="48" font-weight="700" fill="#34c759" text-anchor="middle">87</text>
+  <text x="195" y="325" font-family="SF Pro, -apple-system, sans-serif" font-size="14" fill="#8e8e93" text-anchor="middle">out of 100</text>
+  
+  <text x="85" y="355" font-family="SF Pro, -apple-system, sans-serif" font-size="14" fill="#000" text-anchor="middle">
+    <tspan fill="#34c759" font-weight="600">7</tspan> Pass
+  </text>
+  <text x="195" y="355" font-family="SF Pro, -apple-system, sans-serif" font-size="14" fill="#000" text-anchor="middle">
+    <tspan fill="#f59e0b" font-weight="600">2</tspan> Attention
+  </text>
+  <text x="305" y="355" font-family="SF Pro, -apple-system, sans-serif" font-size="14" fill="#000" text-anchor="middle">
+    <tspan fill="#ef4444" font-weight="600">0</tspan> Fail
+  </text>
+  
+  <!-- Test Results -->
+  <text x="30" y="400" font-family="SF Pro, -apple-system, sans-serif" font-size="15" font-weight="600" fill="#000">Test Results</text>
+  
+  <!-- Result Items -->
+  <rect x="30" y="415" width="330" height="50" rx="10" fill="#f2f2f7"/>
+  <text x="46" y="438" font-family="SF Pro, -apple-system, sans-serif" font-size="14" font-weight="600" fill="#000">Touch Grid (Outer)</text>
+  <text x="46" y="455" font-family="SF Pro, -apple-system, sans-serif" font-size="12" fill="#8e8e93">Outer display</text>
+  <rect x="290" y="430" width="55" height="20" rx="10" fill="#d1fae5"/>
+  <text x="317" y="444" font-family="SF Pro, -apple-system, sans-serif" font-size="11" font-weight="600" fill="#059669" text-anchor="middle"> Pass</text>
+  
+  <rect x="30" y="475" width="330" height="50" rx="10" fill="#f2f2f7"/>
+  <text x="46" y="498" font-family="SF Pro, -apple-system, sans-serif" font-size="14" font-weight="600" fill="#000">Hinge Sweep</text>
+  <text x="46" y="515" font-family="SF Pro, -apple-system, sans-serif" font-size="12" fill="#8e8e93">Max gap: 12°</text>
+  <rect x="270" y="490" width="75" height="20" rx="10" fill="#fef3c7"/>
+  <text x="307" y="504" font-family="SF Pro, -apple-system, sans-serif" font-size="11" font-weight="600" fill="#d97706" text-anchor="middle">  Attention</text>
+  
+  <rect x="30" y="535" width="330" height="50" rx="10" fill="#f2f2f7"/>
+  <text x="46" y="558" font-family="SF Pro, -apple-system, sans-serif" font-size="14" font-weight="600" fill="#000">Crease Visibility</text>
+  <text x="46" y="575" font-family="SF Pro, -apple-system, sans-serif" font-size="12" fill="#8e8e93">Rating: 4/5</text>
+  <rect x="290" y="550" width="55" height="20" rx="10" fill="#d1fae5"/>
+  <text x="317" y="564" font-family="SF Pro, -apple-system, sans-serif" font-size="11" font-weight="600" fill="#059669" text-anchor="middle"> Pass</text>
+  
+  <!-- Action Buttons -->
+  <rect x="30" y="610" width="330" height="52" rx="12" fill="#007aff"/>
+  <text x="195" y="642" font-family="SF Pro, -apple-system, sans-serif" font-size="17" font-weight="600" fill="#fff" text-anchor="middle">=Ä Create PDF Report</text>
+  
+  <text x="195" y="690" font-family="SF Pro, -apple-system, sans-serif" font-size="14" fill="#007aff" text-anchor="middle">Save to History</text>
+</svg>

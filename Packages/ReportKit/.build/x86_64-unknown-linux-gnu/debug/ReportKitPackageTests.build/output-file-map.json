@@ -1,0 +1,11 @@
+{
+  "": {
+    "swift-dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKitPackageTests.build/master.swiftdeps"
+  },
+  "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKitPackageTests.derived/runner.swift": {
+    "dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKitPackageTests.build/runner.d",
+    "object": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKitPackageTests.build/runner.swift.o",
+    "swiftmodule": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKitPackageTests.build/runner~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/ReportKit/.build/x86_64-unknown-linux-gnu/debug/ReportKitPackageTests.build/runner.swiftdeps"
+  }
+}

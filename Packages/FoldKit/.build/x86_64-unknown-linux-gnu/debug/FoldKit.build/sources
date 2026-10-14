@@ -1,0 +1,6 @@
+/workspace/Packages/FoldKit/Sources/FoldKit/FoldKit.swift
+/workspace/Packages/FoldKit/Sources/FoldKit/FoldPosture.swift
+/workspace/Packages/FoldKit/Sources/FoldKit/FoldState.swift
+/workspace/Packages/FoldKit/Sources/FoldKit/FoldStateProvider.swift
+/workspace/Packages/FoldKit/Sources/FoldKit/MockFoldStateProvider.swift
+/workspace/Packages/FoldKit/Sources/FoldKit/RelativeAngleTracker.swift

@@ -1,0 +1,11 @@
+{
+  "": {
+    "swift-dependencies": "/workspace/Packages/HingeAnalysis/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysisPackageTests.build/master.swiftdeps"
+  },
+  "/workspace/Packages/HingeAnalysis/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysisPackageTests.derived/runner.swift": {
+    "dependencies": "/workspace/Packages/HingeAnalysis/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysisPackageTests.build/runner.d",
+    "object": "/workspace/Packages/HingeAnalysis/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysisPackageTests.build/runner.swift.o",
+    "swiftmodule": "/workspace/Packages/HingeAnalysis/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysisPackageTests.build/runner~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/HingeAnalysis/.build/x86_64-unknown-linux-gnu/debug/HingeAnalysisPackageTests.build/runner.swiftdeps"
+  }
+}

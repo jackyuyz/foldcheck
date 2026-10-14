@@ -1,0 +1,17 @@
+{
+  "": {
+    "swift-dependencies": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/master.swiftdeps"
+  },
+  "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.derived/TestsKitTests.swift": {
+    "dependencies": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/TestsKitTests.d",
+    "object": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/TestsKitTests.swift.o",
+    "swiftmodule": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/TestsKitTests~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/TestsKitTests.swiftdeps"
+  },
+  "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.derived/all-discovered-tests.swift": {
+    "dependencies": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/all-discovered-tests.d",
+    "object": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/all-discovered-tests.swift.o",
+    "swiftmodule": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/all-discovered-tests~partial.swiftmodule",
+    "swift-dependencies": "/workspace/Packages/TestsKit/.build/x86_64-unknown-linux-gnu/debug/TestsKitPackageDiscoveredTests.build/all-discovered-tests.swiftdeps"
+  }
+}
