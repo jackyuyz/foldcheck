@@ -258,6 +258,8 @@ struct TestContainerView: View {
             PixelTestView(initialFoldState: foldState, onFinish: finish, onCancel: cancel)
         case .crease:
             CreaseTestView(initialFoldState: foldState, onFinish: finish, onCancel: cancel)
+        case .hingeSweep:
+            HingeSweepTestView(initialFoldState: foldState, onFinish: finish, onCancel: cancel)
         default:
             // Not reachable: the plan only steps through implemented tests.
             Color.clear.onAppear(perform: cancel)

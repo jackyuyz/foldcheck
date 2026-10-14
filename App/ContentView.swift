@@ -5,6 +5,9 @@ import TestsKit
 
 struct ContentView: View {
     @Environment(\.appLanguage) private var language
+    @Environment(\.foldStateProvider) private var foldStateProvider
+    @Environment(FoldCounterModel.self) private var foldCounter
+    @Environment(\.scenePhase) private var scenePhase
     @State private var selectedTab: Tab = .home
     
     enum Tab: Hashable {
@@ -49,6 +52,25 @@ struct ContentView: View {
             .tag(Tab.settings)
         }
         .foldDebugOverlay()
+        // F5: count folds only while FoldCheck is in the foreground.
+        .task {
+            for await state in foldStateProvider.states() {
+                foldCounter.process(state)
+            }
+        }
+        .task {
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(1))
+                foldCounter.tick()
+            }
+        }
+        .onChange(of: scenePhase, initial: true) { _, phase in
+            if phase == .active {
+                foldCounter.enterForeground(current: foldStateProvider.state)
+            } else {
+                foldCounter.leaveForeground()
+            }
+        }
     }
 }
 

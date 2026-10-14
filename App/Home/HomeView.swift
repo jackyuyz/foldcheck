@@ -8,6 +8,7 @@ struct HomeView: View {
     @Environment(\.appLanguage) private var language
     @State private var lastSession: InspectionSession?
     @State private var inspectionRequest: InspectionRequest?
+    @State private var showingFoldStats = false
     
     var body: some View {
         ScrollView {
@@ -25,6 +26,9 @@ struct HomeView: View {
             .padding()
         }
         .navigationTitle("FoldCheck")
+        .fullScreenCover(isPresented: $showingFoldStats) {
+            FoldStatsView()
+        }
         .fullScreenCover(item: $inspectionRequest) { request in
             InspectionFlowView(request: request) { session in
                 // Only a full inspection becomes the "last inspection" on Home.
@@ -118,13 +122,13 @@ struct HomeView: View {
                 GridItem(.flexible()),
                 GridItem(.flexible())
             ], spacing: 12) {
-                // Hinge test (T4) arrives in M3.
                 QuickActionCard(
                     title: L10nKey.homeHingeCheck.text(in: language),
                     icon: "arrow.triangle.2.circlepath",
-                    description: L10nKey.homeComingSoon.text(in: language),
-                    isEnabled: false
-                ) {}
+                    description: L10nKey.homeHingeCheckDetail.text(in: language)
+                ) {
+                    start([.hingeSweep])
+                }
                 .accessibilityIdentifier("home.quick.hinge")
                 
                 QuickActionCard(
@@ -146,13 +150,14 @@ struct HomeView: View {
                 }
                 .accessibilityIdentifier("home.quick.screen")
                 
-                // Fold counter stats (F5) arrive in M3.
+                // F5. The stats page is meant to be paid (spec §1); the paywall arrives in M6.
                 QuickActionCard(
                     title: L10nKey.homeFoldStats.text(in: language),
                     icon: "chart.bar.fill",
-                    description: L10nKey.homeComingSoon.text(in: language),
-                    isEnabled: false
-                ) {}
+                    description: L10nKey.homeFoldStatsDetail.text(in: language)
+                ) {
+                    showingFoldStats = true
+                }
                 .accessibilityIdentifier("home.quick.foldStats")
             }
         }
@@ -186,7 +191,7 @@ struct ResultBadge: View {
         case .pass: return .green
         case .attention: return .orange
         case .fail: return .red
-        case .skipped, .notApplicable: return .gray
+        case .skipped, .notApplicable, .unavailable: return .gray
         }
     }
 }

@@ -30,6 +30,11 @@ struct TestResultReviewView: View {
                 }
                 .padding(.top, 24)
 
+                if !result.series.isEmpty {
+                    HingeSweepChart(points: result.series)
+                        .frame(height: 180)
+                }
+
                 let lines = ResultMetricsFormatter.lines(for: result, language: language)
                 if !lines.isEmpty {
                     VStack(spacing: 0) {

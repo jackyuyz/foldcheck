@@ -87,10 +87,16 @@ Use launch arguments to mock fold states:
 -UITestMode 1 -FoldMock closed      # Closed
 -UITestMode 1 -FoldMock half:90     # Partially open at 90°
 -UITestMode 1 -FoldMock sweep:10-180:6   # Animated sweep
--FoldDebugOverlay 1                 # Show debug overlay
+-UITestMode 1 -FoldMock script:gappy     # Bundled script: App/Resources/MockScripts/gappy.json
+-UITestMode 1 -FoldMock script:jumpy     # Bundled script with backwards jumps
+-FoldDebugOverlay 1                 # Debug overlay; tap it for fold.closed/half/open/nohinge/sweep
+-ResetFoldCounter 1                 # Clear the saved fold counter totals at launch
 ```
 
 Or use the `FoldCheck-MockHinge` scheme which has mock arguments preconfigured.
+
+The hinge test (T4) replays a `sweep:`/`script:` mock each time a sweep step starts, as if the
+user moved the hinge when asked. With a static mock (`open`, `closed`) it ends Unavailable.
 
 ## Architecture
 
@@ -159,9 +165,9 @@ Unit tests pass on Linux:
 
 | Package | Tests | Status |
 |---------|-------|--------|
-| FoldKit | 42 | ✅ Pass |
-| HingeAnalysis | 21 | ✅ Pass |
-| TestsKit | 67 | ✅ Pass |
+| FoldKit | 46 | ✅ Pass |
+| HingeAnalysis | 33 | ✅ Pass |
+| TestsKit | 85 | ✅ Pass |
 | ReportKit | 34 | ✅ Pass |
 | FoldL10n | 8 | ✅ Pass |
 
@@ -182,8 +188,13 @@ Unit tests pass on Linux:
 - Logic in TestsKit (`TouchGridLayout`, `TouchGridSession`, `PixelTestSession`, `CreaseVisibilitySession`, `InspectionPlan`); screens in `App/Tests/`
 - The cell size assumes iPhone-like density (~6 pt/mm) and the crease at the center; both need checking on a real Duo (`reservedRegions(.division)`)
 
-### M3-M7: Pending
-- Hinge test & fold counter (M3)
+### M3: Hinge test & fold counter ✅
+- T4 hinge sweep: two guided "close to ~20°, open to flat" sweeps plus a 5 s hold at ~90°, live speed meter ("Too fast, go slower"), Swift Charts plot; a slider gives the same analysis without a hinge (flagged in the result)
+- HingeAnalysis judges continuity, not absolute angles: gaps, direction legs, backwards jumps, readings per 10°, hold jitter/drift (AC2: clean → Pass, 25° gap → Attention, jumps → Attention, no data → Unavailable with retry)
+- F5 fold counter: closed→open cycles and time per display, debounced, counted only while FoldCheck is in the foreground, shown as "Folds observed by FoldCheck"; all-time totals saved locally (AC7)
+- The real hinge bridge (`onHingeChange`) compiles only with the iOS 27.1+ SDK (`FOLDCHECK_HINGE_API`, set in project.yml) and runs only on iOS 27.1+
+
+### M4-M7: Pending
 - Hardware tests (M4)
 - PDF reports with signing (M5)
 - History, reminders, Store (M6)

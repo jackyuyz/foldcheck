@@ -138,6 +138,30 @@ public actor MockFoldStateProvider: FoldStateProvider {
         await scriptTask?.value
     }
     
+    /// The script given at launch (`sweep:` / `script:`), replayed when a hinge test starts
+    /// recording so UI tests and the simulator behave like a user moving the hinge on cue.
+    public private(set) var launchScript: [FoldScriptStep]?
+
+    public func setLaunchScript(_ script: [FoldScriptStep]?) {
+        launchScript = script
+    }
+
+    /// Jumps to the launch script's first step (so a recording can start there without a
+    /// jump from wherever the last run ended). Returns false when there is no launch script.
+    @discardableResult
+    public func rewindLaunchScript() -> Bool {
+        guard let first = launchScript?.first else { return false }
+        stop()
+        set(first.posture, angle: first.angleDegrees)
+        return true
+    }
+
+    /// Plays the launch script from the start, if there is one.
+    public func replayLaunchScript() async {
+        guard let launchScript else { return }
+        await play(launchScript)
+    }
+
     /// Stop any running script
     public func stop() {
         scriptTask?.cancel()
@@ -145,7 +169,12 @@ public actor MockFoldStateProvider: FoldStateProvider {
     }
     
     /// Parse a launch argument value into the appropriate mock state
-    public static func parseArgument(_ value: String) -> (posture: FoldPosture, angle: Double?, script: [FoldScriptStep]?) {
+    /// Parse a launch argument value into the appropriate mock state.
+    /// - Parameter loadScript: Loads `script:<name>` steps (the app reads bundled JSON).
+    public static func parseArgument(
+        _ value: String,
+        loadScript: (String) -> [FoldScriptStep]? = { _ in nil }
+    ) -> (posture: FoldPosture, angle: Double?, script: [FoldScriptStep]?) {
         let lowercased = value.lowercased()
         
         if lowercased == "nohinge" {
@@ -173,8 +202,19 @@ public actor MockFoldStateProvider: FoldStateProvider {
                     return (.partiallyOpen, from, script)
                 }
             }
+        } else if value.lowercased().hasPrefix("script:") {
+            // Format: script:<bundled-json-name>. The name keeps its case for the file lookup.
+            let name = String(value.dropFirst(7))
+            if let script = loadScript(name), let first = script.first {
+                return (first.posture, first.angleDegrees, script)
+            }
         }
         
         return (.noHinge, nil, nil)
+    }
+
+    /// Decodes a script file: a JSON array of `FoldScriptStep`.
+    public static func decodeScript(_ data: Data) -> [FoldScriptStep]? {
+        try? JSONDecoder().decode([FoldScriptStep].self, from: data)
     }
 }

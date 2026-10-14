@@ -16,6 +16,10 @@ public enum TestOutcome: String, Codable, Sendable, Equatable {
     
     /// Test is not applicable on this device (e.g., hinge tests on non-Duo)
     case notApplicable
+
+    /// The test applies but couldn't measure anything (e.g., no hinge readings arrived on a Duo).
+    /// Never a failure: it reflects an API or data gap, not the device.
+    case unavailable
     
     /// Human-readable display name
     public var displayName: String {
@@ -25,6 +29,7 @@ public enum TestOutcome: String, Codable, Sendable, Equatable {
         case .fail: return "Fail"
         case .skipped: return "Skipped"
         case .notApplicable: return "Not Applicable"
+        case .unavailable: return "Unavailable"
         }
     }
     
@@ -33,7 +38,7 @@ public enum TestOutcome: String, Codable, Sendable, Equatable {
         switch self {
         case .pass, .attention, .fail:
             return true
-        case .skipped, .notApplicable:
+        case .skipped, .notApplicable, .unavailable:
             return false
         }
     }
@@ -46,6 +51,7 @@ public enum TestOutcome: String, Codable, Sendable, Equatable {
         case .fail: return "red"
         case .skipped: return "gray"
         case .notApplicable: return "gray"
+        case .unavailable: return "gray"
         }
     }
     
@@ -57,6 +63,7 @@ public enum TestOutcome: String, Codable, Sendable, Equatable {
         case .fail: return "xmark.circle.fill"
         case .skipped: return "forward.fill"
         case .notApplicable: return "minus.circle.fill"
+        case .unavailable: return "questionmark.circle.fill"
         }
     }
     
@@ -68,6 +75,7 @@ public enum TestOutcome: String, Codable, Sendable, Equatable {
         case .fail: return 0
         case .skipped: return -1  // Not counted
         case .notApplicable: return -1  // Not counted
+        case .unavailable: return -1  // Not counted
         }
     }
 }

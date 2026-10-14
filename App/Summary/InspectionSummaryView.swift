@@ -114,7 +114,7 @@ struct InspectionSummaryView: View {
         case .pass: return .green
         case .attention: return .orange
         case .fail: return .red
-        case .skipped, .notApplicable: return .gray
+        case .skipped, .notApplicable, .unavailable: return .gray
         }
     }
 }
