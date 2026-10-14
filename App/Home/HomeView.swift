@@ -1,0 +1,207 @@
+import SwiftUI
+import FoldKit
+import FoldL10n
+import TestsKit
+
+struct HomeView: View {
+    @Environment(\.foldStateProvider) private var foldStateProvider
+    @Environment(\.appLanguage) private var language
+    @State private var lastSession: InspectionSession?
+    @State private var showingInspection = false
+    
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 24) {
+                headerSection
+                
+                startInspectionButton
+                
+                if let session = lastSession {
+                    lastResultSection(session)
+                }
+                
+                quickActionsSection
+            }
+            .padding()
+        }
+        .navigationTitle("FoldCheck")
+        .sheet(isPresented: $showingInspection) {
+            InspectionFlowView()
+        }
+    }
+    
+    private var headerSection: some View {
+        VStack(spacing: 8) {
+            Image(systemName: "stethoscope")
+                .font(.system(size: 60))
+                .foregroundStyle(.tint)
+            
+            Text(L10nKey.homeHeadline.text(in: language))
+                .font(.title2.bold())
+            
+            Text(L10nKey.homeSubtitle.text(in: language))
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .padding(.vertical)
+    }
+    
+    private var startInspectionButton: some View {
+        Button {
+            showingInspection = true
+        } label: {
+            Label(L10nKey.homeStart.text(in: language), systemImage: "play.fill")
+                .font(.headline)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(.tint, in: RoundedRectangle(cornerRadius: 12))
+                .foregroundStyle(.white)
+        }
+    }
+    
+    @ViewBuilder
+    private func lastResultSection(_ session: InspectionSession) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(L10nKey.homeLastInspection.text(in: language))
+                .font(.headline)
+            
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(session.startedAt, style: .date)
+                        .font(.subheadline)
+                    
+                    HStack(spacing: 8) {
+                        ResultBadge(outcome: session.overallStatus)
+                        
+                        if let score = session.overallScore {
+                            Text("\(score)/100")
+                                .font(.caption.bold())
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                
+                Spacer()
+                
+                NavigationLink {
+                    // TODO: Session detail view
+                    Text(L10nKey.homeSessionDetails.text(in: language))
+                } label: {
+                    Image(systemName: "chevron.right")
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding()
+            .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
+        }
+    }
+    
+    private var quickActionsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(L10nKey.homeQuickActions.text(in: language))
+                .font(.headline)
+            
+            LazyVGrid(columns: [
+                GridItem(.flexible()),
+                GridItem(.flexible())
+            ], spacing: 12) {
+                QuickActionCard(
+                    title: L10nKey.homeHingeCheck.text(in: language),
+                    icon: "arrow.triangle.2.circlepath",
+                    description: L10nKey.homeHingeCheckDetail.text(in: language)
+                ) {
+                    // TODO: Quick hinge test
+                }
+                
+                QuickActionCard(
+                    title: L10nKey.homeTouchTest.text(in: language),
+                    icon: "hand.tap.fill",
+                    description: L10nKey.homeTouchTestDetail.text(in: language)
+                ) {
+                    // TODO: Quick touch test
+                }
+                
+                QuickActionCard(
+                    title: L10nKey.homeScreenTest.text(in: language),
+                    icon: "rectangle.fill",
+                    description: L10nKey.homeScreenTestDetail.text(in: language)
+                ) {
+                    // TODO: Quick screen test
+                }
+                
+                QuickActionCard(
+                    title: L10nKey.homeFoldStats.text(in: language),
+                    icon: "chart.bar.fill",
+                    description: L10nKey.homeFoldStatsDetail.text(in: language)
+                ) {
+                    // TODO: Fold stats view
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Supporting Views
+
+struct ResultBadge: View {
+    let outcome: TestOutcome
+    @Environment(\.appLanguage) private var language
+    
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: outcome.iconName)
+            Text(outcome.localizedName(in: language))
+        }
+        .font(.caption.bold())
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(outcomeColor.opacity(0.15), in: Capsule())
+        .foregroundStyle(outcomeColor)
+    }
+    
+    private var outcomeColor: Color {
+        switch outcome {
+        case .pass: return .green
+        case .attention: return .orange
+        case .fail: return .red
+        case .skipped, .notApplicable: return .gray
+        }
+    }
+}
+
+struct QuickActionCard: View {
+    let title: String
+    let icon: String
+    let description: String
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 8) {
+                Image(systemName: icon)
+                    .font(.title2)
+                    .foregroundStyle(.tint)
+                
+                Text(title)
+                    .font(.subheadline.bold())
+                
+                Text(description)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Preview
+
+#Preview {
+    NavigationStack {
+        HomeView()
+    }
+}

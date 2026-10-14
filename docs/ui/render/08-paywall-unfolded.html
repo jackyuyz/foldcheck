@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FoldCheck · Paywall</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1040px; height: 680px; overflow: hidden; background: #e4e7ee; }
+  body { font-family: "WenQuanYi Micro Hei", "DejaVu Sans", sans-serif; color: #1c1e21; }
+  .caption { height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; }
+  .caption h1 { font-size: 15px; font-weight: 700; }
+  .caption span { font-size: 12px; color: #5c6370; }
+  .stage { height: 628px; display: flex; align-items: center; justify-content: center; }
+  .device { width: 786px; height: 560px; background: linear-gradient(180deg, #3a3d44, #1e2024); border-radius: 36px; padding: 12px; box-shadow: 0 18px 40px rgba(20,24,32,0.28); }
+  .screen { width: 100%; height: 100%; background: #f7f8fa; border-radius: 26px; position: relative; overflow: hidden; display: flex; }
+  .crease { position: absolute; top: 0; bottom: 0; left: 50%; width: 10px; transform: translateX(-50%); background: linear-gradient(90deg, rgba(0,0,0,0), rgba(0,0,0,0.16), rgba(255,255,255,0.55), rgba(0,0,0,0.16), rgba(0,0,0,0)); z-index: 4; }
+  .half { width: 50%; padding: 32px 36px; display: flex; flex-direction: column; justify-content: center; }
+  .kicker { font-size: 12px; letter-spacing: 0.12em; color: #0e7a45; font-weight: 700; }
+  h2 { font-size: 28px; margin: 8px 0 12px; }
+  .feat { display: flex; gap: 10px; margin-bottom: 10px; font-size: 14px; }
+  .feat b { display: block; }
+  .feat span { color: #6b7280; font-size: 12px; }
+  .dot { width: 8px; height: 8px; border-radius: 99px; background: #0e7a45; margin-top: 6px; flex: none; }
+  .price { font-size: 48px; font-weight: 700; }
+  .note { color: #6b7280; font-size: 13px; margin: 4px 0 16px; }
+  .btn { background: #1c1e21; color: #fff; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+  .link { text-align: center; margin-top: 10px; color: #5c6370; font-size: 13px; }
+  .fine { margin-top: 14px; font-size: 12px; color: #6b7280; line-height: 1.45; }
+</style>
+</head>
+<body>
+  <div class="caption">
+    <h1>FoldCheck · Reports</h1>
+    <span>iPhone Duo · fully open · every test is free; the report is a one-time purchase</span>
+  </div>
+  <div class="stage">
+    <div class="device"><div class="screen">
+      <div class="crease"></div>
+      <div class="half">
+        <div class="kicker">FOLDCHECK REPORTS</div>
+        <h2>Unlock PDF Reports</h2>
+        <div class="feat"><i class="dot"></i><div><b>Signed PDF</b><span>Secure Enclave signature, QR verified offline</span></div></div>
+        <div class="feat"><i class="dot"></i><div><b>History &amp; Compare</b><span>Compare this month's crease and hinge with the last visit</span></div></div>
+        <div class="feat"><i class="dot"></i><div><b>Monthly Reminders</b><span>Local notification. Nothing is uploaded.</span></div></div>
+        <div class="feat"><i class="dot"></i><div><b>Fold Statistics</b><span>Counts folds only while FoldCheck is in the foreground</span></div></div>
+      </div>
+      <div class="half">
+        <div class="price">$2.99</div>
+        <div class="note">One-time purchase · price shown in the App Store</div>
+        <div class="btn">Purchase</div>
+        <div class="link">Restore Purchases</div>
+        <div class="fine">All tests are always free. PDF reports, history, and comparison require this one-time purchase.</div>
+      </div>
+    </div></div>
+  </div>
+</body>
+</html>

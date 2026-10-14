@@ -1,0 +1,2 @@
+"NSCameraUsageDescription" = "FoldCheck 會測試相機並掃描報告 QR code。測試照片不會儲存，除非你把它附到報告裡。";
+"NSMicrophoneUsageDescription" = "用一段短錄音測試麥克風，錄音只留在這台 iPhone 上。";
