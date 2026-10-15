@@ -79,9 +79,8 @@ struct HingeBridgeModifier: ViewModifier {
     func body(content: Content) -> some View {
         #if FOLDCHECK_HINGE_API
         if #available(iOS 27.1, *) {
-            // TODO(verify-api): written against the documented signature
-            // onHingeChange(isEnabled:_:) → (DeviceHingeContext, DeviceHingeContext);
-            // not compiled yet because the iOS 27.1 SDK isn't installed. Verify in Xcode 27.1.
+            // onHingeChange(isEnabled:_:) → (DeviceHingeContext, DeviceHingeContext), checked
+            // against the iOS 27.1 SDK (Xcode 27.1 RC, 27A9275).
             content.onHingeChange { _, context in
                 provider.ingest(context.hinge)
             }
@@ -108,7 +107,9 @@ extension SystemFoldStateProvider {
         case .closed: posture = .closed
         case .partiallyOpen: posture = .partiallyOpen
         case .fullyOpen: posture = .fullyOpen
-        @unknown default: posture = .unknown
+        // `DeviceHinge.Status` is a struct of static values in the iOS 27.1 SDK, not an enum,
+        // so `@unknown default` doesn't compile. A status added later lands here.
+        default: posture = .unknown
         }
         ingest(posture: posture, angleDegrees: hinge.angle.degrees)
     }
