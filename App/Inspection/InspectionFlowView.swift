@@ -24,6 +24,7 @@ struct InspectionFlowView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.appLanguage) private var language
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var session: InspectionSession
     @State private var currentTestIndex = 0
@@ -118,8 +119,8 @@ struct InspectionFlowView: View {
                 session.setResult(result)
                 advanceToNextTest()
             },
-            onSkip: {
-                session.setResult(.skipped(id: testID))
+            onSkip: { reason in
+                session.setResult(.skipped(id: testID, reason: reason))
                 advanceToNextTest()
             }
         )
@@ -127,12 +128,12 @@ struct InspectionFlowView: View {
 
     private func advanceToNextTest() {
         if currentTestIndex + 1 < plan.runnable.count {
-            withAnimation {
+            withAnimation(reduceMotion ? nil : .default) {
                 currentTestIndex += 1
             }
         } else {
             finalize()
-            withAnimation {
+            withAnimation(reduceMotion ? nil : .default) {
                 isCompleted = true
             }
         }
@@ -168,12 +169,13 @@ struct TestContainerView: View {
     let testID: TestID
     @Binding var isRunning: Bool
     let onComplete: (TestResult) -> Void
-    let onSkip: () -> Void
+    let onSkip: (String) -> Void
     @Environment(\.foldStateProvider) private var foldStateProvider
     @Environment(\.appLanguage) private var language
     @Environment(\.inspectionHasHinge) private var hasHinge
     @State private var foldState: FoldState = .noHinge
     @State private var pendingResult: TestResult?
+    @AppStorage("touchTapMode") private var touchTapMode = false
 
     var body: some View {
         Group {
@@ -189,68 +191,85 @@ struct TestContainerView: View {
     }
 
     private var intro: some View {
-        VStack(spacing: 20) {
-            Spacer()
-
+        InspectionPanels {
             VStack(spacing: 12) {
                 Image(systemName: iconName(for: testID))
                     .font(.system(size: 60))
                     .foregroundStyle(.tint)
-
+                    .accessibilityHidden(true)
                 Text(testID.localizedName(in: language, hasHinge: hasHinge))
                     .font(.title2.bold())
-
+                    .accessibilityAddTraits(.isHeader)
                 Text(testID.localizedDescription(in: language, hasHinge: hasHinge))
-                    .font(.body)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-
                 if let tip = tip {
                     Text(tip)
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
-                        .padding(.horizontal)
                 }
-
                 if let prompt = foldPrompt {
                     Label(prompt, systemImage: "iphone.gen3.motion")
                         .font(.callout)
                         .padding()
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(Color.orange.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
-                        .padding(.horizontal)
                         .accessibilityIdentifier("test.foldPrompt")
                 }
             }
-
-            Spacer()
-
-            VStack(spacing: 12) {
-                Button {
-                    isRunning = true
-                } label: {
-                    Text(L10nKey.inspectionStartTest.text(in: language))
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(.tint, in: RoundedRectangle(cornerRadius: 12))
-                        .foregroundStyle(.white)
+        } secondary: {
+            VStack(spacing: 16) {
+                if testID == .touchGridOuter || testID == .touchGridInner {
+                    Toggle(L10nKey.touchTapMode.text(in: language), isOn: $touchTapMode)
+                        .accessibilityHint(L10nKey.touchTapInstructions.text(in: language))
+                        .accessibilityIdentifier("test.tapMode")
                 }
-                .accessibilityIdentifier("test.start")
-
-                Button {
-                    onSkip()
-                } label: {
-                    Text(L10nKey.inspectionSkip.text(in: language))
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-                .accessibilityIdentifier("test.skip")
+                introActions
             }
-            .padding()
         }
+    }
+
+    private var introActions: some View {
+        VStack(spacing: 12) {
+            Button {
+                isRunning = true
+            } label: {
+                Text(L10nKey.inspectionStartTest.text(in: language))
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(InspectionStyle.buttonFill, in: RoundedRectangle(cornerRadius: 12))
+                    .foregroundStyle(.white)
+            }
+            .accessibilityIdentifier("test.start")
+
+            Button {
+                onSkip("")
+            } label: {
+                Text(L10nKey.inspectionSkip.text(in: language))
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, minHeight: 44)
+            }
+            .accessibilityIdentifier("test.skip")
+
+            if needsSight {
+                Button {
+                    onSkip(L10nKey.testSightedReason.text(in: language))
+                } label: {
+                    Label(L10nKey.testSightedSkip.text(in: language), systemImage: "accessibility")
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                }
+                .buttonStyle(.bordered)
+                .accessibilityIdentifier("test.skipSighted")
+            }
+        }
+    }
+
+    private var needsSight: Bool {
+        [.touchGridOuter, .touchGridInner, .pixels, .crease, .cameras].contains(testID)
     }
 
     @ViewBuilder
@@ -301,7 +320,8 @@ struct TestContainerView: View {
 
     private var tip: String? {
         switch testID {
-        case .touchGridOuter, .touchGridInner: return L10nKey.touchInstructions.text(in: language)
+        case .touchGridOuter, .touchGridInner:
+            return touchTapMode ? L10nKey.touchTapInstructions.text(in: language) : L10nKey.touchInstructions.text(in: language)
         case .pixels: return L10nKey.pixelsInstructions.text(in: language) + "\n\n" + L10nKey.pixelsTip.text(in: language)
         case .audio: return L10nKey.audioTip.text(in: language)
         default: return nil

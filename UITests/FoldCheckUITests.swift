@@ -29,7 +29,7 @@ final class FoldCheckUITests: XCTestCase {
         app.launch()
         
         // Navigate to Verify tab
-        app.tabBars.buttons["Verify"].tap()
+        app.buttons["Verify"].firstMatch.tap()
         XCTAssertTrue(app.staticTexts["Verify a FoldCheck Report"].exists)
     }
     
@@ -38,7 +38,7 @@ final class FoldCheckUITests: XCTestCase {
         app.launch()
         
         // Navigate to Settings tab
-        app.tabBars.buttons["Settings"].tap()
+        app.buttons["Settings"].firstMatch.tap()
         XCTAssertTrue(app.navigationBars["Settings"].exists)
     }
 }

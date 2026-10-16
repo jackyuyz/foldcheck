@@ -85,6 +85,44 @@ struct TouchGridLayoutTests {
         }
     }
 
+    @Test("Duo fallback rotates the crease with the inner canvas")
+    func rotatedDuoCrease() {
+        for size in [CGSize(width: 956, height: 670), CGSize(width: 670, height: 956)] {
+            let spec = DisplaySpec.duoInner(canvasSize: size)
+            let layout = TouchGridLayout(size: size, spec: spec, includeCreaseBand: true)
+            #expect(layout.axis == (size.width > size.height ? .vertical : .horizontal))
+            var session = TouchGridSession(layout: layout)
+            TouchGridSessionTests.swipeAllColumns(&session, size: size)
+            #expect(session.isComplete)
+            #expect(session.creaseBandCoverage == 1)
+        }
+    }
+
+    @Test("System division overrides the assumed axis and center, even without a resize")
+    func systemDivisionGeometry() throws {
+        let size = CGSize(width: 800, height: 600)
+        let initial = TouchGridLayout(size: size, spec: .duoInner(canvasSize: size), includeCreaseBand: true)
+        var session = TouchGridSession(layout: initial)
+        session.touch(at: CGPoint(x: 20, y: 20))
+        // A horizontal region at y = 250, rather than the assumed vertical center.
+        let spec = DisplaySpec.duoInner(canvasSize: size, divisionFrame: CGRect(x: 0, y: 245, width: 800, height: 10))
+        let updated = TouchGridLayout(size: size, spec: spec, includeCreaseBand: true)
+        session.relayout(updated)
+        #expect(session.coveredCount == 0)
+        #expect(updated.axis == .horizontal)
+        let band = updated.cells.filter(\.isCreaseBand)
+        let minY = try #require(band.map(\.rect.minY).min())
+        let maxY = try #require(band.map(\.rect.maxY).max())
+        #expect(abs((minY + maxY) / 2 - 250) < 0.01)
+        // The identical geometry must preserve new input.
+        session.touch(at: CGPoint(x: 20, y: 20))
+        session.relayout(updated)
+        #expect(session.coveredCount == 1)
+        let vertical = DisplaySpec.duoInner(canvasSize: size, divisionFrame: CGRect(x: 310, y: 0, width: 0, height: 600))
+        #expect(vertical.crease?.axis == .vertical)
+        #expect(vertical.crease?.position == 310.0 / 800)
+    }
+
     @Test("A band that runs off the canvas edge is clamped")
     func bandAtEdge() {
         let spec = DisplaySpec(crease: .init(axis: .vertical, position: 0.02))

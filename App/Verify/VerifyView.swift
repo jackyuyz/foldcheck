@@ -8,7 +8,7 @@ import ReportKit
 
 /// S8: checks a FoldCheck report offline. Importing the PDF checks its embedded content
 /// against the signature; scanning the QR code checks only the signature. Either way it
-/// proves the report wasn't changed after signing, not that the device is genuine.
+/// authenticates the embedded data/signature, not the full PDF file or device identity.
 struct VerifyView: View {
     @Environment(\.appLanguage) private var language
     @State private var verification: ReportVerification?
@@ -90,7 +90,7 @@ struct VerifyView: View {
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(.tint, in: RoundedRectangle(cornerRadius: 12))
+                    .background(InspectionStyle.buttonFill, in: RoundedRectangle(cornerRadius: 12))
                     .foregroundStyle(.white)
             }
             .accessibilityIdentifier("verify.import")

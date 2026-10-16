@@ -32,6 +32,7 @@ struct PaywallView: View {
                     Button(L10nKey.paywallClose.text(in: language)) {
                         dismiss()
                     }
+                    .accessibilityIdentifier("paywall.close")
                 }
             }
             .onChange(of: store.hasReports, initial: true) { _, unlocked in
@@ -161,7 +162,7 @@ struct PaywallView: View {
             .font(.headline)
             .frame(maxWidth: .infinity)
             .padding()
-            .background(.tint, in: RoundedRectangle(cornerRadius: 12))
+            .background(InspectionStyle.buttonFill, in: RoundedRectangle(cornerRadius: 12))
             .foregroundStyle(.white)
             .disabled(store.product == nil || store.purchaseState == .purchasing || isRestoring)
             .accessibilityIdentifier("paywall.purchase")

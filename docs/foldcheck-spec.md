@@ -19,7 +19,7 @@
 | Name check (US App Store, 2026-10-13) | No app named "FoldCheck". Generic phone-diagnostics apps exist (e.g., "Phone Doctor Plus", "TestM"-style). Fallback: "DuoCheck: Hinge & Screen Test". |
 | Recommended repo | `foldcheck-ios` |
 | Bundle ID | `com.jackyu.foldcheck` |
-| Platform / min OS | iOS, iPhone only, **min iOS 27.0** (hinge tests need iPhone Duo; screen/touch/camera/audio tests run on any iPhone) |
+| Platform / min OS | iOS, iPhone only, **min iOS 17.0** for non-hinge tests; **iOS 27.1 + Xcode 27.1 RC** for iPhone Duo hinge APIs and its simulator (implementation decision: keep ordinary iPhone fallback compatibility) |
 | Priority | **Low** |
 | Target | ≈2 weeks |
 | **Overlap note** | Partly overlaps **HingeLab** (the Reddit doc called it "HingeLab 铰链仪器"; both read continuous hinge angles) and the ideas doc's **HingeTools** protractor (4.14). FoldCheck's distinct angle is the **resale / insurance / AppleCare-claim report**. Share `FoldKit` + `HingeInput` packages with HingeLab/FoldPlay; don't duplicate the instrument features. A simple angle meter is included only as part of the hinge test. |
@@ -80,7 +80,7 @@
 | T9 | **Buttons** | Volume up/down detection (observing `AVAudioSession.outputVolume` changes in a test session); side button / Camera Control not detectable → user checklist | Any |
 | F1 | **Inspection session & score** | Runs T1–T9 in order (skippable), each Pass / Attention / Fail / Skipped, with notes; overall summary | — |
 | F2 | **PDF report** (paid) | PDFKit/`UIGraphicsPDFRenderer`: device model (`utsname.machine` → friendly name table), iOS version, storage capacity, date/time + time zone, test results with charts (hinge sweep plot, touch grid heatmap), user notes, optional attached photos, **disclaimer**, QR code | — |
-| F3 | **Tamper evidence** | Per-install P-256 signing key in the Secure Enclave (`SecKeyCreateRandomKey` with `kSecAttrTokenIDSecureEnclave`); the report's canonical JSON is signed; the QR encodes `{reportID, sha256, signature, publicKey}` (compact base64, or a deep link `foldcheck://verify?...` that only opens locally). "Verify report" screen: scan a QR/import a PDF → checks the signature and hash. **It proves the PDF wasn't edited after creation by that install; it does not prove device genuineness.** Say so. | — |
+| F3 | **Tamper evidence** | Per-install P-256 signing key in the Secure Enclave (`SecKeyCreateRandomKey` with `kSecAttrTokenIDSecureEnclave`); the report's canonical JSON is signed; the QR encodes `{reportID, sha256, signature, publicKey}` (compact base64, or a deep link `foldcheck://verify?...` that only opens locally). "Verify report" screen: scan a QR/import a PDF → checks the signature and hash. **It verifies the embedded signed report data, not every byte or visible page of the PDF. Compare the signed results with the pages. It does not prove device genuineness or authenticate the device clock.** Say so. | — |
 | F4 | **History & compare** (paid) | Past sessions list; compare two sessions (touch misses, crease rating, hinge continuity) | — |
 | F5 | **Fold counter** (paid stats; counting always on while app open) | Counts closed→open cycles and time per display **while FoldCheck is in the foreground**; displayed as "Folds observed by FoldCheck" | Duo |
 | F6 | **Monthly reminder** | Local notification (`UNUserNotificationCenter`) | — |
@@ -98,7 +98,7 @@
 | `partiallyOpen` | Hinge sweep in progress; T3 crease visibility viewing-angle steps; layout splits instructions/visuals across halves; keep controls off the crease (`reservedRegions(.division)`), except T1/T3 which intentionally draw on the crease band (no buttons there) |
 | `fullyOpen` | Inner display T1/T2/T3; inner camera test |
 | Transitions | Expected during T4; elsewhere: a test in progress pauses with "Display changed: continue on this screen?" and records which display each result belongs to |
-| Rotation | Touch grid locks orientation during a run; reports store orientation |
+| Rotation | Touch grid follows the system division region (portrait: horizontal crease; landscape: vertical). Rotation or a changed crease layout resets coverage because cell positions change; reports store the final orientation |
 | Split View | Tests require full screen → blocking explanation |
 | `noHinge` | Hinge-dependent tests (T3, T4, F5, crease band in T1) are marked "Not applicable on this device"; all others run |
 | iPad compat | Same as noHinge; display tests cover the compat window only → warn |

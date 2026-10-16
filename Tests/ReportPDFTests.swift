@@ -1,6 +1,8 @@
 import XCTest
 import PDFKit
 import CoreImage
+import SwiftData
+import Library
 @testable import FoldCheck
 import FoldL10n
 import TestsKit
@@ -88,4 +90,43 @@ final class ReportPDFTests: XCTestCase {
         XCTAssertTrue(text.contains(L10nKey.reportTitle.text(in: .zhHans)))
         XCTAssertTrue(text.contains(L10nKey.testHingeSweep.text(in: .zhHans)))
     }
+    @MainActor
+    func testM7BilingualReportPagesForVisualReview() async throws {
+        #if DEBUG
+        let container = try ModelContainer(for: StoredSession.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        try ScreenshotFixtures.populate(container)
+        let sessions = try SessionLibrary(context: ModelContext(container)).sessions()
+        let session = try XCTUnwrap(sessions.first)
+        for language in [AppLanguage.en, .zhHans] {
+            let signer = SoftwareReportSigner()
+            let report = CanonicalReport.from(session: session)
+            let bundle = try await ReportBundle.sign(report, signer: signer)
+            let content = ReportContentAssembler().assemble(session: session, envelope: bundle.envelope, language: language)
+            let pdf = try ReportPDFRenderer(session: session, content: content, bundle: bundle, language: language).render()
+            let document = try XCTUnwrap(PDFDocument(data: pdf))
+            let text = try XCTUnwrap(document.string)
+            for result in session.results {
+                XCTAssertTrue(text.contains(result.id.localizedName(in: language, hasHinge: true)))
+            }
+            let compactText = text.filter { !$0.isWhitespace }
+            let disclaimerPrefix = String(L10nKey.reportDisclaimer.text(in: language).filter { !$0.isWhitespace }.prefix(24))
+            XCTAssertTrue(compactText.contains(disclaimerPrefix), "Missing disclaimer in \(language.rawValue)")
+            XCTAssertTrue(text.contains("SHA-256"))
+            let file = XCTAttachment(data: pdf, uniformTypeIdentifier: "com.adobe.pdf")
+            file.name = "M7-\(language.rawValue)-sample-report"
+            file.lifetime = .keepAlways
+            add(file)
+            for index in 0..<document.pageCount {
+                let page = try XCTUnwrap(document.page(at: index))
+                let image = page.thumbnail(of: CGSize(width: 1224, height: 1584), for: .mediaBox)
+                let attachment = XCTAttachment(image: image)
+                attachment.name = "M7-\(language.rawValue)-PDF-page-\(index + 1)"
+                attachment.lifetime = .keepAlways
+                add(attachment)
+            }
+        }
+        #endif
+    }
+
 }

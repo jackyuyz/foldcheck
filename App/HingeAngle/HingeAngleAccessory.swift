@@ -4,35 +4,15 @@ import FoldL10n
 import TestsKit
 
 extension View {
-    /// Live hinge angle pinned above the side tab bar. Only on devices with a hinge (iPhone Duo).
-    /// Test screens are presented full screen, so they cover it without extra work.
+    /// Let the system place the live gauge clear of camera occlusions and the navigation
+    /// rail on both Duo displays. Apply inside each root NavigationStack.
     func hingeAngleAccessory(state: FoldState, onRunHingeCheck: @escaping () -> Void) -> some View {
-        modifier(HingeAngleAccessoryModifier(state: state, onRunHingeCheck: onRunHingeCheck))
-    }
-}
-
-private struct HingeAngleAccessoryModifier: ViewModifier {
-    let state: FoldState
-    let onRunHingeCheck: () -> Void
-
-    /// On the Duo the system draws the tab bar as a rail centered about 48 pt from the
-    /// trailing edge, on both displays (Xcode 27.1 RC simulator). The button lines up with it.
-    /// `tabViewBottomAccessory` isn't used: on the inner display it floats at the bottom
-    /// center, across the crease and over the content.
-    private static let railCenterInset: CGFloat = 48
-
-    func body(content: Content) -> some View {
-        content.overlay {
-            // Measured from the screen edge, so the container ignores the safe area
-            // the rail sits in. Color.clear doesn't take touches.
-            ZStack(alignment: .trailing) {
-                Color.clear
-                if state.hasHinge {
+        toolbar {
+            if state.hasHinge {
+                ToolbarItem(placement: .topBarTrailing) {
                     HingeAngleButton(state: state, onRunHingeCheck: onRunHingeCheck)
-                        .padding(.trailing, Self.railCenterInset - HingeAngleButton.size / 2)
                 }
             }
-            .ignoresSafeArea()
         }
     }
 }
@@ -45,6 +25,7 @@ struct HingeAngleButton: View {
     let onRunHingeCheck: () -> Void
     @Environment(\.appLanguage) private var language
     @State private var showingPanel = false
+    @State private var runAfterDismissal = false
 
     var body: some View {
         Button {
@@ -62,15 +43,25 @@ struct HingeAngleButton: View {
         .accessibilityIdentifier("hingeAngle.button")
         .popover(isPresented: $showingPanel, arrowEdge: .trailing) {
             HingeAnglePanel(state: state) {
+                runAfterDismissal = true
                 showingPanel = false
-                onRunHingeCheck()
             }
             .presentationCompactAdaptation(.popover)
+            .onDisappear {
+                guard runAfterDismissal else { return }
+                runAfterDismissal = false
+                // Present only once the popover has released its presentation controller.
+                Task { @MainActor in
+                    await Task.yield()
+                    onRunHingeCheck()
+                }
+            }
         }
     }
 }
 
 private struct HingeAngleGauge: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let state: FoldState
 
     var body: some View {
@@ -83,12 +74,13 @@ private struct HingeAngleGauge: View {
         }
         .gaugeStyle(.accessoryCircularCapacity)
         .tint(state.postureColor)
-        .animation(.easeOut(duration: 0.2), value: state.angleDegrees)
+        .animation(reduceMotion ? nil : .easeOut(duration: 0.2), value: state.angleDegrees)
     }
 }
 
 /// Opened from the angle button: big angle, posture, folds this session, and a hinge check.
 private struct HingeAnglePanel: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let state: FoldState
     let onRunHingeCheck: () -> Void
     @Environment(\.appLanguage) private var language
@@ -98,8 +90,8 @@ private struct HingeAnglePanel: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(state.angleText)
                 .font(.system(size: 44, weight: .semibold).monospacedDigit())
-                .contentTransition(.numericText())
-                .animation(.easeOut(duration: 0.2), value: state.angleDegrees)
+                .contentTransition(reduceMotion ? .identity : .numericText())
+                .animation(reduceMotion ? nil : .easeOut(duration: 0.2), value: state.angleDegrees)
             Text(state.postureText(in: language))
                 .font(.caption.weight(.semibold))
                 .padding(.horizontal, 8)

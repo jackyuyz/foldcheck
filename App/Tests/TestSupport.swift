@@ -125,6 +125,7 @@ struct DisplayChangePause: ViewModifier {
                                 onContinue(pendingDisplay)
                             }
                             .buttonStyle(.borderedProminent)
+                .tint(InspectionStyle.buttonFill)
                             .accessibilityIdentifier("test.displayChanged.continue")
                         }
                         .foregroundStyle(.white)
@@ -136,64 +137,15 @@ struct DisplayChangePause: ViewModifier {
     }
 }
 
-// MARK: - Orientation lock
+// MARK: - Supported orientations
 
-/// Supplies the supported orientations so a running touch grid can lock rotation.
+/// Touch tests follow rotation; their coverage is reset when canvas geometry changes.
 final class AppDelegate: NSObject, UIApplicationDelegate {
-    @MainActor static var orientationMask: UIInterfaceOrientationMask = .allButUpsideDown
-
     func application(
         _ application: UIApplication,
         supportedInterfaceOrientationsFor window: UIWindow?
     ) -> UIInterfaceOrientationMask {
-        MainActor.assumeIsolated { Self.orientationMask }
-    }
-}
-
-@MainActor
-enum OrientationLock {
-    /// Locks to the current interface orientation.
-    static func lockCurrent() {
-        guard let scene = activeScene else { return }
-        let mask: UIInterfaceOrientationMask
-        let orientation: UIInterfaceOrientation
-        if #available(iOS 26.0, *) {
-            orientation = scene.effectiveGeometry.interfaceOrientation
-        } else {
-            orientation = scene.interfaceOrientation
-        }
-        switch orientation {
-        case .landscapeLeft: mask = .landscapeLeft
-        case .landscapeRight: mask = .landscapeRight
-        case .portraitUpsideDown: mask = .portraitUpsideDown
-        default: mask = .portrait
-        }
-        apply(mask, in: scene)
-    }
-
-    static func unlock() {
-        guard let scene = activeScene else {
-            AppDelegate.orientationMask = .allButUpsideDown
-            return
-        }
-        apply(.allButUpsideDown, in: scene)
-    }
-
-    private static var activeScene: UIWindowScene? {
-        UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .first { $0.activationState == .foregroundActive }
-    }
-
-    private static func apply(_ mask: UIInterfaceOrientationMask, in scene: UIWindowScene) {
-        AppDelegate.orientationMask = mask
-        for window in scene.windows {
-            var controller = window.rootViewController
-            while let current = controller {
-                current.setNeedsUpdateOfSupportedInterfaceOrientations()
-                controller = current.presentedViewController
-            }
-        }
+        .allButUpsideDown
     }
 }
 
@@ -229,6 +181,7 @@ struct FloatingTestBar<Content: View>: View {
     let onCancel: () -> Void
     @ViewBuilder let content: () -> Content
     @State private var atTop = false
+    @Environment(\.appLanguage) private var language
 
     var body: some View {
         VStack {
@@ -236,9 +189,9 @@ struct FloatingTestBar<Content: View>: View {
             HStack(spacing: 12) {
                 Button(action: onCancel) {
                     Image(systemName: "xmark")
-                        .frame(width: 32, height: 32)
+                        .frame(width: 44, height: 44)
                 }
-                .accessibilityLabel(Text(verbatim: "Cancel"))
+                .accessibilityLabel(Text(L10nKey.inspectionCancel.text(in: language)))
                 .accessibilityIdentifier("test.cancel")
 
                 content()
@@ -247,8 +200,9 @@ struct FloatingTestBar<Content: View>: View {
                     atTop.toggle()
                 } label: {
                     Image(systemName: atTop ? "arrow.down.to.line" : "arrow.up.to.line")
-                        .frame(width: 32, height: 32)
+                        .frame(width: 44, height: 44)
                 }
+                .accessibilityLabel(L10nKey.testMoveBar.text(in: language))
                 .accessibilityIdentifier("test.moveBar")
             }
             .font(.subheadline.weight(.semibold))

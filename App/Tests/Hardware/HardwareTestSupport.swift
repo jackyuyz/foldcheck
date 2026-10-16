@@ -91,6 +91,7 @@ private struct StepButtonStyle: ViewModifier {
     func body(content: Content) -> some View {
         if prominent {
             content.buttonStyle(.borderedProminent)
+                .tint(InspectionStyle.buttonFill)
         } else {
             content.buttonStyle(.bordered)
         }

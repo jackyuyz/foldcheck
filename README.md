@@ -37,9 +37,9 @@ UI mockups in `docs/ui/png/` are drawn for iPhone Duo: a wide inner display with
 
 ### Prerequisites
 
-- Xcode 15.0+ with iOS 17.0+ SDK
+- **Xcode 27.1 RC** (`/Applications/Xcode-27.1RC.app`, build 27A9275) with the **iOS 27.1 iPhone Duo simulator**. The system-selected Xcode may be older; set `DEVELOPER_DIR` for commands below.
 - [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`)
-- Swift 6.0+ (included with Xcode 16+)
+- Swift 6 (use the toolchain bundled with Xcode 27.1 RC)
 
 ### Build Steps
 
@@ -49,8 +49,9 @@ UI mockups in `docs/ui/png/` are drawn for iPhone Duo: a wide inner display with
    cd foldcheck-ios
    ```
 
-2. Generate the Xcode project:
+2. Select the toolchain for this shell and generate the Xcode project:
    ```bash
+   export DEVELOPER_DIR=/Applications/Xcode-27.1RC.app/Contents/Developer
    xcodegen generate
    ```
 
@@ -75,7 +76,7 @@ cd Packages/Library && swift test     # SwiftData: tests run on macOS; the modul
 
 **App tests (requires Xcode):**
 ```bash
-xcodebuild test -scheme FoldCheck -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
+DEVELOPER_DIR=/Applications/Xcode-27.1RC.app/Contents/Developer xcodebuild test -scheme FoldCheck -destination 'platform=iOS Simulator,name=iPhone Duo' -parallel-testing-enabled NO
 ```
 
 ### Mock Hinge for Testing
@@ -127,7 +128,7 @@ The following APIs are marked as unverified in the spec and wrapped in protocols
 
 | API | Status | Fallback |
 |-----|--------|----------|
-| `View.onHingeChange(isEnabled:_:)` | **Confirmed** but untested | Mock provider for tests |
+| `View.onHingeChange(isEnabled:_:)` | **Verified in Xcode 27.1 RC Duo simulator** | Mock provider for tests |
 | `UIHingeInteraction` | **Confirmed** but untested | Protocol wrapper |
 | Hinge angle range/precision | **Undocumented** | Relative tracking, no absolute thresholds |
 | Background hinge events | **Not available** | Count only in foreground |
@@ -161,17 +162,19 @@ Crease width, point sizes, and `UIScreen.scale` are still unknown. They are `nil
 
 7. **Pricing validation**: Is $2.99 one-time still the right price point?
 
-## Test Results (Linux)
+## Test Results (M7)
 
-Unit tests pass on Linux:
+Swift Package tests passed on macOS using Xcode 27.1 RC (256 total):
 
 | Package | Tests | Status |
 |---------|-------|--------|
 | FoldKit | 46 | ✅ Pass |
-| HingeAnalysis | 33 | ✅ Pass |
-| TestsKit | 85 | ✅ Pass |
-| ReportKit | 34 | ✅ Pass |
-| FoldL10n | 8 | ✅ Pass |
+| HingeAnalysis | 37 | ✅ Pass |
+| TestsKit | 110 | ✅ Pass |
+| ReportKit | 41 | ✅ Pass |
+| FoldL10n | 10 | ✅ Pass |
+| Library | 6 | ✅ Pass |
+| Store | 6 | ✅ Pass |
 
 ## Implemented Milestones
 
@@ -220,11 +223,17 @@ Unit tests pass on Linux:
 - AC8 gating: every test is free; PDF reports, History and compare, monthly reminders and the fold stats page need the purchase. Inspections are still saved for free users, behind a lock, so buying shows them all. `-UnlockReports` (DEBUG only) unlocks for UI tests
 - F4: tapping a saved inspection opens its summary; Compare shows two inspections side by side with each test's outcome and the metrics that show wear (touch misses, crease rating, hinge continuity and gap, pixel issues, score), marked better, worse or unchanged (`SessionComparison` in TestsKit)
 - F6: a monthly local notification on the same day (capped at 28) at 10:00, in the app language; denied permission turns the toggle back off and says where to fix it
-- `Configuration.storekit` is selected in the Run scheme. `SKTestSession` tests (purchase, refund, Ask to Buy, failure, restore) skip in command-line runs: storekitd only serves apps installed for development, and a build signed "to run locally" isn't one. Run them from Xcode with a development team
+- `Configuration.storekit` is selected in the Run scheme. `SKTestSession` tests cover purchase, refund, Ask to Buy, failure and restore. All five passed in the locally signed Xcode 27.1 RC command-line run on this host. They skip if the local StoreKit environment cannot load products; device/Sandbox validation still needs the owner's development team
 - Before submission: replace the placeholder privacy policy URL (`AppLinks.privacy`) and enable Family Sharing for the product in App Store Connect
 
-### M7: Pending
-- Polish (M7). In-app language switching is in place; remaining work is visual polish.
+### M7: Polish ✅
+- Adaptive Home, test introductions and Summary: `ArrangementView` panels following the actual reserved fold region in either orientation (outside scroll views), a single reading column on the cover; wide panels scroll independently at accessibility text sizes. `reservedRegions(.division, .includeInactive)` is observed across layout changes; layout follows geometry, not hinge angles. The hinge gauge uses the system navigation toolbar to avoid covering the cover-screen rail.
+- Accessibility: optional physical single-cell tapping in T1 (Settings or the test introduction); VoiceOver direct-touch guidance; visual tests can be skipped with a recorded “needs sighted help” reason. No synthetic touches or automatic Pass results.
+- Scrollable test introductions, larger canvas controls, localized control labels, semantic result colors, and Reduce Motion support for app animations. The Home last-inspection action now opens the real summary behind the purchase gate. Developer settings are DEBUG-only.
+- Nine new strings translated into all six catalogs; format-placeholder parity checks; English and Simplified Chinese PDF rendering and interaction coverage (AC10).
+- Actual Duo review screenshots and bilingual sample PDF pages are generated by `PolishUITests` and `ReportPDFTests` using DEBUG-only, isolated in-memory sample sessions (`-ScreenshotFixtures`). No real inspection history is changed.
+- Review notes, repeatable verification steps and remaining device/submission checks: [docs/review/m7-validation.md](docs/review/m7-validation.md) and [docs/review/app-review-notes.md](docs/review/app-review-notes.md).
+- Simulator coverage does not replace physical hinge/touch calibration, human VoiceOver testing or App Store Connect configuration.
 
 
 ## Languages

@@ -66,10 +66,10 @@ struct HingeSweepTestView: View {
                 Button(action: cancel) {
                     Image(systemName: "xmark")
                         .font(.headline)
-                        .frame(width: 36, height: 36)
+                        .frame(width: 44, height: 44)
                         .background(.quaternary, in: Circle())
                 }
-                .accessibilityLabel(Text(verbatim: "Cancel"))
+                .accessibilityLabel(Text(L10nKey.inspectionCancel.text(in: language)))
                 .accessibilityIdentifier("test.cancel")
                 Spacer()
                 Text(stepTitle.uppercased())
@@ -170,7 +170,7 @@ struct HingeSweepTestView: View {
                 .font(.headline)
                 .frame(maxWidth: .infinity)
                 .padding()
-                .background(.tint, in: RoundedRectangle(cornerRadius: 12))
+                .background(InspectionStyle.buttonFill, in: RoundedRectangle(cornerRadius: 12))
                 .foregroundStyle(.white)
         }
         .accessibilityIdentifier(identifier)
@@ -195,6 +195,7 @@ struct HingeSweepTestView: View {
                     Text(L10nKey.hingeRetry.text(in: language)).frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
+                .tint(InspectionStyle.buttonFill)
                 .accessibilityIdentifier("hinge.retry")
                 Button {
                     showUnavailable = false

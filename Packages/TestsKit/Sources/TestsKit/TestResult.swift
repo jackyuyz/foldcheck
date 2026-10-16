@@ -109,6 +109,8 @@ public struct TestResult: Codable, Sendable, Equatable, Identifiable {
 
 /// Standard metric keys used across tests
 public enum TestMetricKey {
+    /// 1 for physical single-cell tapping; 0 for the interpolated swipe grid.
+    public static let tapMode = "tapMode"
     // Touch Grid
     public static let cellsCovered = "cellsCovered"
     public static let totalCells = "totalCells"

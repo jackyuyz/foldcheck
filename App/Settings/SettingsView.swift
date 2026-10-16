@@ -6,6 +6,7 @@ struct SettingsView: View {
     @Environment(AppSettings.self) private var settings
     @Environment(Store.self) private var store
     @AppStorage("monthlyReminders") private var monthlyReminders = false
+    @AppStorage("touchTapMode") private var touchTapMode = false
     @AppStorage("hapticFeedback") private var hapticFeedback = true
     @State private var remindersDenied = false
     @State private var showingPaywall = false
@@ -70,6 +71,15 @@ struct SettingsView: View {
                 }
             }
 
+            Section {
+                Toggle(L10nKey.touchTapMode.text(in: language), isOn: $touchTapMode)
+                    .accessibilityIdentifier("settings.tapMode")
+            } header: {
+                Text(L10nKey.settingsAccessibility.text(in: language))
+            } footer: {
+                Text(L10nKey.touchTapInstructions.text(in: language))
+            }
+
             Section(L10nKey.settingsPreferences.text(in: language)) {
                 Toggle(L10nKey.settingsHaptics.text(in: language), isOn: $hapticFeedback)
             }
@@ -108,6 +118,7 @@ struct SettingsView: View {
                 Link(L10nKey.paywallTerms.text(in: language), destination: AppLinks.terms)
             }
 
+            #if DEBUG
             Section {
                 NavigationLink(L10nKey.settingsDebug.text(in: language)) {
                     DebugInfoView()
@@ -117,6 +128,7 @@ struct SettingsView: View {
             } footer: {
                 Text(L10nKey.settingsFooter.text(in: language))
             }
+            #endif
         }
         .navigationTitle(L10nKey.settingsTitle.text(in: language))
         .sheet(isPresented: $showingPaywall) {
@@ -173,6 +185,7 @@ struct HelpView: View {
 }
 
 struct FAQItem: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let question: String
     let answer: String
     @State private var isExpanded = false
@@ -180,7 +193,7 @@ struct FAQItem: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Button {
-                withAnimation {
+                withAnimation(reduceMotion ? nil : .default) {
                     isExpanded.toggle()
                 }
             } label: {

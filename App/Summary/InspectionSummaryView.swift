@@ -27,17 +27,14 @@ struct InspectionSummaryView: View {
     private var isSaved: Bool { !savedCopies.isEmpty }
     
     var body: some View {
-        ScrollView {
+        InspectionPanels {
             VStack(spacing: 24) {
                 summaryHeader
-                
                 scoreCard
-                
-                resultsList
-                
                 actionButtons
             }
-            .padding()
+        } secondary: {
+            resultsList
         }
         .sheet(isPresented: $showingPaywall) {
             PaywallView()
@@ -55,6 +52,7 @@ struct InspectionSummaryView: View {
             
             Text(L10nKey.summaryComplete.text(in: language))
                 .font(.title2.bold())
+                .accessibilityAddTraits(.isHeader)
             
             if let duration = session.durationString {
                 Text(L10nKey.summaryCompletedIn.text(in: language, duration))
@@ -73,7 +71,7 @@ struct InspectionSummaryView: View {
         VStack(spacing: 8) {
             if let score = session.overallScore {
                 Text("\(score)")
-                    .font(.system(size: 48, weight: .bold, design: .rounded))
+                    .font(.system(.largeTitle, design: .rounded, weight: .bold))
                     .foregroundStyle(statusColor)
                 
                 Text(L10nKey.summaryOutOf100.text(in: language))
@@ -81,16 +79,24 @@ struct InspectionSummaryView: View {
                     .foregroundStyle(.secondary)
             }
             
-            HStack(spacing: 20) {
-                ScoreStatView(count: session.passCount, label: L10nKey.outcomePass.text(in: language), color: .green)
-                ScoreStatView(count: session.attentionCount, label: L10nKey.outcomeAttention.text(in: language), color: .orange)
-                ScoreStatView(count: session.failCount, label: L10nKey.outcomeFail.text(in: language), color: .red)
+            ViewThatFits(in: .horizontal) {
+                scoreStats(horizontal: true)
+                scoreStats(horizontal: false)
             }
         }
         .padding()
         .background(.quaternary, in: RoundedRectangle(cornerRadius: 16))
     }
-    
+
+    private func scoreStats(horizontal: Bool) -> some View {
+        let layout = horizontal ? AnyLayout(HStackLayout(spacing: 20)) : AnyLayout(VStackLayout(spacing: 12))
+        return layout {
+            ScoreStatView(count: session.passCount, label: L10nKey.outcomePass.text(in: language), color: .green)
+            ScoreStatView(count: session.attentionCount, label: L10nKey.outcomeAttention.text(in: language), color: .orange)
+            ScoreStatView(count: session.failCount, label: L10nKey.outcomeFail.text(in: language), color: .red)
+        }
+    }
+
     private var resultsList: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(L10nKey.summaryResults.text(in: language))
@@ -115,7 +121,7 @@ struct InspectionSummaryView: View {
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(.tint, in: RoundedRectangle(cornerRadius: 12))
+                    .background(InspectionStyle.buttonFill, in: RoundedRectangle(cornerRadius: 12))
                     .foregroundStyle(.white)
             }
             .accessibilityIdentifier("summary.createReport")
@@ -131,6 +137,7 @@ struct InspectionSummaryView: View {
                         .foregroundStyle(.tint)
                 }
             }
+            .frame(minHeight: 44)
             .disabled(isSaved)
             .accessibilityIdentifier("summary.save")
             
@@ -152,12 +159,7 @@ struct InspectionSummaryView: View {
     }
     
     private var statusColor: Color {
-        switch session.overallStatus {
-        case .pass: return .green
-        case .attention: return .orange
-        case .fail: return .red
-        case .skipped, .notApplicable, .unavailable: return .gray
-        }
+        ResultBadge.color(for: session.overallStatus)
     }
 }
 
@@ -184,9 +186,11 @@ struct TestResultRow: View {
     let result: TestResult
     let hasHinge: Bool
     @Environment(\.appLanguage) private var language
-    
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     var body: some View {
-        HStack {
+        let layout = dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading, spacing: 12)) : AnyLayout(HStackLayout())
+        layout {
             VStack(alignment: .leading, spacing: 4) {
                 Text(result.id.localizedName(in: language, hasHinge: hasHinge))
                     .font(.subheadline.bold())

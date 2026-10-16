@@ -15,21 +15,25 @@ struct HomeView: View {
     @State private var showingFoldStats = false
     @State private var showingPaywall = false
     @Environment(Store.self) private var store
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     
     var body: some View {
-        ScrollView {
+        InspectionPanels {
             VStack(spacing: 24) {
                 headerSection
-                
                 startInspectionButton
-                
+                Label(L10nKey.homeLocal.text(in: language), systemImage: "lock.shield")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+        } secondary: {
+            VStack(spacing: 24) {
                 if let session = latestFull.first?.session {
                     lastResultSection(session)
                 }
-                
                 quickActionsSection
             }
-            .padding()
         }
         .navigationTitle("FoldCheck")
         .sheet(isPresented: $showingPaywall) {
@@ -48,9 +52,11 @@ struct HomeView: View {
             Image(systemName: "stethoscope")
                 .font(.system(size: 60))
                 .foregroundStyle(.tint)
+                .accessibilityHidden(true)
             
             Text(L10nKey.homeHeadline.text(in: language))
                 .font(.title2.bold())
+                .accessibilityAddTraits(.isHeader)
             
             Text(L10nKey.homeSubtitle.text(in: language))
                 .font(.subheadline)
@@ -68,7 +74,7 @@ struct HomeView: View {
                 .font(.headline)
                 .frame(maxWidth: .infinity)
                 .padding()
-                .background(.tint, in: RoundedRectangle(cornerRadius: 12))
+                .background(InspectionStyle.buttonFill, in: RoundedRectangle(cornerRadius: 12))
                 .foregroundStyle(.white)
         }
         .accessibilityIdentifier("home.start")
@@ -105,12 +111,18 @@ struct HomeView: View {
                 Spacer()
                 
                 NavigationLink {
-                    // TODO: Session detail view
-                    Text(L10nKey.homeSessionDetails.text(in: language))
+                    if store.hasReports {
+                        InspectionSummaryView(session: session)
+                    } else {
+                        PaywallView()
+                    }
                 } label: {
                     Image(systemName: "chevron.right")
                         .foregroundStyle(.secondary)
+                        .frame(minWidth: 44, minHeight: 44)
                 }
+                .accessibilityLabel(L10nKey.homeSessionDetails.text(in: language))
+                .accessibilityIdentifier("home.lastInspection")
             }
             .padding()
             .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
@@ -122,10 +134,7 @@ struct HomeView: View {
             Text(L10nKey.homeQuickActions.text(in: language))
                 .font(.headline)
             
-            LazyVGrid(columns: [
-                GridItem(.flexible()),
-                GridItem(.flexible())
-            ], spacing: 12) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: dynamicTypeSize.isAccessibilitySize ? 1 : 2), spacing: 12) {
                 QuickActionCard(
                     title: L10nKey.homeHingeCheck.text(in: language),
                     icon: "arrow.triangle.2.circlepath",
@@ -154,7 +163,7 @@ struct HomeView: View {
                 }
                 .accessibilityIdentifier("home.quick.screen")
                 
-                                QuickActionCard(
+                QuickActionCard(
                     title: L10nKey.homeFoldStats.text(in: language),
                     icon: "chart.bar.fill",
                     description: L10nKey.homeFoldStatsDetail.text(in: language)
@@ -195,12 +204,7 @@ struct ResultBadge: View {
     }
 
     static func color(for outcome: TestOutcome) -> Color {
-        switch outcome {
-        case .pass: return .green
-        case .attention: return .orange
-        case .fail: return .red
-        case .skipped, .notApplicable, .unavailable: return .gray
-        }
+        InspectionStyle.color(for: outcome)
     }
 }
 
@@ -225,13 +229,15 @@ struct QuickActionCard: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
-            .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity, minHeight: 110)
             .padding()
-            .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
+            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 12))
             .opacity(isEnabled ? 1 : 0.5)
         }
         .buttonStyle(.plain)
         .disabled(!isEnabled)
+        .accessibilityLabel(title)
+        .accessibilityHint(description)
     }
 }
 

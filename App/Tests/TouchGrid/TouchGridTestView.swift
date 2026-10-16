@@ -15,6 +15,7 @@ struct TouchGridTestView: View {
 
     @Environment(\.appLanguage) private var language
     @Environment(\.inspectionHasHinge) private var hasHinge
+    @AppStorage("touchTapMode") private var tapMode = false
     @State private var session: TouchGridSession?
     @State private var foldState: FoldState
     @State private var display: DisplayKind?
@@ -48,6 +49,7 @@ struct TouchGridTestView: View {
 
     var body: some View {
         GeometryReader { geometry in
+            let spec = displaySpec(in: geometry)
             ZStack {
                 Color.black
 
@@ -59,8 +61,9 @@ struct TouchGridTestView: View {
                     multiTouchLayer
                 }
             }
-            .onAppear { updateLayout(for: geometry.size) }
-            .onChange(of: geometry.size) { _, size in updateLayout(for: size) }
+            .onAppear { updateLayout(for: geometry.size, spec: spec) }
+            .onChange(of: geometry.size) { _, size in updateLayout(for: size, spec: spec) }
+            .onChange(of: spec) { _, spec in updateLayout(for: geometry.size, spec: spec) }
         }
         .ignoresSafeArea()
         .statusBarHidden()
@@ -72,8 +75,6 @@ struct TouchGridTestView: View {
             session?.resetCoverage()
             showMisses = false
         })
-        .onAppear { OrientationLock.lockCurrent() }
-        .onDisappear { OrientationLock.unlock() }
         .overlay {
             if showMissDialog {
                 missCard
@@ -110,6 +111,7 @@ struct TouchGridTestView: View {
                 Text(L10nKey.touchKeepTrying.text(in: language)).frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
+                .tint(InspectionStyle.buttonFill)
             .accessibilityIdentifier("touchGrid.keepTrying")
         }
         .padding(20)
@@ -137,6 +139,7 @@ struct TouchGridTestView: View {
                 }
             }
             TouchCaptureView(
+                tapsOnly: tapMode,
                 onStroke: { from, to in _ = session?.stroke(from: from, to: to) },
                 onTouchCount: { count in
                     currentTouches = count
@@ -147,6 +150,8 @@ struct TouchGridTestView: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(testID.localizedName(in: language, hasHinge: hasHinge)))
         .accessibilityValue(Text(accessibilityProgress))
+        .accessibilityHint(L10nKey.touchDirectTouch.text(in: language))
+        .accessibilityAddTraits(.allowsDirectInteraction)
         .accessibilityIdentifier("touchGrid.canvas")
     }
 
@@ -156,6 +161,11 @@ struct TouchGridTestView: View {
                 Text(progressText)
                     .monospacedDigit()
                     .accessibilityIdentifier("touchGrid.progress")
+                if tapMode {
+                    Text(L10nKey.touchTapMode.text(in: language))
+                        .font(.caption)
+                        .accessibilityIdentifier("touchGrid.tapMode")
+                }
                 if includeCreaseBand {
                     Text(L10nKey.touchBandHint.text(in: language))
                         .font(.caption2)
@@ -170,7 +180,7 @@ struct TouchGridTestView: View {
             } label: {
                 Text(L10nKey.testFinish.text(in: language))
                     .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
+                    .frame(minHeight: 44)
                     .background(session?.isComplete == true ? Color.green : Color.white.opacity(0.2), in: Capsule())
             }
             .accessibilityIdentifier("touchGrid.finish")
@@ -203,14 +213,29 @@ struct TouchGridTestView: View {
         return value
     }
 
-    private func updateLayout(for size: CGSize) {
-        guard size.width > 0, size.height > 0, size != canvasSize else { return }
+    private func displaySpec(in geometry: GeometryProxy) -> DisplaySpec {
+        guard includeCreaseBand else { return .standard }
+        #if FOLDCHECK_HINGE_API
+        if #available(iOS 27.1, *) {
+            let division = geometry.reservedRegions(kind: .division, options: .includeInactive).first?.frame
+            return .duoInner(canvasSize: geometry.size, divisionFrame: division)
+        }
+        #endif
+        return .duoInner(canvasSize: geometry.size)
+    }
+
+    private func updateLayout(for size: CGSize, spec: DisplaySpec) {
+        guard size.width > 0, size.height > 0 else { return }
         canvasSize = size
-        let layout = TouchGridLayout(size: size, spec: includeCreaseBand ? .duoInner : .standard, includeCreaseBand: includeCreaseBand)
+        let layout = TouchGridLayout(size: size, spec: spec, includeCreaseBand: includeCreaseBand)
         if session == nil {
             session = TouchGridSession(layout: layout)
         } else {
+            guard session?.layout != layout else { return }
             session?.relayout(layout)
+            showMisses = false
+            showMissDialog = false
+            missReason = nil
         }
     }
 
@@ -278,13 +303,17 @@ struct TouchGridTestView: View {
         case (let missed, nil):
             note = L10nKey.touchNoteMissed.text(in: language, count: missed, one: .touchNoteMissedOne)
         }
-        let result = session.result(
+        var result = session.result(
             id: testID,
             display: display,
             missReason: missReason,
             landscape: canvasSize.width > canvasSize.height,
             notes: note
         )
+        result.metrics[TestMetricKey.tapMode] = tapMode ? 1 : 0
+        if tapMode {
+            result.notes = [result.notes, L10nKey.touchTapNote.text(in: language)].filter { !$0.isEmpty }.joined(separator: "\n")
+        }
         onFinish(result)
     }
 }
@@ -294,23 +323,27 @@ struct TouchGridTestView: View {
 /// Multi-touch capture with coalesced touches, so fast swipes are sampled as finely as the
 /// hardware reports them. SwiftUI gestures only track one finger.
 struct TouchCaptureView: UIViewRepresentable {
+    var tapsOnly = false
     let onStroke: (CGPoint, CGPoint) -> Void
     let onTouchCount: (Int) -> Void
 
     func makeUIView(context: Context) -> TouchCaptureUIView {
         let view = TouchCaptureUIView()
+        view.tapsOnly = tapsOnly
         view.onStroke = onStroke
         view.onTouchCount = onTouchCount
         return view
     }
 
     func updateUIView(_ view: TouchCaptureUIView, context: Context) {
+        view.tapsOnly = tapsOnly
         view.onStroke = onStroke
         view.onTouchCount = onTouchCount
     }
 }
 
 final class TouchCaptureUIView: UIView {
+    var tapsOnly = false
     var onStroke: ((CGPoint, CGPoint) -> Void)?
     var onTouchCount: ((Int) -> Void)?
     private var lastLocations: [ObjectIdentifier: CGPoint] = [:]
@@ -335,6 +368,8 @@ final class TouchCaptureUIView: UIView {
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        // Assisted tapping only counts physical contact beginnings, never interpolated drags.
+        guard !tapsOnly else { reportCount(event); return }
         for touch in touches {
             let key = ObjectIdentifier(touch)
             let samples = event?.coalescedTouches(for: touch) ?? [touch]

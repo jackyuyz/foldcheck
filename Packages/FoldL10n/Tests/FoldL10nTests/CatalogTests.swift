@@ -91,4 +91,22 @@ struct CatalogTests {
         #expect(L10nKey.hingeReadings.text(in: .fr, count: 2, one: .hingeReadingsOne) == "2 mesures")
         #expect(L10nKey.hingeReadings.text(in: .ja, count: 1, one: .hingeReadingsOne) == "1 件の読み取り")
     }
+    @Test("Translated format placeholders match English")
+    func formatPlaceholders() throws {
+        let pattern = try NSRegularExpression(pattern: #"%(?:[0-9]+\$)?[-+ #0]*(?:[0-9]+)?(?:\.[0-9]+)?(?:hh|ll|[hlLzjt])?[@diuoxXfFeEgGcCsSpaA]"#)
+        func signature(_ text: String) -> [String] {
+            let cleaned = text.replacingOccurrences(of: "%%", with: "")
+            let range = NSRange(cleaned.startIndex..., in: cleaned)
+            return pattern.matches(in: cleaned, range: range).map { match in
+                String((cleaned as NSString).substring(with: match.range).last!)
+            }.sorted()
+        }
+        for key in L10nKey.allCases {
+            let expected = signature(key.text(in: .en))
+            for language in AppLanguage.allCases {
+                #expect(signature(key.text(in: language)) == expected, "\(key.rawValue) in \(language.rawValue)")
+            }
+        }
+    }
+
 }

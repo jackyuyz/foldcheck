@@ -14,15 +14,15 @@ final class StoreUITests: XCTestCase {
         tap(app.buttons["summary.createReport"])
         XCTAssertTrue(app.buttons["paywall.purchase"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["paywall.restore"].exists)
-        app.swipeDown(velocity: .fast)
+        tap(app.buttons["paywall.close"])
 
         tap(app.buttons["inspection.close"])
         tap(app.buttons["home.quick.foldStats"])
         XCTAssertTrue(app.buttons["paywall.purchase"].waitForExistence(timeout: 5))
-        app.swipeDown(velocity: .fast)
+        tap(app.buttons["paywall.close"])
 
         // The saved session stays on the device, behind the lock.
-        tap(app.tabBars.buttons["History"])
+        tap(app.buttons["History"].firstMatch)
         XCTAssertTrue(element(app, "history.locked").waitForExistence(timeout: 5))
         XCTAssertFalse(app.buttons["history.row"].exists)
         tap(app.buttons["history.unlock"])
@@ -36,7 +36,7 @@ final class StoreUITests: XCTestCase {
         finishScreenTest(app, save: true)
         tap(app.buttons["inspection.close"])
 
-        tap(app.tabBars.buttons["History"])
+        tap(app.buttons["History"].firstMatch)
         tap(app.buttons["history.compare"])
         let rows = app.buttons.matching(identifier: "history.row")
         XCTAssertGreaterThanOrEqual(rows.count, 2)

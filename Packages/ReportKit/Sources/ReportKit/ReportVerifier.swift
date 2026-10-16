@@ -66,15 +66,15 @@ public enum ReportVerification: Sendable, Equatable {
         case badSignature
     }
 
-    /// A PDF whose content matches its signature.
+    /// The embedded report data matches its signature; visible PDF pages are not checked.
     case valid(report: CanonicalReport, envelope: ReportEnvelope, signer: ReportSignerIdentity)
     /// A QR code whose signature is valid. The PDF content itself isn't checked.
     case signatureValid(envelope: ReportEnvelope, signer: ReportSignerIdentity)
     case invalid(Failure)
 }
 
-/// Offline verification of FoldCheck reports. Proves a report wasn't changed after the
-/// installation holding the key signed it; it says nothing about the device itself.
+/// Offline verification of embedded FoldCheck report data. Checks the bytes signed by the
+/// installation holding the key, not the entire PDF file, visible pages or device identity.
 public enum ReportVerifier {
     /// Verifies the embedded bytes against the envelope's hash and signature.
     /// - Parameter ownPublicKey: this installation's public key, to tell "this device" apart.

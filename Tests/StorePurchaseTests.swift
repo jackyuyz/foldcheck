@@ -16,6 +16,13 @@ final class StorePurchaseTests: XCTestCase {
         session.disableDialogs = true
     }
 
+    override func tearDown() async throws {
+        // Do not leave the restore test's purchase active for subsequent free-user UI tests.
+        session?.clearTransactions()
+        session = nil
+        try await super.tearDown()
+    }
+
     /// StoreKit's local test environment only serves apps installed for development. A
     /// command-line build signed "to run locally" isn't one (storekitd logs "not installed for
     /// development" and returns no products), so these tests skip there and run from Xcode
@@ -46,7 +53,13 @@ final class StorePurchaseTests: XCTestCase {
 
         let transaction = try XCTUnwrap(session.allTransactions().first)
         try session.refundTransaction(identifier: transaction.identifier)
-        await store.refreshEntitlements()
+        // SKTestSession can return before storekitd publishes the revoked entitlement.
+        // Poll the observable result with a bound while the launch listener also refreshes it.
+        for _ in 0..<50 {
+            await store.refreshEntitlements()
+            if !store.hasReports { break }
+            try await Task.sleep(for: .milliseconds(100))
+        }
         XCTAssertFalse(store.hasReports)
     }
 

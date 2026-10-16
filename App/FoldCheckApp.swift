@@ -16,6 +16,16 @@ struct FoldCheckApp: App {
     @State private var foldCounter = FoldCounterModel()
     @State private var store = Store()
     private let sessionContainer = Self.makeSessionContainer()
+    private let viewPreferences: UserDefaults = {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-ScreenshotFixtures") {
+            let defaults = UserDefaults(suiteName: "foldcheck.review")!
+            defaults.set(false, forKey: "touchTapMode")
+            return defaults
+        }
+        #endif
+        return .standard
+    }()
     
     init() {
         // Assigning a @State property inside init is ignored; seed its initial value instead.
@@ -25,6 +35,7 @@ struct FoldCheckApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .defaultAppStorage(viewPreferences)
                 .environment(\.foldStateProvider, currentProvider)
                 .environment(settings)
                 .environment(foldCounter)
@@ -35,6 +46,7 @@ struct FoldCheckApp: App {
                     guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else { return }
                     await store.start()
                 }
+                .tint(InspectionStyle.tint)
                 .environment(\.appLanguage, settings.appLanguage)
                 .environment(\.reportLanguage, settings.reportLanguage)
                 .modifier(HingeBridgeModifier(provider: foldStateProvider))
@@ -73,6 +85,14 @@ struct FoldCheckApp: App {
     /// Saved sessions (spec §Persistence) stay on this device: Application Support/Sessions.store,
     /// outside the shared app group and with no CloudKit database, so nothing is synced or uploaded.
     private static func makeSessionContainer() -> ModelContainer {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-ScreenshotFixtures") {
+            let configuration = ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
+            let container = try! ModelContainer(for: StoredSession.self, configurations: configuration)
+            try! ScreenshotFixtures.populate(container)
+            return container
+        }
+        #endif
         let configuration = ModelConfiguration("Sessions", groupContainer: .none, cloudKitDatabase: .none)
         do {
             return try ModelContainer(for: StoredSession.self, configurations: configuration)

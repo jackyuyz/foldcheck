@@ -162,7 +162,7 @@ final class DisplayTouchUITests: XCTestCase {
 
     private func launch(foldMock: String) -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments = ["-UITestMode", "1", "-FoldMock", foldMock]
+        app.launchArguments = ["-UITestMode", "1", "-FoldMock", foldMock, "-touchTapMode", "NO"]
         app.launch()
         return app
     }

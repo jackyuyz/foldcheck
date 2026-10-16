@@ -85,7 +85,7 @@ struct TestResultReviewView: View {
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(.tint, in: RoundedRectangle(cornerRadius: 12))
+                        .background(InspectionStyle.buttonFill, in: RoundedRectangle(cornerRadius: 12))
                         .foregroundStyle(.white)
                 }
                 .accessibilityIdentifier("result.continue")

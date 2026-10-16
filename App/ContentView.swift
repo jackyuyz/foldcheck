@@ -26,6 +26,7 @@ struct ContentView: View {
         TabView(selection: $selectedTab) {
             NavigationStack {
                 HomeView()
+                    .hingeAngleAccessory(state: foldState, onRunHingeCheck: runHingeCheck)
             }
             .tabItem {
                 Label(L10nKey.tabHome.text(in: language), systemImage: "house.fill")
@@ -34,6 +35,7 @@ struct ContentView: View {
             
             NavigationStack {
                 HistoryView()
+                    .hingeAngleAccessory(state: foldState, onRunHingeCheck: runHingeCheck)
             }
             .tabItem {
                 Label(L10nKey.tabHistory.text(in: language), systemImage: "clock.fill")
@@ -42,6 +44,7 @@ struct ContentView: View {
             
             NavigationStack {
                 VerifyView()
+                    .hingeAngleAccessory(state: foldState, onRunHingeCheck: runHingeCheck)
             }
             .tabItem {
                 Label(L10nKey.tabVerify.text(in: language), systemImage: "qrcode.viewfinder")
@@ -50,14 +53,12 @@ struct ContentView: View {
             
             NavigationStack {
                 SettingsView()
+                    .hingeAngleAccessory(state: foldState, onRunHingeCheck: runHingeCheck)
             }
             .tabItem {
                 Label(L10nKey.tabSettings.text(in: language), systemImage: "gear")
             }
             .tag(Tab.settings)
-        }
-        .hingeAngleAccessory(state: foldState) {
-            hingeCheckRequest = .current(tests: [.hingeSweep], foldState: foldStateProvider.state)
         }
         .observeFoldState($foldState)
         .fullScreenCover(item: $hingeCheckRequest) { request in
@@ -84,6 +85,11 @@ struct ContentView: View {
             }
         }
     }
+
+    private func runHingeCheck() {
+        hingeCheckRequest = .current(tests: [.hingeSweep], foldState: foldStateProvider.state)
+    }
+
 }
 
 // MARK: - Debug Overlay

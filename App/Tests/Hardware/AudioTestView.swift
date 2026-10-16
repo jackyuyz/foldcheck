@@ -199,6 +199,7 @@ struct AudioTestView: View {
 
 /// Horizontal bar for the microphone level, 0…1.
 private struct LevelMeter: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let level: Double
 
     var body: some View {
@@ -208,7 +209,7 @@ private struct LevelMeter: View {
                 Capsule()
                     .fill(.green)
                     .frame(width: geometry.size.width * min(max(level, 0), 1))
-                    .animation(.linear(duration: 0.05), value: level)
+                    .animation(reduceMotion ? nil : .linear(duration: 0.05), value: level)
             }
         }
     }

@@ -2,6 +2,15 @@ import Foundation
 
 /// Stable localization key. English is the fallback.
 public enum L10nKey: String, CaseIterable, Sendable, Hashable {
+    case homeLocal = "home.local"
+    case settingsAccessibility = "settings.accessibility"
+    case touchTapMode = "touch.tapMode"
+    case touchTapInstructions = "touch.tapInstructions"
+    case touchTapNote = "touch.tapNote"
+    case touchDirectTouch = "touch.directTouch"
+    case testSightedSkip = "test.sightedSkip"
+    case testSightedReason = "test.sightedReason"
+    case testMoveBar = "test.moveBar"
     case angleTitle = "angle.title"
     case audioChannelLeft = "audio.channelLeft"
     case audioChannelRight = "audio.channelRight"

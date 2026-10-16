@@ -11,6 +11,7 @@ struct HistoryView: View {
     @Query(StoredSession.newestFirst) private var records: [StoredSession]
     @Environment(Store.self) private var store
     @State private var selectedSessions: Set<UUID> = []
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isComparing = false
     @State private var sheet: HistorySheet?
 
@@ -72,7 +73,7 @@ struct HistoryView: View {
             if store.hasReports && sessions.count >= 2 {
                 ToolbarItem(placement: .primaryAction) {
                     Button(isComparing ? L10nKey.historyDone.text(in: language) : L10nKey.historyCompare.text(in: language)) {
-                        withAnimation {
+                        withAnimation(reduceMotion ? nil : .default) {
                             isComparing.toggle()
                             if !isComparing {
                                 selectedSessions.removeAll()
@@ -102,6 +103,7 @@ struct HistoryView: View {
         } actions: {
             Button(L10nKey.historyUnlock.text(in: language)) { sheet = .paywall }
                 .buttonStyle(.borderedProminent)
+                .tint(InspectionStyle.buttonFill)
                 .accessibilityIdentifier("history.unlock")
         }
     }
@@ -142,7 +144,7 @@ struct HistoryView: View {
                 .font(.headline)
                 .frame(maxWidth: .infinity)
                 .padding()
-                .background(.tint, in: RoundedRectangle(cornerRadius: 12))
+                .background(InspectionStyle.buttonFill, in: RoundedRectangle(cornerRadius: 12))
                 .foregroundStyle(.white)
         }
         .accessibilityIdentifier("history.compareSelected")

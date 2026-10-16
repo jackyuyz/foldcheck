@@ -42,12 +42,12 @@ struct CreaseTestView: View {
                 Button(action: onCancel) {
                     Image(systemName: "xmark")
                         .font(.headline)
-                        .frame(width: 36, height: 36)
+                        .frame(width: 44, height: 44)
                         .background(.regularMaterial, in: Circle())
                 }
                 .padding(.leading, 16)
                 .padding(.top, 8)
-                .accessibilityLabel(Text(verbatim: "Cancel"))
+                .accessibilityLabel(Text(L10nKey.inspectionCancel.text(in: language)))
                 .accessibilityIdentifier("test.cancel")
             }
         }
@@ -129,6 +129,7 @@ struct CreaseTestView: View {
                         .padding(.vertical, 10)
                 }
                 .buttonStyle(.borderedProminent)
+                .tint(InspectionStyle.buttonFill)
                 .tint(Color(red: 0.055, green: 0.478, blue: 0.271))
                 .disabled(!session.canAdvance)
                 .accessibilityIdentifier("crease.next")

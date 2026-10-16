@@ -45,6 +45,24 @@ public struct DisplaySpec: Codable, Sendable, Equatable {
     public static let standard = DisplaySpec()
 
     /// The Duo's inner display: fold through the middle, dense cells within ±10 mm.
-    /// Assumed geometry until `reservedRegions(kind: .division)` can be read on device.
+    /// Default book-style geometry; use `duoInner(canvasSize:divisionFrame:)` for a live canvas.
     public static let duoInner = DisplaySpec(crease: Crease())
+
+    /// Resolve the physical fold in canvas coordinates, including inactive regions on a flat
+    /// inner display. Before the system supplies a region, Duo's portrait canvas has a
+    /// horizontal fold and its landscape canvas has a vertical fold.
+    public static func duoInner(canvasSize: CGSize, divisionFrame: CGRect? = nil) -> DisplaySpec {
+        var crease = Crease(axis: canvasSize.width >= canvasSize.height ? .vertical : .horizontal)
+        if let frame = divisionFrame,
+           !frame.isNull, !frame.isInfinite, frame.width != frame.height,
+           canvasSize.width > 0, canvasSize.height > 0,
+           frame.midX >= 0, frame.midX <= canvasSize.width,
+           frame.midY >= 0, frame.midY <= canvasSize.height {
+            crease.axis = frame.width > frame.height ? .horizontal : .vertical
+            crease.position = crease.axis == .vertical
+                ? Double(frame.midX / canvasSize.width)
+                : Double(frame.midY / canvasSize.height)
+        }
+        return DisplaySpec(crease: crease)
+    }
 }
