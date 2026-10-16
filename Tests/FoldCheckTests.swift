@@ -19,12 +19,14 @@ final class FoldCheckTests: XCTestCase {
     func testInspectionRequestUsesFoldStateForApplicability() {
         let noHinge = InspectionRequest.current(foldState: .noHinge)
         XCTAssertFalse(noHinge.context.hasHinge)
+        // Touch ID is planned only where the device (here, the simulator) reports Touch ID.
+        let hardware: [TestID] = [.cameras, .audio] + (noHinge.context.hasTouchID ? [.touchID] : []) + [.sensors, .buttons]
         let plan = InspectionPlan(tests: noHinge.tests, context: noHinge.context, implemented: InspectionTestRegistry.implemented)
-        XCTAssertEqual(plan.runnable, [.touchGridOuter, .pixels])
+        XCTAssertEqual(plan.runnable, [.touchGridOuter, .pixels] + hardware)
 
         let open = InspectionRequest.current(foldState: FoldState(posture: .fullyOpen, angleDegrees: 180))
         let duoPlan = InspectionPlan(tests: open.tests, context: open.context, implemented: InspectionTestRegistry.implemented)
-        XCTAssertEqual(duoPlan.runnable, [.touchGridOuter, .touchGridInner, .pixels, .crease, .hingeSweep])
+        XCTAssertEqual(duoPlan.runnable, [.touchGridOuter, .touchGridInner, .pixels, .crease, .hingeSweep] + hardware)
     }
 
     func testMetricsFormatterForTouchGrid() {

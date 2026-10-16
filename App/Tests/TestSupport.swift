@@ -10,7 +10,7 @@ import ReportKit
 /// Which tests this build has real screens for. Everything else is recorded as Skipped
 /// ("not available in this version yet") instead of pretending to run.
 enum InspectionTestRegistry {
-    static let implemented: Set<TestID> = [.touchGridOuter, .touchGridInner, .pixels, .crease, .hingeSweep]
+    static let implemented: Set<TestID> = Set(TestID.allCases)
 }
 
 // MARK: - Device info
@@ -54,7 +54,8 @@ enum DeviceInfo {
         DeviceContext(
             foldState: foldState,
             modelIdentifier: modelIdentifier,
-            osVersion: osVersion
+            osVersion: osVersion,
+            biometricType: biometricType
         )
     }
 }
@@ -334,7 +335,43 @@ enum ResultMetricsFormatter {
             if m[TestMetricKey.photoAttached] == 1 {
                 lines.append(Line(label: L10nKey.metricPhoto.text(in: language), value: "✓"))
             }
-        default:
+        case .cameras:
+            if let available = m[TestMetricKey.camerasAvailable], available > 0 {
+                let working = (0..<Int(available)).filter { m[TestMetricKey.cameraOK($0)] == 1 }.count
+                let tested = Int(m[TestMetricKey.camerasTested] ?? 0)
+                lines.append(Line(label: L10nKey.metricCamerasWorking.text(in: language), value: "\(working) / \(tested)"))
+            }
+        case .audio:
+            let speakers = [TestMetricKey.speakerLeftConfirmed, TestMetricKey.speakerRightConfirmed].compactMap { m[$0] }
+            if !speakers.isEmpty {
+                lines.append(Line(
+                    label: L10nKey.metricSpeakersHeard.text(in: language),
+                    value: "\(speakers.filter { $0 == 1 }.count) / \(speakers.count)"
+                ))
+            }
+            if let peak = m[TestMetricKey.micPeakLevel] {
+                lines.append(Line(label: L10nKey.metricMicPeak.text(in: language), value: "\(Int(peak.rounded())) dB"))
+            }
+            if let heard = m[TestMetricKey.micPlaybackConfirmed] {
+                lines.append(Line(label: L10nKey.metricPlaybackHeard.text(in: language), value: heard == 1 ? "✓" : "✗"))
+            }
+        case .sensors:
+            for part in SensorPart.allCases {
+                guard let ok = m[TestMetricKey.sensorOK(part)] else { continue }
+                lines.append(Line(label: part.localizedName(in: language), value: ok == 1 ? "✓" : "✗"))
+            }
+        case .buttons:
+            if let up = m[TestMetricKey.volumeUpDetected] {
+                lines.append(Line(label: L10nKey.buttonsVolumeUp.text(in: language), value: up == 1 ? "✓" : "✗"))
+            }
+            if let down = m[TestMetricKey.volumeDownDetected] {
+                lines.append(Line(label: L10nKey.buttonsVolumeDown.text(in: language), value: down == 1 ? "✓" : "✗"))
+            }
+            for button in PhysicalButton.allCases {
+                guard let works = m[TestMetricKey.buttonWorks(button)] else { continue }
+                lines.append(Line(label: button.localizedName(in: language), value: works == 1 ? "✓" : "✗"))
+            }
+        case .touchID:
             break
         }
         return lines

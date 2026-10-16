@@ -196,10 +196,19 @@ Unit tests pass on Linux:
 - F5 fold counter: closed→open cycles and time per display, debounced, counted only while FoldCheck is in the foreground, shown as "Folds observed by FoldCheck"; all-time totals saved locally (AC7)
 - The real hinge bridge (`onHingeChange`) compiles only with the iOS 27.1+ SDK (`FOLDCHECK_HINGE_API`, set in project.yml) and runs only on iOS 27.1+
 
-### M4-M7: Pending
-- Hardware tests (M4)
+### M4: Hardware tests ✅
+- T5 cameras: every camera from `AVCaptureDevice.DiscoverySession` is previewed in turn; Capture keeps only brightness and sharpness from a downsampled luma frame (no image stored) and the user says whether the picture looks right. No frame → Fail; no cameras (the simulator) → Unavailable
+- T6 audio: a generated tone in the left channel, then the right, then a 3 s recording with a level meter played back; each confirmed by the user. The recording is a temporary file deleted when the test ends
+- T7 Touch ID: one `LAContext` match. Only planned on devices that report Touch ID, so Face ID iPhones show it as Not applicable and no Face ID usage string is needed. Not enrolled or locked out → Attention; no match → Fail
+- T8 sensors and haptics: accelerometer (≈1 g) and gyroscope (a visible turn) over 4 s, the proximity sensor, and three haptic taps the user confirms. Parts the device doesn't offer are Unavailable, never Fail
+- T9 buttons: volume up and down detected through `AVAudioSession.outputVolume`; the side button, Action button and Camera Control can't be observed, so the user checks them off
+- Camera or microphone access off → that test is Skipped with the reason and a Settings link (AC6)
+- Pass/Attention/Fail rules live in TestsKit (`CameraTestSession`, `AudioTestSession`, `BiometricCheck`, `SensorsTestSession`, `ButtonsTestSession`); screens in `App/Tests/Hardware/`
+- Audio, Touch ID matches and real camera frames need a device; the simulator UI tests cover the no-camera, no-sensor and buttons paths
+
+### M5-M7: Pending
 - PDF reports with signing (M5)
-- History, reminders, Store (M6)
+- History compare, reminders, Store (M6). Saving history locally is in place
 - Polish (M7). In-app language switching is in place; remaining work is visual polish.
 
 

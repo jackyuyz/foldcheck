@@ -15,9 +15,11 @@ public extension DisplayKind {
 }
 
 public extension TestID {
-    /// Whether the test can run on this device. Hinge tests are N/A without a hinge.
+    /// Whether the test can run on this device. Hinge tests are N/A without a hinge, and the
+    /// Touch ID test is N/A on a device without Touch ID (Face ID iPhones).
     func isApplicable(_ context: DeviceContext) -> Bool {
-        !requiresHinge || context.hasHinge
+        if self == .touchID { return context.hasTouchID }
+        return !requiresHinge || context.hasHinge
     }
 
     /// The display this test is meant to run on, on a Duo.

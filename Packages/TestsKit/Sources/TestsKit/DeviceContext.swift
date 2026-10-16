@@ -46,6 +46,11 @@ public struct DeviceContext: Sendable {
     public var hasHinge: Bool {
         foldState.hasHinge
     }
+
+    /// Whether the device reports Touch ID (enrolled or not).
+    public var hasTouchID: Bool {
+        biometricType == "touchID"
+    }
     
     /// Create a mock context for testing
     public static func mock(hasHinge: Bool = false) -> DeviceContext {

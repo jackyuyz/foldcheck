@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 import FoldKit
 import FoldL10n
 import TestsKit
@@ -151,7 +152,7 @@ struct InspectionFlowView: View {
         // Full inspections go to History on their own; quick tests wait for "Save to History".
         // The summary's button shows "Saved" either way, and saving again only updates the copy.
         if isFullInspection {
-            try? SessionLibrary(context: modelContext).save(session, isFullInspection: true)
+            _ = try? SessionLibrary(context: modelContext).save(session, isFullInspection: true)
         }
         onFinished(session)
     }
@@ -274,9 +275,16 @@ struct TestContainerView: View {
             CreaseTestView(initialFoldState: foldState, onFinish: finish, onCancel: cancel)
         case .hingeSweep:
             HingeSweepTestView(initialFoldState: foldState, onFinish: finish, onCancel: cancel)
-        default:
-            // Not reachable: the plan only steps through implemented tests.
-            Color.clear.onAppear(perform: cancel)
+        case .cameras:
+            CameraTestView(initialFoldState: foldState, onFinish: finish, onCancel: cancel)
+        case .audio:
+            AudioTestView(initialFoldState: foldState, onFinish: finish, onCancel: cancel)
+        case .touchID:
+            TouchIDTestView(initialFoldState: foldState, onFinish: finish, onCancel: cancel)
+        case .sensors:
+            SensorsTestView(initialFoldState: foldState, onFinish: finish, onCancel: cancel)
+        case .buttons:
+            ButtonsTestView(initialFoldState: foldState, onFinish: finish, onCancel: cancel)
         }
     }
 
@@ -294,6 +302,7 @@ struct TestContainerView: View {
         switch testID {
         case .touchGridOuter, .touchGridInner: return L10nKey.touchInstructions.text(in: language)
         case .pixels: return L10nKey.pixelsInstructions.text(in: language) + "\n\n" + L10nKey.pixelsTip.text(in: language)
+        case .audio: return L10nKey.audioTip.text(in: language)
         default: return nil
         }
     }

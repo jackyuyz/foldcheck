@@ -156,26 +156,29 @@ public enum TestMetricKey {
     /// 1 when any angle came from the on-screen slider instead of the hinge.
     public static let manualInput = "manualInput"
     
-    // Cameras
+    // Cameras (n is the camera's position in the discovery order)
     public static let camerasAvailable = "camerasAvailable"
     public static let camerasTested = "camerasTested"
-    public static let sharpnessScore = "sharpnessScore"
-    
+    /// 1 when the picture looked right, 0 when it looked wrong or no frame arrived.
+    public static func cameraOK(_ n: Int) -> String { "camera\(n).ok" }
+    public static func cameraBrightness(_ n: Int) -> String { "camera\(n).brightness" }
+    public static func cameraSharpness(_ n: Int) -> String { "camera\(n).sharpness" }
+
     // Audio
     public static let speakerLeftConfirmed = "speakerLeftConfirmed"
     public static let speakerRightConfirmed = "speakerRightConfirmed"
+    /// Loudest level during the recording, dBFS.
     public static let micPeakLevel = "micPeakLevel"
-    
+    public static let micPlaybackConfirmed = "micPlaybackConfirmed"
+
     // TouchID
     public static let biometryAvailable = "biometryAvailable"
-    public static let biometryType = "biometryType"
-    
-    // Sensors
-    public static let accelerometerOK = "accelerometerOK"
-    public static let gyroscopeOK = "gyroscopeOK"
-    public static let hapticConfirmed = "hapticConfirmed"
-    
+
+    // Sensors: 1 OK, 0 not confirmed or faulty; missing when unavailable
+    public static func sensorOK(_ part: SensorPart) -> String { "\(part.rawValue)OK" }
+
     // Buttons
     public static let volumeUpDetected = "volumeUpDetected"
     public static let volumeDownDetected = "volumeDownDetected"
+    public static func buttonWorks(_ button: PhysicalButton) -> String { "\(button.rawValue)ButtonWorks" }
 }

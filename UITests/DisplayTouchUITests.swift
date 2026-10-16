@@ -99,16 +99,20 @@ final class DisplayTouchUITests: XCTestCase {
     func testFullInspectionWithoutHinge() throws {
         let app = launch(foldMock: "nohinge")
         tap(app.buttons["home.start"])
-        XCTAssertTrue(app.staticTexts["Test 1 of 2"].waitForExistence(timeout: 5))
+        // Outer grid, pixels, cameras, audio, sensors, buttons. Touch ID is N/A on a Face ID iPhone.
+        XCTAssertTrue(app.staticTexts["Test 1 of 6"].waitForExistence(timeout: 5))
 
         tap(app.buttons["test.skip"])
-        XCTAssertTrue(app.staticTexts["Test 2 of 2"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Test 2 of 6"].waitForExistence(timeout: 5))
         tap(app.buttons["test.start"])
         for _ in 0..<6 {
             tap(app.buttons["pixels.next"])
         }
         XCTAssertEqual(element(app, "result.outcome").label, "Pass")
         tap(app.buttons["result.continue"])
+        for _ in 0..<4 {
+            tap(app.buttons["test.skip"])
+        }
 
         XCTAssertTrue(element(app, "summary.device").waitForExistence(timeout: 5))
         XCTAssertTrue(element(app, "summary.device").label.contains("iPhone"))
@@ -118,6 +122,7 @@ final class DisplayTouchUITests: XCTestCase {
         assertRow(app, "crease", contains: "Not Applicable")
         assertRow(app, "hingeSweep", contains: "Not Applicable")
         assertRow(app, "cameras", contains: "Skipped")
+        assertRow(app, "touchID", contains: "Not Applicable")
     }
 
     // MARK: T3
@@ -125,14 +130,14 @@ final class DisplayTouchUITests: XCTestCase {
     func testCreaseVisibilityOnOpenDuo() throws {
         let app = launch(foldMock: "open")
         tap(app.buttons["home.start"])
-        XCTAssertTrue(app.staticTexts["Test 1 of 5"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Test 1 of 9"].waitForExistence(timeout: 5))
         // The outer-display grid asks an open Duo to close first.
         XCTAssertTrue(element(app, "test.foldPrompt").waitForExistence(timeout: 5))
 
         for _ in 0..<3 {
             tap(app.buttons["test.skip"])
         }
-        XCTAssertTrue(app.staticTexts["Test 4 of 5"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Test 4 of 9"].waitForExistence(timeout: 5))
         tap(app.buttons["test.start"])
 
         for rating in [2, 1, 3] {
@@ -143,9 +148,11 @@ final class DisplayTouchUITests: XCTestCase {
         XCTAssertEqual(element(app, "result.outcome").label, "Pass")
         XCTAssertTrue(app.staticTexts["2 / 5 (max 3)"].exists)
         tap(app.buttons["result.continue"])
-        // Test 5 is the hinge sweep.
-        XCTAssertTrue(app.staticTexts["Test 5 of 5"].waitForExistence(timeout: 5))
-        tap(app.buttons["test.skip"])
+        // Test 5 is the hinge sweep, then the four hardware tests.
+        XCTAssertTrue(app.staticTexts["Test 5 of 9"].waitForExistence(timeout: 5))
+        for _ in 0..<5 {
+            tap(app.buttons["test.skip"])
+        }
 
         assertRow(app, "crease", contains: "Pass")
         assertRow(app, "hingeSweep", contains: "Skipped")
