@@ -17,7 +17,9 @@ public struct HingeSweepReport: Codable, Sendable, Equatable {
     /// Jitter observed while the device was at rest (standard deviation in degrees)
     public var restJitterDegrees: Double
     
-    /// Estimated sample rate (Hz)
+    /// Estimated sample rate while the hinge was moving (Hz). Gaps longer than
+    /// `HingeSampleCollection.idleIntervalThreshold` are left out: the hinge feed only reports
+    /// changes, so time spent still says nothing about the rate.
     public var estimatedHz: Double
     
     /// Fraction of the angle travel (degrees moved) that went in the direction of the sweep's
@@ -30,7 +32,7 @@ public struct HingeSweepReport: Codable, Sendable, Equatable {
     /// Total samples collected
     public var sampleCount: Int
     
-    /// Duration of the sweep in seconds
+    /// Duration of the sweeps in seconds, first to last reading of each, idle time included
     public var durationSeconds: Double
 
     /// Number of direction legs found (a guided "close, then open" sweep has 2).

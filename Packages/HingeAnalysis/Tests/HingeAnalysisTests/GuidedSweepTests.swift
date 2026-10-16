@@ -153,6 +153,20 @@ struct GuidedSweepTests {
         #expect(shaky.assessQuality() == .attention)
     }
 
+    @Test("Waiting before the first movement doesn't drag the rate to 0 Hz")
+    func idleLeadIn() {
+        // The real hinge feed reports changes only: the seeded starting reading, then nothing
+        // until the user moves ~14 minutes later.
+        var sweep = HingeSampleCollection(samples: [HingeSample(degrees: 180, status: .fullyOpen, t: 0)])
+        for sample in cleanSweep.samples {
+            sweep.append(HingeSample(degrees: sample.degrees, status: sample.status, t: 840 + sample.t))
+        }
+        let report = analyzer.analyze(sweeps: [sweep, cleanSweep], hold: Self.hold(at: 90))
+        #expect(report.durationSeconds > 840)
+        #expect(abs(report.estimatedHz - 30) < 0.01)
+        #expect(report.assessQuality() == .pass)
+    }
+
     @Test("Legs are split with hysteresis")
     func legs() {
         let angles: [Double] = [180, 150, 100, 50, 20, 22, 21, 60, 120, 180]

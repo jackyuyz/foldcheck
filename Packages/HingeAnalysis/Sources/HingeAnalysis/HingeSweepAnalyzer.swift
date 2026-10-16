@@ -8,7 +8,7 @@ import FoldKit
 /// - Gaps in angle coverage
 /// - Jitter at rest
 /// - Status transitions
-/// - Sample rate adequacy
+/// - Sample rate adequacy (readings per 10° of travel)
 public struct HingeSweepAnalyzer: Sendable {
     
     /// Minimum samples required per 10° of sweep for adequate coverage
@@ -71,6 +71,12 @@ public struct HingeSweepAnalyzer: Sendable {
         let agreeingTravel = analyzed.reduce(0) { $0 + $1.agreeingTravel }
         let intervals = analyzed.reduce(0) { $0 + max($1.count - 1, 0) }
         let duration = analyzed.reduce(0) { $0 + $1.duration }
+        // Rate while moving, as in `HingeSampleCollection.estimatedSampleRate`.
+        let activeIntervals = analyzed.reduce(0) { $0 + $1.activeIntervals.count }
+        let activeDuration = analyzed.reduce(0) { $0 + $1.activeIntervals.duration }
+        let estimatedHz = activeDuration > 0
+            ? Double(activeIntervals) / activeDuration
+            : (duration > 0 ? Double(intervals) / duration : 0)
 
         var statusSequence: [FoldPosture] = []
         for status in analyzed.flatMap(\.statusSequence) where statusSequence.last != status {
@@ -94,7 +100,7 @@ public struct HingeSweepAnalyzer: Sendable {
             observedMax: analyzed.map(\.max).max() ?? 0,
             maxGapDegrees: analyzed.map(\.maxGap).max() ?? 0,
             restJitterDegrees: restJitter,
-            estimatedHz: duration > 0 ? Double(intervals) / duration : 0,
+            estimatedHz: estimatedHz,
             monotonicFraction: totalTravel == 0 ? 1.0 : agreeingTravel / totalTravel,
             statusSequence: statusSequence,
             sampleCount: analyzed.reduce(0) { $0 + $1.count },
@@ -147,6 +153,7 @@ public struct HingeSweepAnalyzer: Sendable {
     private struct SweepStats {
         var count: Int
         var duration: TimeInterval
+        var activeIntervals: (count: Int, duration: TimeInterval)
         var min: Double
         var max: Double
         var maxGap: Double
@@ -164,6 +171,7 @@ public struct HingeSweepAnalyzer: Sendable {
             let angles = samples.map(\.degrees)
             count = samples.count
             duration = collection.duration
+            activeIntervals = collection.activeIntervals
             min = angles.min() ?? 0
             max = angles.max() ?? 0
 

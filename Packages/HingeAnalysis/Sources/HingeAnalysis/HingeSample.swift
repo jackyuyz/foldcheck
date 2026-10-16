@@ -40,10 +40,36 @@ public struct HingeSampleCollection: Sendable, Equatable {
         return last.t - first.t
     }
     
-    /// Estimated sample rate in Hz
+    /// Gaps between consecutive readings longer than this are the hinge sitting still, not
+    /// the reading rate (seconds).
+    public static let idleIntervalThreshold: TimeInterval = 1.0
+
+    /// Intervals between consecutive readings of at most `idleIntervalThreshold`, and their
+    /// total length.
+    public var activeIntervals: (count: Int, duration: TimeInterval) {
+        var count = 0
+        var total: TimeInterval = 0
+        for i in samples.indices.dropFirst() {
+            let dt = samples[i].t - samples[i - 1].t
+            guard dt <= Self.idleIntervalThreshold else { continue }
+            count += 1
+            total += dt
+        }
+        return (count, total)
+    }
+
+    /// Estimated sample rate in Hz while the hinge is moving.
+    ///
+    /// The hinge feed is event-driven: it only delivers a reading when the angle changes, so a
+    /// hinge left still for minutes would dilute count / duration towards 0 Hz. Idle gaps are
+    /// left out instead. This uses count / duration over the active intervals rather than the
+    /// median interval, which bursts of near-simultaneous readings could pull towards 0 s.
+    /// Falls back to the plain average when every interval is idle.
     public var estimatedSampleRate: Double {
         guard samples.count > 1, duration > 0 else { return 0 }
-        return Double(samples.count - 1) / duration
+        let active = activeIntervals
+        guard active.duration > 0 else { return Double(samples.count - 1) / duration }
+        return Double(active.count) / active.duration
     }
     
     /// Minimum angle observed

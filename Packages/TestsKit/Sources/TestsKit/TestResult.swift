@@ -9,7 +9,7 @@ public enum DisplayKind: String, Codable, Sendable, Equatable {
 
 /// One point of a chart series stored with a result (e.g. hinge angle over time).
 public struct TestSeriesPoint: Codable, Sendable, Equatable {
-    /// Seconds since the series started.
+    /// Seconds since the segment started (each segment starts at 0).
     public var t: Double
     public var value: Double
     /// Which part of the test the point belongs to (e.g. sweep 1, sweep 2, hold).

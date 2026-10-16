@@ -72,7 +72,48 @@ struct HingeSampleCollectionTests {
             collection.append(HingeSample(degrees: degrees, status: .partiallyOpen, t: t))
         }
         
-        #expect(collection.estimatedSampleRate == 30.0)
+        #expect(abs(collection.estimatedSampleRate - 30.0) < 0.001)
+    }
+
+    @Test("Idle time before moving doesn't dilute the sample rate")
+    func testSampleRateIgnoresIdleLeadIn() {
+        var collection = HingeSampleCollection()
+        // The starting reading, then ~14 minutes still (the feed only reports changes),
+        // then 300 readings at 30 Hz while the hinge moves.
+        collection.append(HingeSample(degrees: 180, status: .fullyOpen, t: 0))
+        for i in 0..<300 {
+            let degrees = 180 - Double(i) * 0.5
+            collection.append(HingeSample(degrees: degrees, status: .partiallyOpen, t: 840 + Double(i) / 30.0))
+        }
+
+        #expect(collection.duration > 840)
+        #expect(collection.activeIntervals.count == 299)
+        #expect(abs(collection.estimatedSampleRate - 30.0) < 0.001)
+    }
+
+    @Test("Pauses mid-sweep don't dilute the sample rate")
+    func testSampleRateIgnoresPauses() {
+        var collection = HingeSampleCollection()
+        var t = 0.0
+        for burst in 0..<3 {
+            for i in 0..<20 {
+                collection.append(HingeSample(degrees: Double(burst * 20 + i), status: .partiallyOpen, t: t))
+                t += i == 19 ? 30 : 0.05
+            }
+        }
+
+        #expect(abs(collection.estimatedSampleRate - 20.0) < 0.001)
+    }
+
+    @Test("Sample rate falls back to the plain average when every gap is idle")
+    func testSampleRateAllIdle() {
+        var collection = HingeSampleCollection()
+        collection.append(HingeSample(degrees: 90, status: .partiallyOpen, t: 0))
+        collection.append(HingeSample(degrees: 95, status: .partiallyOpen, t: 5))
+        collection.append(HingeSample(degrees: 100, status: .partiallyOpen, t: 10))
+
+        #expect(collection.activeIntervals.count == 0)
+        #expect(collection.estimatedSampleRate == 0.2)
     }
     
     @Test("Collection tracks min/max angles")

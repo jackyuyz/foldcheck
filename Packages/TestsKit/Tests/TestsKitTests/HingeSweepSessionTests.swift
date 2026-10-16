@@ -1,6 +1,7 @@
 import Testing
 import Foundation
 @testable import TestsKit
+import HingeAnalysis
 
 @Suite("Hinge sweep session (T4)")
 struct HingeSweepSessionTests {
@@ -87,6 +88,49 @@ struct HingeSweepSessionTests {
         let sweep1 = result.series.filter { $0.segment == 0 }.map(\.value)
         #expect(sweep1.min() == 20)
         #expect(sweep1.last == 180)
+    }
+
+    @Test("Waiting before moving: non-zero rate, and each step charted from its first movement")
+    func idleLeadIn() {
+        var session = HingeSweepSession()
+        // The feed only reports changes: the seeded starting angle, then nothing for 14 minutes.
+        session.beginStep(at: t0, current: FoldState(posture: .fullyOpen, angleDegrees: 180))
+        feedSweep(&session, start: 840)
+        session.advance()
+        session.beginStep(at: t0.addingTimeInterval(900), current: FoldState(posture: .fullyOpen, angleDegrees: 180))
+        feedSweep(&session, start: 905)
+        session.advance()
+        session.beginStep(at: t0.addingTimeInterval(950), current: nil)
+        feedHold(&session, start: 950)
+        session.advance()
+
+        let result = session.result(display: .inner)
+        #expect(result.outcome == .pass)
+        #expect(abs((result.metrics[TestMetricKey.sampleRate] ?? 0) - 30) < 0.1)
+        for segment in 0...2 {
+            let points = result.series.filter { $0.segment == segment }
+            #expect(points.first?.t == 0)
+            #expect((points.last?.t ?? 99) < 12)
+        }
+        #expect(result.series.first { $0.segment == 0 }?.value == 180)
+    }
+
+    @Test("The starting angle is charted one reading interval before the first movement")
+    func chartLeadIn() {
+        var sweep = HingeSampleCollection(samples: [HingeSample(degrees: 180, status: .fullyOpen, t: 0)])
+        for i in 1...60 {
+            sweep.append(HingeSample(degrees: 180 - Double(i), status: .partiallyOpen, t: 600 + Double(i) / 30))
+        }
+        let charted = HingeSweepSession.chartSamples(sweep, fromFirstMovement: true)
+        #expect(charted.count == 61)
+        #expect(charted[0].t == 0)
+        #expect(charted[0].degrees == 180)
+        #expect(abs(charted[1].t - 1.0 / 30) < 0.001)
+        #expect(abs(charted[60].t - 2) < 0.001)
+        // The hold is charted from its own start, still readings included.
+        let hold = HingeSweepSession.chartSamples(sweep, fromFirstMovement: false)
+        #expect(hold.count == 61)
+        #expect(hold[1].t > 600)
     }
 
     @Test("A 25° gap → Attention (AC2)")

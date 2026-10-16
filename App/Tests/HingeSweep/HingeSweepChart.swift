@@ -3,7 +3,8 @@ import Charts
 import FoldL10n
 import TestsKit
 
-/// Hinge angle over time, one line per step (sweep 1, sweep 2, hold).
+/// Hinge angle over time, one line per step (sweep 1, sweep 2, hold), overlaid from t = 0:
+/// each step's series starts at its own first movement (see `HingeSweepSession.series`).
 struct HingeSweepChart: View {
     let points: [TestSeriesPoint]
     @Environment(\.appLanguage) private var language

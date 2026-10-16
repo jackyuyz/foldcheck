@@ -172,12 +172,19 @@ public struct HingeSweepSession: Sendable, Equatable {
         return hold.samples.map(\.degrees).reduce(0, +) / Double(hold.count)
     }
 
-    /// Readings downsampled for the chart; segment = step index.
+    /// Change from the starting angle that counts as the sweep's first movement (degrees).
+    public static let chartMovementThreshold: Double = 1
+
+    /// Readings downsampled for the chart; segment = step index. Each step starts at t = 0 so
+    /// the sweeps overlay: sweeps from their first movement, the hold from its start.
     public var series: [TestSeriesPoint] {
-        let segments = [sweeps[0], sweeps[1], hold]
+        let segments = [
+            Self.chartSamples(sweeps[0], fromFirstMovement: true),
+            Self.chartSamples(sweeps[1], fromFirstMovement: true),
+            Self.chartSamples(hold, fromFirstMovement: false),
+        ]
         let perSegment = Self.maxSeriesPoints / segments.count
-        return segments.enumerated().flatMap { index, collection -> [TestSeriesPoint] in
-            let samples = collection.samples
+        return segments.enumerated().flatMap { index, samples -> [TestSeriesPoint] in
             guard !samples.isEmpty else { return [] }
             let stride = max(1, Int((Double(samples.count) / Double(perSegment)).rounded(.up)))
             var indices = Set(Swift.stride(from: 0, to: samples.count, by: stride))
@@ -186,6 +193,29 @@ public struct HingeSweepSession: Sendable, Equatable {
             if let low = samples.indices.min(by: { samples[$0].degrees < samples[$1].degrees }) { indices.insert(low) }
             if let high = samples.indices.max(by: { samples[$0].degrees < samples[$1].degrees }) { indices.insert(high) }
             return indices.sorted().map { TestSeriesPoint(t: samples[$0].t, value: samples[$0].degrees, segment: index) }
+        }
+    }
+
+    /// A step's readings with t relative to the step's start. With `fromFirstMovement`, readings
+    /// before the angle first moves are dropped except the last, which is placed one reading
+    /// interval before the movement: the hinge feed only reports changes, so the wait before
+    /// the user starts moving (minutes, on the simulator) would otherwise fill the time axis.
+    static func chartSamples(_ collection: HingeSampleCollection, fromFirstMovement: Bool) -> [HingeSample] {
+        var samples = collection.samples
+        guard let first = samples.first else { return [] }
+        var start = first.t
+        if fromFirstMovement,
+           let moved = samples.firstIndex(where: { abs($0.degrees - first.degrees) >= chartMovementThreshold }),
+           moved > 0 {
+            samples.removeFirst(moved - 1)
+            let rate = collection.estimatedSampleRate
+            let interval = rate > 0 ? 1 / rate : HingeSampleCollection.idleIntervalThreshold
+            start = max(samples[0].t, samples[1].t - min(interval, HingeSampleCollection.idleIntervalThreshold))
+        }
+        return samples.map { sample in
+            var sample = sample
+            sample.t = max(0, sample.t - start)
+            return sample
         }
     }
 
