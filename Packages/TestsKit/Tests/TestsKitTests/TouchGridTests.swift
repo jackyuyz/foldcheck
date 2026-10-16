@@ -142,6 +142,57 @@ struct TouchGridLayoutTests {
     }
 }
 
+@Suite("Touch grid rotation projection")
+struct TouchGridProjectionTests {
+    @Test("Each quarter-turn keeps every cell at the same physical touch location")
+    func physicalCells() {
+        let size = CGSize(width: 670, height: 956)
+        let layout = TouchGridLayout(size: size, spec: .duoInner(canvasSize: size), includeCreaseBand: true)
+        for turns in 0..<4 {
+            let canvas = turns.isMultiple(of: 2) ? size : CGSize(width: size.height, height: size.width)
+            let projection = TouchGridProjection(referenceSize: size, canvasSize: canvas, quarterTurns: turns)
+            for cell in layout.cells {
+                let rect = projection.rectInCanvas(cell.rect)
+                #expect(rect.minX >= -0.001 && rect.maxX <= canvas.width + 0.001)
+                #expect(rect.minY >= -0.001 && rect.maxY <= canvas.height + 0.001)
+                let input = projection.pointInReference(CGPoint(x: rect.midX, y: rect.midY))
+                #expect(layout.cellID(at: input) == cell.id)
+            }
+            // An asymmetric point catches clockwise/counterclockwise and 180° mistakes.
+            let point = projection.pointInCanvas(CGPoint(x: 0.2 * size.width, y: 0.3 * size.height))
+            let expected = [CGPoint(x: 0.2, y: 0.3), CGPoint(x: 0.7, y: 0.2),
+                            CGPoint(x: 0.8, y: 0.7), CGPoint(x: 0.3, y: 0.8)][turns]
+            #expect(abs(point.x / canvas.width - expected.x) < 0.0001)
+            #expect(abs(point.y / canvas.height - expected.y) < 0.0001)
+        }
+    }
+
+    @Test("A run can reach 100% while rotating between every physical contact")
+    func completeWhileRotating() {
+        let size = CGSize(width: 956, height: 670)
+        let layout = TouchGridLayout(size: size, spec: .duoInner(canvasSize: size), includeCreaseBand: true)
+        var session = TouchGridSession(layout: layout)
+        for (index, cell) in layout.cells.enumerated() {
+            let turns = index % 4
+            let canvas = turns.isMultiple(of: 2) ? size : CGSize(width: size.height, height: size.width)
+            let projection = TouchGridProjection(referenceSize: size, canvasSize: canvas, quarterTurns: turns)
+            let input = projection.pointInCanvas(CGPoint(x: cell.rect.midX, y: cell.rect.midY))
+            let reference = projection.pointInReference(input)
+            #expect(session.stroke(from: reference, to: reference) == [cell.id])
+            #expect(session.coveredCount == index + 1)
+            #expect(session.totalCount == layout.cells.count)
+            // Touching the same physical cell again after a half turn adds no coverage.
+            let reversed = TouchGridProjection(referenceSize: size, canvasSize: canvas, quarterTurns: turns + 2)
+            let sameCell = reversed.pointInCanvas(CGPoint(x: cell.rect.midX, y: cell.rect.midY))
+            #expect(session.stroke(from: reversed.pointInReference(sameCell),
+                                   to: reversed.pointInReference(sameCell)).isEmpty)
+        }
+        #expect(session.isComplete)
+        #expect(session.creaseBandCoverage == 1)
+        #expect(session.result(id: .touchGridInner, display: .inner).outcome == .pass)
+    }
+}
+
 @Suite("Touch grid session")
 struct TouchGridSessionTests {
     let phone = CGSize(width: 402, height: 874)

@@ -23,4 +23,6 @@ English and Chinese QA reports, including every rendered page, are under [report
 
 See [validation](m7-validation.md) for commands, test coverage, device limitations and remaining manual checks, and [App Review notes](app-review-notes.md) for the submission draft.
 
-Touch rotation fix: [portrait / horizontal crease](screenshots/en-touch-portrait.png) and [landscape / vertical crease](screenshots/en-touch-landscape.png). These captures use the native division region with no fold mock. Device Hub rotation was checked in both directions; touched-cell coverage resets when the geometry changes.
+Touch rotation fix: [portrait / horizontal crease](screenshots/en-touch-portrait.png) and [landscape / vertical crease](screenshots/en-touch-landscape.png). These captures use the native division region with no fold mock. Device Hub rotation was checked in both directions; the crease direction follows the physical screen. The later fixed-grid update preserves coverage during rotation (see validation).
+
+Fixed-grid progress: [portrait, 3/512 cells](screenshots/en-touch-progress-portrait.png) and [the same three cells after rotating to landscape](screenshots/en-touch-progress-landscape.png). Green cells remain attached to the same physical locations, and the crease-band count remains part of the original grid.

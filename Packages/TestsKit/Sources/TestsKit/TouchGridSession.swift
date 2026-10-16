@@ -59,8 +59,8 @@ public struct TouchGridSession: Sendable, Equatable {
         covered.removeAll()
     }
 
-    /// Replaces the layout (e.g. after a rotation or display change). Coverage starts over
-    /// because cell IDs refer to the old geometry.
+    /// Replaces the grid definition, clearing IDs from the old grid. Ordinary rotation
+    /// uses TouchGridProjection to preserve the original layout and coverage instead.
     public mutating func relayout(_ newLayout: TouchGridLayout) {
         guard newLayout != layout else { return }
         layout = newLayout

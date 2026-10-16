@@ -98,7 +98,7 @@
 | `partiallyOpen` | Hinge sweep in progress; T3 crease visibility viewing-angle steps; layout splits instructions/visuals across halves; keep controls off the crease (`reservedRegions(.division)`), except T1/T3 which intentionally draw on the crease band (no buttons there) |
 | `fullyOpen` | Inner display T1/T2/T3; inner camera test |
 | Transitions | Expected during T4; elsewhere: a test in progress pauses with "Display changed: continue on this screen?" and records which display each result belongs to |
-| Rotation | Touch grid follows the system division region (portrait: horizontal crease; landscape: vertical). Rotation or a changed crease layout resets coverage because cell positions change; reports store the final orientation |
+| Rotation | Touch grid chooses its physical cells once at test start, using the system division region (portrait: horizontal crease; landscape: vertical). Rendering and touch coordinates rotate together; cell IDs, total and coverage remain fixed through 90°/180° rotations. Switching between inner and outer displays starts a separate grid. Reports store the final orientation |
 | Split View | Tests require full screen → blocking explanation |
 | `noHinge` | Hinge-dependent tests (T3, T4, F5, crease band in T1) are marked "Not applicable on this device"; all others run |
 | iPad compat | Same as noHinge; display tests cover the compat window only → warn |

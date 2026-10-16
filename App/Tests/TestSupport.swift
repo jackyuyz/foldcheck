@@ -139,7 +139,7 @@ struct DisplayChangePause: ViewModifier {
 
 // MARK: - Supported orientations
 
-/// Touch tests follow rotation; their coverage is reset when canvas geometry changes.
+/// Touch tests follow rotation while keeping coverage in their original grid coordinates.
 final class AppDelegate: NSObject, UIApplicationDelegate {
     func application(
         _ application: UIApplication,

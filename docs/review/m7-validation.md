@@ -41,7 +41,7 @@ Fixtures are gated by DEBUG and `-ScreenshotFixtures`. They use a separate in-me
 
 ## Recorded run
 
-Package tests on Xcode 27.1 RC: **256 passed** (FoldKit 46, HingeAnalysis 37, TestsKit 110, ReportKit 41, FoldL10n 10, Library 6, Store 6). All six catalogs also passed after the final signing-copy changes.
+Package tests on Xcode 27.1 RC: **258 passed** (FoldKit 46, HingeAnalysis 37, TestsKit 112, ReportKit 41, FoldL10n 10, Library 6, Store 6). All six catalogs also passed after the final signing-copy changes.
 
 The final Release simulator build passed. The app/PDF tests include actual StoreKit product loading, purchase/refund, Ask to Buy, failure and restore on this host. StoreKit fixtures now clear their test transactions after each test and wait for revocation propagation, avoiding state leaking into free-user UI checks.
 
@@ -69,7 +69,7 @@ The handoff now waits until the popover disappears before presenting the inspect
 
 The 12 bilingual UI captures, largest-text capture and four rendered PDF pages were visually reviewed. Native cover and partial-posture captures supplement the mock-driven screenshots. Dark appearance was recaptured after the adaptive accent fix. See `README.md` in this directory for the gallery.
 
-## Touch rotation regression (2026-10-16)
+## Initial touch rotation fix (2026-10-16; coverage behavior superseded below)
 
 The live Touch Test now resolves the crease from `reservedRegions(kind: .division, options: .includeInactive)` in canvas coordinates, including its axis and normalized center. Until a region is available, portrait Duo canvases use a horizontal crease and landscape canvases a vertical one. The touch test allows rotation. A changed canvas or fold layout clears coverage and any stale missed-cell decision; equal geometry preserves coverage. The final orientation is still recorded in the result.
 
@@ -81,3 +81,15 @@ The live Touch Test now resolves the crease from `reservedRegions(kind: .divisio
 The first two native automated rotation attempts failed because `XCUIDevice.orientation` did not rotate the inner panel in this RC (its canvas remained 669 × 951). The final regression explicitly skips multi-screen simulators and runs on the ordinary iPhone with FoldMock; native rotation uses Device Hub. This is a limitation of this automation path, not a claimed native automated pass.
 
 The final Release simulator build after the rotation fix passed: `/tmp/foldcheck-touch-rotation-release.log` (`BUILD SUCCEEDED`).
+
+## Preserving touch progress through rotation
+
+The test now chooses the physical grid once. `TouchGridProjection` rotates its rectangles into the current canvas and inversely maps touch samples into the original grid. Rotation changes neither cell IDs nor the denominator: a tested physical cell stays green, and new touches keep accumulating toward 100%. Even a 180° turn with unchanged canvas size updates the projection. Starting a test on another physical display creates a separate grid.
+
+Orientation comes from the touch view's own UIWindowScene, including Duo's effective inner-screen geometry. A child view controller reports layout and transition completion; touch interpolation is reset across a transition so old-coordinate samples cannot draw a phantom stroke. Transient device orientation values such as face-up are not used.
+
+TestsKit: 112/112 passed (`/tmp/foldcheck-touch-preserve-package.log`). The new projection suite checks all cells at all four rotations, clockwise direction with an asymmetric point, constant cell totals, repeated contact on the same physical cell, and reaching 100% while rotating between every contact. The low-level `relayout` tests still intentionally clear coverage when replacing the grid definition; the app no longer replaces that definition for rotation.
+
+Actual input regressions passed: `/tmp/foldcheck-touch-preserve-iphone.xcresult` verifies preserved totals, repeated contacts at the same physical position through both quarter and half turns, and new coverage after rotating back. `/tmp/foldcheck-touch-preserve-duo.xcresult` verifies tap-only capture still counts only contact beginnings. The Release build passed in `/tmp/foldcheck-touch-preserve-release.log`.
+
+Native Duo Device Hub verification also passed: a marked off-center cell followed its physical position into portrait, tapping it again added no coverage, two new contacts (including one in the crease band) increased progress to 3/512, and another rotation retained all three cells and the 512-cell denominator. See `screenshots/en-touch-progress-portrait.png` and `screenshots/en-touch-progress-landscape.png`. These captures supersede the earlier zero-coverage rotation examples.

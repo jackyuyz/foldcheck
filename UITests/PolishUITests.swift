@@ -13,7 +13,7 @@ final class PolishUITests: XCTestCase {
         XCTAssertTrue(element(app, "hinge.chart").waitForExistence(timeout: 5))
     }
 
-    func testTouchGridRotatesAndRestartsCoverage() throws {
+    func testTouchGridRotatesAndPreservesCoverage() throws {
         try XCTSkipIf(XCUIScreen.screens.count > 1,
                       "Duo RC does not rotate its inner panel through XCUIDevice.orientation; verify with Device Hub. Run this regression on a single-screen iPhone with FoldMock.")
         XCUIDevice.shared.orientation = .landscapeLeft
@@ -23,21 +23,32 @@ final class PolishUITests: XCTestCase {
         tap(app.buttons["test.start"])
         let canvas = element(app, "touchGrid.canvas")
         XCTAssertTrue(canvas.waitForExistence(timeout: 5))
+        let initialTotal = try totalCells(canvas)
+        let initialPoint = CGVector(dx: 0.23, dy: 0.31)
+        canvas.coordinate(withNormalizedOffset: initialPoint).tap()
+        XCTAssertEqual(try covered(canvas), 1)
         // Compare actual canvas geometry with its baseline rather than assuming
         // a fixed orientation at launch.
         let initialLandscape = canvas.frame.width > canvas.frame.height
-        for orientation in [UIDeviceOrientation.landscapeLeft, .portrait, .landscapeRight] {
+        let orientations: [UIDeviceOrientation] = [.landscapeLeft, .portrait, .landscapeRight, .landscapeLeft]
+        // Interface orientations rotate opposite to UIDevice's landscape names.
+        let samePhysicalPoints = [initialPoint, CGVector(dx: 0.69, dy: 0.23),
+                                  CGVector(dx: 0.77, dy: 0.69), initialPoint]
+        for (index, orientation) in orientations.enumerated() {
             XCUIDevice.shared.orientation = orientation
             let landscape = orientation == .portrait ? !initialLandscape : initialLandscape
             let rotated = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
                 (canvas.frame.width > canvas.frame.height) == landscape
             }, object: nil)
             XCTAssertEqual(XCTWaiter.wait(for: [rotated], timeout: 10), .completed, "Canvas: \(canvas.frame)")
-            XCTAssertEqual(try covered(canvas), 0, "Old cell coverage must not survive rotation")
-            capture("touch-rotation-\(orientation.rawValue)")
-            canvas.coordinate(withNormalizedOffset: CGVector(dx: 0.25, dy: 0.25)).tap()
-            XCTAssertGreaterThan(try covered(canvas), 0)
+            XCTAssertEqual(try covered(canvas), 1, "Rotation must preserve tested cells")
+            XCTAssertEqual(try totalCells(canvas), initialTotal, "The chosen grid must stay fixed")
+            canvas.coordinate(withNormalizedOffset: samePhysicalPoints[index]).tap()
+            XCTAssertEqual(try covered(canvas), 1, "The same physical cell must stay the same cell")
+            capture("touch-preserved-\(index)")
         }
+        canvas.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.6)).tap()
+        XCTAssertEqual(try covered(canvas), 2, "New contacts must continue adding coverage")
     }
 
     func testTapModeCountsOnlyContactBeginnings() throws {
@@ -148,6 +159,13 @@ final class PolishUITests: XCTestCase {
     private func covered(_ canvas: XCUIElement) throws -> Int {
         let value = try XCTUnwrap(canvas.value as? String)
         return try XCTUnwrap(value.split(whereSeparator: { !$0.isNumber }).first.flatMap { Int($0) })
+    }
+
+    private func totalCells(_ canvas: XCUIElement) throws -> Int {
+        let value = try XCTUnwrap(canvas.value as? String)
+        let numbers = value.split(whereSeparator: { !$0.isNumber }).compactMap { Int($0) }
+        XCTAssertGreaterThanOrEqual(numbers.count, 2)
+        return numbers[1]
     }
 
     private func element(_ app: XCUIApplication, _ identifier: String) -> XCUIElement {

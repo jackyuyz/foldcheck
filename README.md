@@ -164,13 +164,13 @@ Crease width, point sizes, and `UIScreen.scale` are still unknown. They are `nil
 
 ## Test Results (M7)
 
-Swift Package tests passed on macOS using Xcode 27.1 RC (256 total):
+Swift Package tests passed on macOS using Xcode 27.1 RC (258 total):
 
 | Package | Tests | Status |
 |---------|-------|--------|
 | FoldKit | 46 | ✅ Pass |
 | HingeAnalysis | 37 | ✅ Pass |
-| TestsKit | 110 | ✅ Pass |
+| TestsKit | 112 | ✅ Pass |
 | ReportKit | 41 | ✅ Pass |
 | FoldL10n | 10 | ✅ Pass |
 | Library | 6 | ✅ Pass |

@@ -25,6 +25,9 @@ struct TouchGridTestView: View {
     @State private var missReason: TouchGridMissReason?
     @State private var currentTouches = 0
     @State private var canvasSize: CGSize = .zero
+    @State private var canvasOrientation: UIInterfaceOrientation = .unknown
+    @State private var referenceOrientation: UIInterfaceOrientation = .unknown
+    @State private var canvasSpec: DisplaySpec = .standard
 
     enum Phase {
         case grid
@@ -55,15 +58,12 @@ struct TouchGridTestView: View {
 
                 switch phase {
                 case .grid:
-                    gridLayer
+                    gridLayer(spec: spec)
                     gridControls
                 case .multiTouch:
-                    multiTouchLayer
+                    multiTouchLayer(spec: spec)
                 }
             }
-            .onAppear { updateLayout(for: geometry.size, spec: spec) }
-            .onChange(of: geometry.size) { _, size in updateLayout(for: size, spec: spec) }
-            .onChange(of: spec) { _, spec in updateLayout(for: geometry.size, spec: spec) }
         }
         .ignoresSafeArea()
         .statusBarHidden()
@@ -72,8 +72,11 @@ struct TouchGridTestView: View {
         .observeFoldState($foldState)
         .modifier(DisplayChangePause(foldState: foldState) { newDisplay in
             display = newDisplay
-            session?.resetCoverage()
+            // Inner and outer displays are separate physical surfaces.
+            startGrid(size: canvasSize, spec: canvasSpec, orientation: canvasOrientation)
             showMisses = false
+            showMissDialog = false
+            missReason = nil
         })
         .overlay {
             if showMissDialog {
@@ -128,19 +131,25 @@ struct TouchGridTestView: View {
 
     // MARK: Grid
 
-    private var gridLayer: some View {
+    private func gridLayer(spec: DisplaySpec) -> some View {
         ZStack {
             Canvas { context, _ in
                 guard let session else { return }
                 for cell in session.layout.cells {
                     let inset: CGFloat = cell.isCreaseBand ? 1 : 1.5
-                    let path = Path(roundedRect: cell.rect.insetBy(dx: inset, dy: inset), cornerRadius: cell.isCreaseBand ? 2 : 3)
+                    let rect = projection.rectInCanvas(cell.rect)
+                    let path = Path(roundedRect: rect.insetBy(dx: inset, dy: inset), cornerRadius: cell.isCreaseBand ? 2 : 3)
                     context.fill(path, with: .color(color(for: cell, in: session)))
                 }
             }
             TouchCaptureView(
                 tapsOnly: tapMode,
-                onStroke: { from, to in _ = session?.stroke(from: from, to: to) },
+                onCanvasChange: { size, orientation in
+                    updateCanvas(size: size, spec: spec, orientation: orientation)
+                },
+                onStroke: { from, to in
+                    _ = session?.stroke(from: projection.pointInReference(from), to: projection.pointInReference(to))
+                },
                 onTouchCount: { count in
                     currentTouches = count
                     session?.recordSimultaneousTouches(count)
@@ -224,19 +233,26 @@ struct TouchGridTestView: View {
         return .duoInner(canvasSize: geometry.size)
     }
 
-    private func updateLayout(for size: CGSize, spec: DisplaySpec) {
-        guard size.width > 0, size.height > 0 else { return }
+    private var projection: TouchGridProjection {
+        TouchGridProjection(referenceSize: session?.layout.size ?? canvasSize, canvasSize: canvasSize,
+                            quarterTurns: canvasOrientation.gridQuarterTurns - referenceOrientation.gridQuarterTurns)
+    }
+
+    private func updateCanvas(size: CGSize, spec: DisplaySpec, orientation: UIInterfaceOrientation) {
+        guard size.width > 0, size.height > 0, orientation != .unknown else { return }
         canvasSize = size
-        let layout = TouchGridLayout(size: size, spec: spec, includeCreaseBand: includeCreaseBand)
+        canvasOrientation = orientation
+        canvasSpec = spec
         if session == nil {
-            session = TouchGridSession(layout: layout)
-        } else {
-            guard session?.layout != layout else { return }
-            session?.relayout(layout)
-            showMisses = false
-            showMissDialog = false
-            missReason = nil
+            startGrid(size: size, spec: spec, orientation: orientation)
         }
+    }
+
+    private func startGrid(size: CGSize, spec: DisplaySpec, orientation: UIInterfaceOrientation) {
+        guard size.width > 0, size.height > 0 else { return }
+        referenceOrientation = orientation
+        let layout = TouchGridLayout(size: size, spec: spec, includeCreaseBand: includeCreaseBand)
+        session = TouchGridSession(layout: layout)
     }
 
     private func finishGrid() {
@@ -252,9 +268,12 @@ struct TouchGridTestView: View {
 
     // MARK: Multi-touch
 
-    private var multiTouchLayer: some View {
+    private func multiTouchLayer(spec: DisplaySpec) -> some View {
         ZStack {
             TouchCaptureView(
+                onCanvasChange: { size, orientation in
+                    updateCanvas(size: size, spec: spec, orientation: orientation)
+                },
                 onStroke: { _, _ in },
                 onTouchCount: { count in
                     currentTouches = count
@@ -322,23 +341,88 @@ struct TouchGridTestView: View {
 
 /// Multi-touch capture with coalesced touches, so fast swipes are sampled as finely as the
 /// hardware reports them. SwiftUI gestures only track one finger.
-struct TouchCaptureView: UIViewRepresentable {
+struct TouchCaptureView: UIViewControllerRepresentable {
     var tapsOnly = false
+    var onCanvasChange: ((CGSize, UIInterfaceOrientation) -> Void)?
     let onStroke: (CGPoint, CGPoint) -> Void
     let onTouchCount: (Int) -> Void
 
-    func makeUIView(context: Context) -> TouchCaptureUIView {
-        let view = TouchCaptureUIView()
-        view.tapsOnly = tapsOnly
-        view.onStroke = onStroke
-        view.onTouchCount = onTouchCount
-        return view
+    func makeUIViewController(context: Context) -> TouchCaptureController {
+        let controller = TouchCaptureController()
+        updateUIViewController(controller, context: context)
+        return controller
     }
 
-    func updateUIView(_ view: TouchCaptureUIView, context: Context) {
+    func updateUIViewController(_ controller: TouchCaptureController, context: Context) {
+        let view = controller.captureView
         view.tapsOnly = tapsOnly
         view.onStroke = onStroke
         view.onTouchCount = onTouchCount
+        controller.onCanvasChange = onCanvasChange
+    }
+}
+
+private extension UIInterfaceOrientation {
+    /// Clockwise turns of the physical surface relative to an upright portrait canvas.
+    var gridQuarterTurns: Int {
+        switch self {
+        case .landscapeLeft: 1
+        case .portraitUpsideDown: 2
+        case .landscapeRight: 3
+        default: 0
+        }
+    }
+}
+
+/// Read orientation from this view's scene, rather than UIDevice or the first connected
+/// scene: Duo's cover and inner screen can have different effective geometry.
+final class TouchCaptureController: UIViewController {
+    let captureView = TouchCaptureUIView()
+    var onCanvasChange: ((CGSize, UIInterfaceOrientation) -> Void)?
+    private var lastSize: CGSize = .zero
+    private var lastOrientation: UIInterfaceOrientation = .unknown
+
+    override func loadView() { view = captureView }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        reportCanvas()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        reportCanvas()
+    }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        captureView.isUserInteractionEnabled = false
+        captureView.resetTouchLocations()
+        coordinator.animate(alongsideTransition: nil) { [weak self] _ in
+            guard let self else { return }
+            self.reportCanvas()
+            self.captureView.isUserInteractionEnabled = true
+        }
+    }
+
+    private func reportCanvas() {
+        guard let scene = view.window?.windowScene else { return }
+        let orientation: UIInterfaceOrientation
+        if #available(iOS 26.0, *) {
+            orientation = scene.effectiveGeometry.interfaceOrientation
+        } else {
+            orientation = scene.interfaceOrientation
+        }
+        let size = view.bounds.size
+        guard size.width > 0, size.height > 0, orientation != .unknown,
+              size != lastSize || orientation != lastOrientation else { return }
+        lastSize = size
+        lastOrientation = orientation
+        captureView.resetTouchLocations()
+        // Publish outside UIKit's layout pass so SwiftUI can safely update the canvas.
+        Task { @MainActor [weak self] in
+            self?.onCanvasChange?(size, orientation)
+        }
     }
 }
 
@@ -356,6 +440,11 @@ final class TouchCaptureUIView: UIView {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func resetTouchLocations() {
+        // A rotation must never interpolate from an old-coordinate sample to a new one.
+        lastLocations.removeAll()
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
