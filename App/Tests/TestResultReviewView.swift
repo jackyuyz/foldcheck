@@ -8,6 +8,7 @@ struct TestResultReviewView: View {
     let onContinue: (TestResult) -> Void
 
     @Environment(\.appLanguage) private var language
+    @Environment(\.inspectionHasHinge) private var hasHinge
     @State private var userNote = ""
 
     var body: some View {
@@ -20,7 +21,7 @@ struct TestResultReviewView: View {
                     Text(result.outcome.localizedName(in: language))
                         .font(.title.bold())
                         .accessibilityIdentifier("result.outcome")
-                    Text(result.id.localizedName(in: language))
+                    Text(result.id.localizedName(in: language, hasHinge: hasHinge))
                         .font(.headline)
                     if let display = result.display {
                         Text(display.localizedName(in: language))

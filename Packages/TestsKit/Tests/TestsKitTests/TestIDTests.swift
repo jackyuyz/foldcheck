@@ -31,7 +31,16 @@ struct TestIDTests {
             }
         }
     }
-    
+
+    @Test("The outer grid drops \"Outer\" without a hinge")
+    func testNameKeys() {
+        #expect(TestID.touchGridOuter.nameKey(hasHinge: true) == "test.touchGridOuter")
+        #expect(TestID.touchGridOuter.nameKey(hasHinge: false) == "test.touchGrid")
+        #expect(TestID.touchGridOuter.descriptionKey(hasHinge: false) == "testDesc.touchGrid")
+        #expect(TestID.pixels.nameKey(hasHinge: false) == "test.pixels")
+        #expect(TestID.touchGridInner.nameKey(hasHinge: true) == "test.touchGridInner")
+    }
+
     @Test("Estimated durations are reasonable")
     func testEstimatedDurations() {
         for testID in TestID.allCases {

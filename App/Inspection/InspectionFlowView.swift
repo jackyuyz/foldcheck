@@ -76,6 +76,7 @@ struct InspectionFlowView: View {
                 if isCompleted { finalize() }
             }
         }
+        .environment(\.inspectionHasHinge, session.hasHinge)
         .foldDebugOverlay()
     }
 
@@ -97,7 +98,7 @@ struct InspectionFlowView: View {
                 Spacer()
 
                 if !isCompleted && currentTestIndex < total {
-                    Text(plan.runnable[currentTestIndex].localizedName(in: language))
+                    Text(plan.runnable[currentTestIndex].localizedName(in: language, hasHinge: session.hasHinge))
                         .font(.caption.bold())
                 }
             }
@@ -168,6 +169,7 @@ struct TestContainerView: View {
     let onSkip: () -> Void
     @Environment(\.foldStateProvider) private var foldStateProvider
     @Environment(\.appLanguage) private var language
+    @Environment(\.inspectionHasHinge) private var hasHinge
     @State private var foldState: FoldState = .noHinge
     @State private var pendingResult: TestResult?
 
@@ -193,10 +195,10 @@ struct TestContainerView: View {
                     .font(.system(size: 60))
                     .foregroundStyle(.tint)
 
-                Text(testID.localizedName(in: language))
+                Text(testID.localizedName(in: language, hasHinge: hasHinge))
                     .font(.title2.bold())
 
-                Text(testID.localizedDescription(in: language))
+                Text(testID.localizedDescription(in: language, hasHinge: hasHinge))
                     .font(.body)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)

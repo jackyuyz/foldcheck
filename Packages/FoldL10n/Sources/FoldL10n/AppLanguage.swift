@@ -27,6 +27,16 @@ public enum AppLanguage: String, Codable, CaseIterable, Sendable, Hashable, Iden
 
     public var localeIdentifier: String { rawValue }
 
+    /// Whether a count takes the singular form (CLDR "one" for integers): English and Spanish
+    /// use it for 1, French for 0 and 1, and Japanese and Chinese have no plural.
+    public func usesSingular(for count: Int) -> Bool {
+        switch self {
+        case .en, .es: return count == 1
+        case .fr: return count == 0 || count == 1
+        case .ja, .zhHans, .zhHant: return false
+        }
+    }
+
     /// Accepts catalog codes and a few common aliases.
     public init?(languageCode: String) {
         let normalized = languageCode.replacingOccurrences(of: "_", with: "-")

@@ -43,7 +43,7 @@ final class DisplayTouchUITests: XCTestCase {
     func testTouchGridWithoutHingeHasNoBandAndUnresponsiveMissesFail() throws {
         let app = launch(foldMock: "nohinge")
         tap(app.buttons["home.quick.touch"])
-        XCTAssertTrue(app.staticTexts["Touch Grid (Outer)"].firstMatch.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Touch Grid"].firstMatch.waitForExistence(timeout: 5))
         tap(app.buttons["test.start"])
 
         let canvas = element(app, "touchGrid.canvas")
@@ -84,7 +84,7 @@ final class DisplayTouchUITests: XCTestCase {
         }
 
         XCTAssertEqual(element(app, "result.outcome").label, "Attention")
-        XCTAssertTrue(element(app, "result.systemNotes").label.contains("1 spots"))
+        XCTAssertTrue(element(app, "result.systemNotes").label.contains("1 spot that"))
         tap(app.buttons["result.continue"])
 
         let row = element(app, "summary.row.pixels")

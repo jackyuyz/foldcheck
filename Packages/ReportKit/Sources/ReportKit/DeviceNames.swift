@@ -5,10 +5,12 @@ public struct DeviceNames: Sendable {
     /// Known device model mappings
     /// These would be updated as new devices are released
     public static let models: [String: String] = [
-        // iPhone Duo (hypothetical model numbers)
-        "iPhone19,1": "iPhone 19 Duo",
-        "iPhone19,2": "iPhone 19 Duo",
-        
+        // iPhone 18 Pro series and iPhone Duo (2026), as reported by the Xcode 27.1 RC
+        // simulators. Not yet checked against real hardware.
+        "iPhone19,2": "iPhone 18 Pro",
+        "iPhone19,3": "iPhone 18 Pro Max",
+        "iPhone19,4": "iPhone Duo",
+
         // iPhone 17 series and iPhone Air (2025)
         "iPhone18,1": "iPhone 17 Pro",
         "iPhone18,2": "iPhone 17 Pro Max",
@@ -49,9 +51,12 @@ public struct DeviceNames: Sendable {
         return modelIdentifier
     }
     
-    /// Check if a model identifier likely represents an iPhone Duo
+    /// Check if a model identifier is a known iPhone Duo. The iPhone 18 Pro models share the
+    /// `iPhone19,` prefix, so this matches exact identifiers. Whether a device has a hinge
+    /// comes from the hinge API, not from this table.
     public static func isDuo(modelIdentifier: String) -> Bool {
-        // Hypothetical: iPhone 19 series is the Duo
-        return modelIdentifier.hasPrefix("iPhone19,")
+        duoModels.contains(modelIdentifier)
     }
+
+    private static let duoModels: Set<String> = ["iPhone19,4"]
 }

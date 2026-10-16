@@ -83,6 +83,17 @@ public enum TestID: String, Codable, CaseIterable, Sendable, Equatable {
             return false
         }
     }
+
+    /// Localization key for the test's name. Without a hinge there is only one display, so
+    /// the outer grid drops "(Outer)".
+    public func nameKey(hasHinge: Bool) -> String {
+        self == .touchGridOuter && !hasHinge ? "test.touchGrid" : "test.\(rawValue)"
+    }
+
+    /// Localization key for the test's description, matching `nameKey(hasHinge:)`.
+    public func descriptionKey(hasHinge: Bool) -> String {
+        self == .touchGridOuter && !hasHinge ? "testDesc.touchGrid" : "testDesc.\(rawValue)"
+    }
     
     /// Estimated duration of the test in seconds
     public var estimatedDurationSeconds: Int {

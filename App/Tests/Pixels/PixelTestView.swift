@@ -38,7 +38,7 @@ struct PixelTestView: View {
                     })
                     .accessibilityElement()
                     .accessibilityLabel(Text(L10nKey.testPixels.text(in: language)))
-                    .accessibilityValue(Text(L10nKey.pixelsMarked.text(in: language, session.marks.count)))
+                    .accessibilityValue(Text(L10nKey.pixelsMarked.text(in: language, count: session.marks.count, one: .pixelsMarkedOne)))
                     .accessibilityAddTraits(.allowsDirectInteraction)
                     .accessibilityIdentifier("pixels.canvas")
 
@@ -54,7 +54,7 @@ struct PixelTestView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(L10nKey.pixelsStep.text(in: language, session.currentIndex + 1, session.patterns.count))
                             .monospacedDigit()
-                        Text(L10nKey.pixelsMarked.text(in: language, session.marks.count))
+                        Text(L10nKey.pixelsMarked.text(in: language, count: session.marks.count, one: .pixelsMarkedOne))
                             .font(.caption)
                             .monospacedDigit()
                     }
@@ -110,7 +110,7 @@ struct PixelTestView: View {
 
     private func finish() {
         let count = session.marks.count
-        let note = count == 0 ? "" : L10nKey.pixelsNote.text(in: language, count)
+        let note = count == 0 ? "" : L10nKey.pixelsNote.text(in: language, count: count, one: .pixelsNoteOne)
         onFinish(session.result(display: display, notes: note))
     }
 }

@@ -136,7 +136,7 @@ public struct ReportContentAssembler {
         
         let testResults = session.results.map { result in
             TestResultContent(
-                testName: localizedCopy("test.\(result.id.rawValue)", language: language),
+                testName: localizedCopy(result.id.nameKey(hasHinge: session.hasHinge), language: language),
                 outcome: localizedCopy("outcome.\(result.outcome.rawValue)", language: language),
                 outcomeColor: result.outcome.colorName,
                 metrics: formatMetrics(result.metrics, language: language),

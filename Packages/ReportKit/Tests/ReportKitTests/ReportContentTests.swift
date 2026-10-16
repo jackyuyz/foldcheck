@@ -148,7 +148,8 @@ struct DeviceNamesTests {
     
     @Test("Known devices return friendly names")
     func testKnownDevices() {
-        #expect(DeviceNames.friendlyName(for: "iPhone19,1") == "iPhone 19 Duo")
+        #expect(DeviceNames.friendlyName(for: "iPhone19,4") == "iPhone Duo")
+        #expect(DeviceNames.friendlyName(for: "iPhone19,2") == "iPhone 18 Pro")
         #expect(DeviceNames.friendlyName(for: "iPhone17,1") == "iPhone 16 Pro")
         #expect(DeviceNames.friendlyName(for: "iPhone18,1") == "iPhone 17 Pro")
         #expect(DeviceNames.friendlyName(for: "x86_64") == "Simulator (Intel)")
@@ -174,8 +175,9 @@ struct DeviceNamesTests {
     
     @Test("isDuo correctly identifies Duo models")
     func testIsDuo() {
-        #expect(DeviceNames.isDuo(modelIdentifier: "iPhone19,1"))
-        #expect(DeviceNames.isDuo(modelIdentifier: "iPhone19,2"))
+        #expect(DeviceNames.isDuo(modelIdentifier: "iPhone19,4"))
+        #expect(!DeviceNames.isDuo(modelIdentifier: "iPhone19,2"))
+        #expect(!DeviceNames.isDuo(modelIdentifier: "iPhone19,3"))
         #expect(!DeviceNames.isDuo(modelIdentifier: "iPhone18,1"))
         #expect(!DeviceNames.isDuo(modelIdentifier: "iPhone17,1"))
     }

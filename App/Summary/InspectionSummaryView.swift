@@ -95,7 +95,7 @@ struct InspectionSummaryView: View {
                 .font(.headline)
             
             ForEach(session.results) { result in
-                TestResultRow(result: result)
+                TestResultRow(result: result, hasHinge: session.hasHinge)
             }
         }
     }
@@ -176,12 +176,13 @@ struct ScoreStatView: View {
 
 struct TestResultRow: View {
     let result: TestResult
+    let hasHinge: Bool
     @Environment(\.appLanguage) private var language
     
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text(result.id.localizedName(in: language))
+                Text(result.id.localizedName(in: language, hasHinge: hasHinge))
                     .font(.subheadline.bold())
                 
                 if let display = result.display {

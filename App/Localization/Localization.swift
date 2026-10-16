@@ -10,6 +10,10 @@ private struct ReportLanguageKey: EnvironmentKey {
     static let defaultValue: AppLanguage = .en
 }
 
+private struct InspectionHasHingeKey: EnvironmentKey {
+    static let defaultValue = true
+}
+
 extension EnvironmentValues {
     /// UI language. Defaults to English when Settings has not been injected.
     var appLanguage: AppLanguage {
@@ -22,15 +26,29 @@ extension EnvironmentValues {
         get { self[ReportLanguageKey.self] }
         set { self[ReportLanguageKey.self] = newValue }
     }
+
+    /// Whether the device in the current inspection has a hinge; set by the inspection flow
+    /// so test names can drop "(Outer)" on a device with one display.
+    var inspectionHasHinge: Bool {
+        get { self[InspectionHasHingeKey.self] }
+        set { self[InspectionHasHingeKey.self] = newValue }
+    }
 }
 
 extension TestID {
-    func localizedName(in language: AppLanguage) -> String {
-        localizedCopy("test.\(rawValue)", language: language)
+    func localizedName(in language: AppLanguage, hasHinge: Bool) -> String {
+        localizedCopy(nameKey(hasHinge: hasHinge), language: language)
     }
 
-    func localizedDescription(in language: AppLanguage) -> String {
-        localizedCopy("testDesc.\(rawValue)", language: language)
+    func localizedDescription(in language: AppLanguage, hasHinge: Bool) -> String {
+        localizedCopy(descriptionKey(hasHinge: hasHinge), language: language)
+    }
+}
+
+extension Date {
+    /// Formatted in the app's language rather than the system's.
+    func formatted(date: Date.FormatStyle.DateStyle, time: Date.FormatStyle.TimeStyle, in language: AppLanguage) -> String {
+        formatted(Date.FormatStyle(date: date, time: time).locale(Locale(identifier: language.localeIdentifier)))
     }
 }
 

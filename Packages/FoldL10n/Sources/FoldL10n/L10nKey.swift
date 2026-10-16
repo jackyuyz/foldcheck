@@ -64,6 +64,7 @@ public enum L10nKey: String, CaseIterable, Sendable, Hashable {
     case hingeNoReadings = "hinge.noReadings"
     case hingeRangeNote = "hinge.rangeNote"
     case hingeReadings = "hinge.readings"
+    case hingeReadingsOne = "hinge.readingsOne"
     case hingeRetry = "hinge.retry"
     case hingeSweepInstruction = "hinge.sweepInstruction"
     case hingeSweepStep = "hinge.sweepStep"
@@ -143,7 +144,9 @@ public enum L10nKey: String, CaseIterable, Sendable, Hashable {
     case paywallTitle = "paywall.title"
     case pixelsInstructions = "pixels.instructions"
     case pixelsMarked = "pixels.marked"
+    case pixelsMarkedOne = "pixels.markedOne"
     case pixelsNote = "pixels.note"
+    case pixelsNoteOne = "pixels.noteOne"
     case pixelsStep = "pixels.step"
     case pixelsTip = "pixels.tip"
     case postureClosed = "posture.closed"
@@ -231,6 +234,7 @@ public enum L10nKey: String, CaseIterable, Sendable, Hashable {
     case testNotImplemented = "test.notImplemented"
     case testPixels = "test.pixels"
     case testSensors = "test.sensors"
+    case testTouchGrid = "test.touchGrid"
     case testTouchGridInner = "test.touchGridInner"
     case testTouchGridOuter = "test.touchGridOuter"
     case testTouchID = "test.touchID"
@@ -242,6 +246,7 @@ public enum L10nKey: String, CaseIterable, Sendable, Hashable {
     case testDescHingeSweep = "testDesc.hingeSweep"
     case testDescPixels = "testDesc.pixels"
     case testDescSensors = "testDesc.sensors"
+    case testDescTouchGrid = "testDesc.touchGrid"
     case testDescTouchGridInner = "testDesc.touchGridInner"
     case testDescTouchGridOuter = "testDesc.touchGridOuter"
     case testDescTouchID = "testDesc.touchID"
@@ -251,12 +256,16 @@ public enum L10nKey: String, CaseIterable, Sendable, Hashable {
     case touchKeepTrying = "touch.keepTrying"
     case touchMissedMessage = "touch.missedMessage"
     case touchMissedTitle = "touch.missedTitle"
+    case touchMissedTitleOne = "touch.missedTitleOne"
     case touchMultiCount = "touch.multiCount"
     case touchMultiInstructions = "touch.multiInstructions"
     case touchMultiTitle = "touch.multiTitle"
     case touchNoteBlockedByCase = "touch.noteBlockedByCase"
+    case touchNoteBlockedByCaseOne = "touch.noteBlockedByCaseOne"
     case touchNoteMissed = "touch.noteMissed"
+    case touchNoteMissedOne = "touch.noteMissedOne"
     case touchNoteUnresponsive = "touch.noteUnresponsive"
+    case touchNoteUnresponsiveOne = "touch.noteUnresponsiveOne"
     case touchProgress = "touch.progress"
     case touchUnresponsive = "touch.unresponsive"
     case verifyCheckInstall = "verify.checkInstall"
@@ -285,5 +294,12 @@ public enum L10nKey: String, CaseIterable, Sendable, Hashable {
 
     public func text(in language: AppLanguage, _ args: CVarArg...) -> String {
         StringCatalog.format(rawValue, language: language, args)
+    }
+
+    /// `self` formatted with `count`, or its singular key `one` when `count` takes the
+    /// singular in `language`. Both templates take `count` as their only argument.
+    public func text(in language: AppLanguage, count: Int, one: L10nKey) -> String {
+        let key = language.usesSingular(for: count) ? one : self
+        return key.text(in: language, count)
     }
 }

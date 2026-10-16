@@ -88,7 +88,7 @@ struct HingeSweepTestView: View {
                     .monospacedDigit()
                     .accessibilityIdentifier("hinge.angle")
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(L10nKey.hingeReadings.text(in: language, session.currentSamples.count))
+                    Text(L10nKey.hingeReadings.text(in: language, count: session.currentSamples.count, one: .hingeReadingsOne))
                         .font(.caption.monospacedDigit())
                         .foregroundStyle(.secondary)
                         .accessibilityIdentifier("hinge.readings")

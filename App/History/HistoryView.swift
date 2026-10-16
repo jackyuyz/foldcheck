@@ -116,6 +116,7 @@ struct SessionRow: View {
     let isSelected: Bool
     let isComparing: Bool
     let onTap: () -> Void
+    @Environment(\.appLanguage) private var language
     
     var body: some View {
         Button(action: onTap) {
@@ -126,7 +127,7 @@ struct SessionRow: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(session.startedAt, style: .date)
+                    Text(session.startedAt.formatted(date: .long, time: .omitted, in: language))
                         .font(.headline)
                     
                     HStack(spacing: 8) {

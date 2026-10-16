@@ -79,4 +79,16 @@ struct CatalogTests {
             "English", "Español", "Français", "日本語", "简体中文", "繁體中文"
         ])
     }
+
+    @Test("Counts pick the singular per language")
+    func singularCounts() {
+        #expect(L10nKey.pixelsNote.text(in: .en, count: 1, one: .pixelsNoteOne)
+            == "The user marked 1 spot that looked dead, stuck, or discolored.")
+        #expect(L10nKey.pixelsNote.text(in: .en, count: 2, one: .pixelsNoteOne).contains("2 spots"))
+        #expect(L10nKey.pixelsNote.text(in: .en, count: 0, one: .pixelsNoteOne).contains("0 spots"))
+        #expect(L10nKey.touchMissedTitle.text(in: .es, count: 1, one: .touchMissedTitleOne) == "1 celda no respondió")
+        #expect(L10nKey.hingeReadings.text(in: .fr, count: 0, one: .hingeReadingsOne) == "0 mesure")
+        #expect(L10nKey.hingeReadings.text(in: .fr, count: 2, one: .hingeReadingsOne) == "2 mesures")
+        #expect(L10nKey.hingeReadings.text(in: .ja, count: 1, one: .hingeReadingsOne) == "1 件の読み取り")
+    }
 }

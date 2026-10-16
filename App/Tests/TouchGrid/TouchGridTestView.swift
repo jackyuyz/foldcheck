@@ -14,6 +14,7 @@ struct TouchGridTestView: View {
     let onCancel: () -> Void
 
     @Environment(\.appLanguage) private var language
+    @Environment(\.inspectionHasHinge) private var hasHinge
     @State private var session: TouchGridSession?
     @State private var foldState: FoldState
     @State private var display: DisplayKind?
@@ -83,7 +84,7 @@ struct TouchGridTestView: View {
     /// Asked when Finish is tapped with cells still missed (shown in red behind the card).
     private var missCard: some View {
         VStack(spacing: 12) {
-            Text(L10nKey.touchMissedTitle.text(in: language, session?.missedCount ?? 0))
+            Text(L10nKey.touchMissedTitle.text(in: language, count: session?.missedCount ?? 0, one: .touchMissedTitleOne))
                 .font(.headline)
                 .accessibilityIdentifier("touchGrid.missedTitle")
             Text(L10nKey.touchMissedMessage.text(in: language))
@@ -144,7 +145,7 @@ struct TouchGridTestView: View {
             )
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(testID.localizedName(in: language)))
+        .accessibilityLabel(Text(testID.localizedName(in: language, hasHinge: hasHinge)))
         .accessibilityValue(Text(accessibilityProgress))
         .accessibilityIdentifier("touchGrid.canvas")
     }
@@ -271,11 +272,11 @@ struct TouchGridTestView: View {
         case (0, _):
             note = ""
         case (let missed, .blockedByCase):
-            note = L10nKey.touchNoteBlockedByCase.text(in: language, missed)
+            note = L10nKey.touchNoteBlockedByCase.text(in: language, count: missed, one: .touchNoteBlockedByCaseOne)
         case (let missed, .unresponsive):
-            note = L10nKey.touchNoteUnresponsive.text(in: language, missed)
+            note = L10nKey.touchNoteUnresponsive.text(in: language, count: missed, one: .touchNoteUnresponsiveOne)
         case (let missed, nil):
-            note = L10nKey.touchNoteMissed.text(in: language, missed)
+            note = L10nKey.touchNoteMissed.text(in: language, count: missed, one: .touchNoteMissedOne)
         }
         let result = session.result(
             id: testID,

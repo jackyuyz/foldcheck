@@ -82,7 +82,7 @@ struct HomeView: View {
             
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(session.startedAt, style: .date)
+                    Text(session.startedAt.formatted(date: .long, time: .omitted, in: language))
                         .font(.subheadline)
                     
                     HStack(spacing: 8) {

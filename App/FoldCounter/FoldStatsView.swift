@@ -77,7 +77,7 @@ struct FoldStatsView: View {
                 }
             }
             if showSince {
-                Text(L10nKey.foldsSince.text(in: language, stats.startedAt.formatted(Date.FormatStyle(date: .abbreviated, time: .shortened).locale(Locale(identifier: language.localeIdentifier)))))
+                Text(L10nKey.foldsSince.text(in: language, stats.startedAt.formatted(date: .abbreviated, time: .shortened, in: language)))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
