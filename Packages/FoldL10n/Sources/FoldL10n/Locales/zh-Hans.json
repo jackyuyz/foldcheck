@@ -1,4 +1,5 @@
 {
+  "angle.title": "铰链角度",
   "crease.hingeAngle": "铰链角度约 %d°",
   "crease.photo": "附加照片（可选）",
   "crease.photoAttached": "已附加照片",
@@ -142,6 +143,10 @@
   "pixels.note": "用户标记了 %d 处看起来坏点、亮点或变色的位置。",
   "pixels.step": "颜色 %1$d / %2$d",
   "pixels.tip": "测试期间亮度调至最高，结束后恢复。为获得准确色彩，请关闭原彩显示和夜览。",
+  "posture.closed": "合上",
+  "posture.fullyOpen": "全开",
+  "posture.partiallyOpen": "半开",
+  "posture.unknown": "角度未知",
   "report.devUnsigned": "开发版本（未签名）",
   "report.deviceInfo": "设备信息",
   "report.disclaimer": "声明：本报告是使用 FoldCheck 由用户自行生成的检查快照，不是 Apple 或任何授权服务商的官方认证。数字签名只证明此 PDF 在这份 FoldCheck 安装生成之后没有被修改。它不能证明设备真伪、所有权或维修记录。FoldCheck 无法读取电池健康、循环次数、序列号或终身折叠次数。折叠计数只统计应用在前台时观察到的开合。铰链测试反映角度读数的连续性和一致性，不是绝对的机械精度。请仅将本报告作为补充信息。",

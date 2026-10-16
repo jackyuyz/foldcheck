@@ -1,4 +1,5 @@
 {
+  "angle.title": "Angle de la charnière",
   "crease.hingeAngle": "Angle de charnière env. %d°",
   "crease.photo": "Joindre une photo (facultatif)",
   "crease.photoAttached": "Photo jointe",
@@ -142,6 +143,10 @@
   "pixels.note": "L’utilisateur a marqué %d points qui semblaient morts, bloqués ou décolorés.",
   "pixels.step": "Couleur %1$d sur %2$d",
   "pixels.tip": "La luminosité passe au maximum pendant le test puis est rétablie. Désactivez True Tone et Night Shift pour des couleurs fidèles.",
+  "posture.closed": "Fermé",
+  "posture.fullyOpen": "Entièrement ouvert",
+  "posture.partiallyOpen": "Entrouvert",
+  "posture.unknown": "Angle inconnu",
   "report.devUnsigned": "Version de développement (non signée)",
   "report.deviceInfo": "Appareil",
   "report.disclaimer": "AVERTISSEMENT : Ce rapport est un constat créé par l’utilisateur avec FoldCheck. Ce n’est PAS une certification officielle d’Apple ni d’un réparateur agréé. La signature numérique prouve seulement que ce PDF n’a pas été modifié depuis sa création par cette installation de FoldCheck. Elle ne prouve pas l’authenticité de l’appareil, sa propriété ni son historique de réparation. FoldCheck ne peut pas lire la santé de la batterie, les cycles, le numéro de série ni le nombre de pliages à vie. Le compteur ne compte que les pliages observés pendant que l’app est au premier plan. Le test de charnière mesure la continuité, pas une précision mécanique absolue. Utilisez ce rapport uniquement comme information complémentaire.",

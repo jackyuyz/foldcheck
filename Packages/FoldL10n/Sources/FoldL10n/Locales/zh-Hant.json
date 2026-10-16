@@ -1,4 +1,5 @@
 {
+  "angle.title": "鉸鏈角度",
   "crease.hingeAngle": "鉸鏈角度約 %d°",
   "crease.photo": "附加照片（可選）",
   "crease.photoAttached": "已附加照片",
@@ -142,6 +143,10 @@
   "pixels.note": "使用者標記了 %d 處看起來壞點、亮點或變色的位置。",
   "pixels.step": "顏色 %1$d / %2$d",
   "pixels.tip": "測試期間亮度調至最高，結束後恢復。為取得準確色彩，請關閉原彩顯示和夜覽。",
+  "posture.closed": "闔上",
+  "posture.fullyOpen": "全開",
+  "posture.partiallyOpen": "半開",
+  "posture.unknown": "角度未知",
   "report.devUnsigned": "開發版本（未簽章）",
   "report.deviceInfo": "裝置資訊",
   "report.disclaimer": "聲明：本報告是使用 FoldCheck 由使用者自行產生的檢查快照，不是 Apple 或任何授權服務商的官方認證。數位簽章只證明此 PDF 在這份 FoldCheck 安裝產生之後沒有被修改。它不能證明裝置真偽、所有權或維修紀錄。FoldCheck 無法讀取電池健康度、循環次數、序號或終身摺疊次數。摺疊計數只統計 App 在前景時觀察到的開合。鉸鏈測試反映角度讀數的連續性與一致性，不是絕對的機械精度。請僅將本報告作為補充資訊。",

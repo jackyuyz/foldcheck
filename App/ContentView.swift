@@ -9,7 +9,9 @@ struct ContentView: View {
     @Environment(FoldCounterModel.self) private var foldCounter
     @Environment(\.scenePhase) private var scenePhase
     @State private var selectedTab: Tab = .home
-    
+    @State private var foldState: FoldState = .noHinge
+    @State private var hingeCheckRequest: InspectionRequest?
+
     enum Tab: Hashable {
         case home
         case history
@@ -50,6 +52,13 @@ struct ContentView: View {
                 Label(L10nKey.tabSettings.text(in: language), systemImage: "gear")
             }
             .tag(Tab.settings)
+        }
+        .hingeAngleAccessory(state: foldState) {
+            hingeCheckRequest = .current(tests: [.hingeSweep], foldState: foldStateProvider.state)
+        }
+        .observeFoldState($foldState)
+        .fullScreenCover(item: $hingeCheckRequest) { request in
+            InspectionFlowView(request: request)
         }
         .foldDebugOverlay()
         // F5: count folds only while FoldCheck is in the foreground.

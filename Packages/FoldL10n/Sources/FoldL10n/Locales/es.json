@@ -1,4 +1,5 @@
 {
+  "angle.title": "Ángulo de la bisagra",
   "crease.hingeAngle": "Ángulo de bisagra aprox. %d°",
   "crease.photo": "Adjuntar una foto (opcional)",
   "crease.photoAttached": "Foto adjunta",
@@ -142,6 +143,10 @@
   "pixels.note": "El usuario marcó %d puntos que parecían muertos, atascados o descoloridos.",
   "pixels.step": "Color %1$d de %2$d",
   "pixels.tip": "El brillo sube al máximo durante la prueba y se restablece después. Desactiva True Tone y Night Shift para ver colores precisos.",
+  "posture.closed": "Cerrado",
+  "posture.fullyOpen": "Totalmente abierto",
+  "posture.partiallyOpen": "Entreabierto",
+  "posture.unknown": "Ángulo desconocido",
   "report.devUnsigned": "Compilación de desarrollo (sin firma)",
   "report.deviceInfo": "Dispositivo",
   "report.disclaimer": "AVISO: Este informe es una revisión generada por el usuario con FoldCheck. NO es una certificación oficial de Apple ni de un servicio autorizado. La firma digital solo demuestra que este PDF no se ha modificado desde que lo creó esta instalación de FoldCheck. No verifica la autenticidad del dispositivo, la propiedad ni el historial de reparaciones. FoldCheck no puede leer la salud de la batería, los ciclos, el número de serie ni los pliegues de por vida. El contador solo registra pliegues mientras la app está en primer plano. La prueba de bisagra mide continuidad y consistencia, no una precisión mecánica absoluta. Usa este informe solo como información complementaria.",

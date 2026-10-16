@@ -2,6 +2,7 @@ import Foundation
 
 /// Stable localization key. English is the fallback.
 public enum L10nKey: String, CaseIterable, Sendable, Hashable {
+    case angleTitle = "angle.title"
     case creaseHingeAngle = "crease.hingeAngle"
     case creasePhoto = "crease.photo"
     case creasePhotoAttached = "crease.photoAttached"
@@ -145,6 +146,10 @@ public enum L10nKey: String, CaseIterable, Sendable, Hashable {
     case pixelsNote = "pixels.note"
     case pixelsStep = "pixels.step"
     case pixelsTip = "pixels.tip"
+    case postureClosed = "posture.closed"
+    case postureFullyOpen = "posture.fullyOpen"
+    case posturePartiallyOpen = "posture.partiallyOpen"
+    case postureUnknown = "posture.unknown"
     case reportDevUnsigned = "report.devUnsigned"
     case reportDeviceInfo = "report.deviceInfo"
     case reportDisclaimer = "report.disclaimer"

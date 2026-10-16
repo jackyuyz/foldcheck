@@ -1,4 +1,5 @@
 {
+  "angle.title": "Hinge angle",
   "crease.hingeAngle": "Hinge angle about %d°",
   "crease.photo": "Attach a photo (optional)",
   "crease.photoAttached": "Photo attached",
@@ -142,6 +143,10 @@
   "pixels.note": "The user marked %d spots that looked dead, stuck, or discolored.",
   "pixels.step": "Color %1$d of %2$d",
   "pixels.tip": "Brightness goes to maximum during the test and is restored after. Turn off True Tone and Night Shift for accurate colors.",
+  "posture.closed": "Closed",
+  "posture.fullyOpen": "Fully open",
+  "posture.partiallyOpen": "Partly open",
+  "posture.unknown": "Angle unknown",
   "report.devUnsigned": "Development build (unsigned)",
   "report.deviceInfo": "Device Information",
   "report.disclaimer": "DISCLAIMER: This report is a user-generated inspection snapshot created by FoldCheck. It is NOT an official certification from Apple or any authorized service provider. The digital signature proves only that this PDF has not been modified since creation by this specific FoldCheck installation. It does not verify device authenticity, ownership, or repair history. FoldCheck cannot access battery health, cycle counts, serial numbers, or lifetime fold counts. The fold counter tracks only folds observed while the app was running in the foreground. Hinge test results reflect continuity and consistency of angle readings, not absolute mechanical accuracy. Use this report as supplementary information only.",
