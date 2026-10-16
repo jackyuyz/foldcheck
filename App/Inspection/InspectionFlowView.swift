@@ -43,6 +43,7 @@ struct InspectionFlowView: View {
         _session = State(initialValue: InspectionSession(
             deviceModel: DeviceInfo.displayName,
             osVersion: context.osVersion,
+            storageCapacity: DeviceInfo.storageCapacity,
             hasHinge: context.hasHinge
         ))
         _isCompleted = State(initialValue: plan.runnable.isEmpty)

@@ -206,8 +206,15 @@ Unit tests pass on Linux:
 - Pass/Attention/Fail rules live in TestsKit (`CameraTestSession`, `AudioTestSession`, `BiometricCheck`, `SensorsTestSession`, `ButtonsTestSession`); screens in `App/Tests/Hardware/`
 - Audio, Touch ID matches and real camera frames need a device; the simulator UI tests cover the no-camera, no-sensor and buttons paths
 
-### M5-M7: Pending
-- PDF reports with signing (M5)
+### M5: Reports ✅
+- F2 PDF (`ReportPDFRenderer`, US Letter): device model, OS, storage, date and time zone, summary, every result with its metrics and notes, the hinge chart, attached crease photos, the signature with a QR code, and the disclaimer. Saved in `Application Support/Reports` and shared from the preview
+- F3 signing: a per-install P-256 key created in the Secure Enclave on first use; the Keychain keeps only its encrypted `dataRepresentation` (this device only). Without a Secure Enclave the development software key signs and the report says "Development build (unsigned)". The Apple silicon simulator has a Secure Enclave, so simulator reports are signed for real
+- The PDF's Subject carries a `ReportBundle`: the exact signed canonical-JSON bytes plus the envelope. `ReportVerifier` hashes those bytes, so any changed byte fails (AC4)
+- Verify: importing a PDF checks content and signature and lists the signed results to compare with the pages; scanning the QR (VisionKit) checks the signature only. Both say whether this installation or another one (key fingerprint) signed it
+- Reports are unlocked in DEBUG builds until StoreKit lands in M6; release builds show the paywall
+- Not checked yet: importing through the Files picker on a device, and QR scanning (needs a camera)
+
+### M6-M7: Pending
 - History compare, reminders, Store (M6). Saving history locally is in place
 - Polish (M7). In-app language switching is in place; remaining work is visual polish.
 

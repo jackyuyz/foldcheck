@@ -103,8 +103,11 @@ struct InspectionSummaryView: View {
     private var actionButtons: some View {
         VStack(spacing: 12) {
             Button {
-                // TODO: Check if user has purchased reports
-                showingPaywall = true
+                if ReportAccess.isUnlocked {
+                    showingReport = true
+                } else {
+                    showingPaywall = true
+                }
             } label: {
                 Label(L10nKey.summaryCreateReport.text(in: language), systemImage: "doc.fill")
                     .font(.headline)
@@ -113,7 +116,8 @@ struct InspectionSummaryView: View {
                     .background(.tint, in: RoundedRectangle(cornerRadius: 12))
                     .foregroundStyle(.white)
             }
-            
+            .accessibilityIdentifier("summary.createReport")
+
             Button(action: saveToHistory) {
                 if isSaved {
                     Label(L10nKey.summarySaved.text(in: language), systemImage: "checkmark.circle.fill")

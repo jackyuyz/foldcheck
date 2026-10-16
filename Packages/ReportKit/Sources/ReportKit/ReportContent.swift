@@ -125,7 +125,8 @@ public struct ReportContentAssembler {
     public func assemble(
         session: InspectionSession,
         envelope: ReportEnvelope?,
-        language: AppLanguage = .en
+        language: AppLanguage = .en,
+        generatedAt: Date = .now
     ) -> ReportContent {
         dateFormatter.locale = Locale(identifier: language.localeIdentifier)
         timeFormatter.locale = Locale(identifier: language.localeIdentifier)
@@ -164,7 +165,7 @@ public struct ReportContentAssembler {
         return ReportContent(
             title: L10nKey.reportTitle.text(in: language),
             reportID: envelope?.reportID.uuidString ?? session.id.uuidString,
-            generatedAt: timeFormatter.string(from: Date()),
+            generatedAt: timeFormatter.string(from: generatedAt),
             timeZone: session.timeZoneIdentifier,
             deviceModel: session.deviceModel,
             osVersion: session.osVersion,
