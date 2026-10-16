@@ -1,19 +1,29 @@
 import SwiftUI
+import SwiftData
 import FoldL10n
 import TestsKit
+import Library
 
 struct HistoryView: View {
     @Environment(\.appLanguage) private var language
-    @State private var sessions: [InspectionSession] = []
+    @Environment(\.modelContext) private var modelContext
+    @Query(StoredSession.newestFirst) private var records: [StoredSession]
     @State private var selectedSessions: Set<UUID> = []
     @State private var isComparing = false
     
+    /// Saved sessions that still decode, newest first, each with its stored record.
+    private var entries: [(record: StoredSession, session: InspectionSession)] {
+        records.compactMap { record in record.session.map { (record, $0) } }
+    }
+    
     var body: some View {
+        // Decode once per render; the list, the toolbar and the empty check all use it.
+        let sessions = entries.map(\.session)
         Group {
             if sessions.isEmpty {
                 emptyState
             } else {
-                sessionsList
+                sessionsList(sessions)
             }
         }
         .navigationTitle(L10nKey.historyTitle.text(in: language))
@@ -41,7 +51,7 @@ struct HistoryView: View {
         )
     }
     
-    private var sessionsList: some View {
+    private func sessionsList(_ sessions: [InspectionSession]) -> some View {
         List {
             ForEach(sessions) { session in
                 SessionRow(
@@ -87,7 +97,17 @@ struct HistoryView: View {
     }
     
     private func deleteSessions(at offsets: IndexSet) {
-        sessions.remove(atOffsets: offsets)
+        let entries = self.entries
+        let doomed = offsets.map { entries[$0] }
+        for entry in doomed {
+            selectedSessions.remove(entry.session.id)
+        }
+        try? SessionLibrary(context: modelContext).delete(doomed.map(\.record))
+        // Compare needs two sessions; leave the mode when fewer remain.
+        if entries.count - doomed.count < 2 {
+            isComparing = false
+            selectedSessions.removeAll()
+        }
     }
 }
 
@@ -140,4 +160,5 @@ struct SessionRow: View {
     NavigationStack {
         HistoryView()
     }
+    .modelContainer(for: StoredSession.self, inMemory: true)
 }

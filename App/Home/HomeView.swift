@@ -1,12 +1,15 @@
 import SwiftUI
+import SwiftData
 import FoldKit
 import FoldL10n
 import TestsKit
+import Library
 
 struct HomeView: View {
     @Environment(\.foldStateProvider) private var foldStateProvider
     @Environment(\.appLanguage) private var language
-    @State private var lastSession: InspectionSession?
+    /// Only a saved full inspection becomes the "last inspection" on Home (full ones save themselves).
+    @Query(StoredSession.latestFullInspection) private var latestFull: [StoredSession]
     @State private var inspectionRequest: InspectionRequest?
     @State private var showingFoldStats = false
     
@@ -17,7 +20,7 @@ struct HomeView: View {
                 
                 startInspectionButton
                 
-                if let session = lastSession {
+                if let session = latestFull.first?.session {
                     lastResultSection(session)
                 }
                 
@@ -30,12 +33,7 @@ struct HomeView: View {
             FoldStatsView()
         }
         .fullScreenCover(item: $inspectionRequest) { request in
-            InspectionFlowView(request: request) { session in
-                // Only a full inspection becomes the "last inspection" on Home.
-                if request.tests == TestID.defaultOrder {
-                    lastSession = session
-                }
-            }
+            InspectionFlowView(request: request)
         }
     }
     
@@ -233,4 +231,5 @@ struct QuickActionCard: View {
     NavigationStack {
         HomeView()
     }
+    .modelContainer(for: StoredSession.self, inMemory: true)
 }

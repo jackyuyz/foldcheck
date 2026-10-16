@@ -70,6 +70,7 @@ cd Packages/HingeAnalysis && swift test
 cd Packages/TestsKit && swift test
 cd Packages/ReportKit && swift test
 cd Packages/FoldL10n && swift test
+cd Packages/Library && swift test     # SwiftData: tests run on macOS; the module is empty on Linux
 ```
 
 **App tests (requires Xcode):**
@@ -108,6 +109,7 @@ All business logic is in Swift Packages that build and test on Linux:
 - **HingeAnalysis**: Hinge sweep analysis (`HingeSample`, `HingeSweepAnalyzer`, `HingeSweepReport` with quality assessment)
 - **TestsKit**: Test definitions (`TestID`, `TestOutcome`, `TestResult`, `InspectionSession`, `FoldCounter`)
 - **ReportKit**: Report generation (`CanonicalReport`, `ReportEnvelope`, `ReportSigner` protocol, PDF content assembly, device names)
+- **Library**: Saved sessions (`StoredSession` SwiftData model holding the encoded `InspectionSession`, `SessionLibrary` save/delete/query, latest result per test). Apple platforms only; empty on Linux
 - **FoldL10n**: String catalogs and `AppLanguage`. English is the default. Spanish, French, Japanese, Simplified Chinese, and Traditional Chinese are selected in Settings.
 
 ### App Layer (iOS-Only)
@@ -117,7 +119,7 @@ The SwiftUI app is a thin layer that:
 - Provides UI for the inspection flow
 - Handles StoreKit purchases
 - Renders PDFs (PDFKit)
-- Manages local persistence (SwiftData)
+- Manages local persistence (SwiftData): sessions live in `Application Support/Sessions.store` on the device, with no CloudKit and nothing uploaded. Full inspections save on their own; quick tests save with "Save to History"
 
 ## Unverified/Assumed APIs
 

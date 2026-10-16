@@ -1,8 +1,10 @@
 import SwiftUI
+import SwiftData
 import FoldKit
 import FoldL10n
 import TestsKit
 import ReportKit
+import Library
 
 @main
 struct FoldCheckApp: App {
@@ -11,6 +13,7 @@ struct FoldCheckApp: App {
     @State private var mockFoldStateProvider: MockFoldStateProvider?
     @State private var settings = AppSettings()
     @State private var foldCounter = FoldCounterModel()
+    private let sessionContainer = Self.makeSessionContainer()
     
     init() {
         // Assigning a @State property inside init is ignored; seed its initial value instead.
@@ -27,6 +30,7 @@ struct FoldCheckApp: App {
                 .environment(\.reportLanguage, settings.reportLanguage)
                 .modifier(HingeBridgeModifier(provider: foldStateProvider))
         }
+        .modelContainer(sessionContainer)
     }
     
     private var currentProvider: any FoldStateProvider {
@@ -55,6 +59,20 @@ struct FoldCheckApp: App {
         #else
         return nil
         #endif
+    }
+    
+    /// Saved sessions (spec §Persistence) stay on this device: Application Support/Sessions.store,
+    /// outside the shared app group and with no CloudKit database, so nothing is synced or uploaded.
+    private static func makeSessionContainer() -> ModelContainer {
+        let configuration = ModelConfiguration("Sessions", groupContainer: .none, cloudKitDatabase: .none)
+        do {
+            return try ModelContainer(for: StoredSession.self, configurations: configuration)
+        } catch {
+            // An unreadable store shouldn't stop the tests from running; history just won't persist.
+            assertionFailure("Session store failed to open: \(error)")
+            let fallback = ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
+            return try! ModelContainer(for: StoredSession.self, configurations: fallback)
+        }
     }
     
     private static func getMockValue() -> String? {

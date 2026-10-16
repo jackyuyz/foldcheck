@@ -2,12 +2,16 @@ import SwiftUI
 import FoldKit
 import FoldL10n
 import TestsKit
+import Library
 
 /// What to run: the full inspection or a single quick test, with the device context at launch.
 struct InspectionRequest: Identifiable {
     let id = UUID()
     var tests: [TestID]
     var context: DeviceContext
+
+    /// The full inspection (every test), as opposed to a quick single test.
+    var isFullInspection: Bool { tests == TestID.defaultOrder }
 
     @MainActor
     static func current(tests: [TestID] = TestID.defaultOrder, foldState: FoldState) -> InspectionRequest {
@@ -18,6 +22,7 @@ struct InspectionRequest: Identifiable {
 struct InspectionFlowView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.appLanguage) private var language
+    @Environment(\.modelContext) private var modelContext
 
     @State private var session: InspectionSession
     @State private var currentTestIndex = 0
@@ -26,11 +31,13 @@ struct InspectionFlowView: View {
     @State private var isRunningTest = false
 
     private let plan: InspectionPlan
+    private let isFullInspection: Bool
     private let onFinished: (InspectionSession) -> Void
 
     init(request: InspectionRequest, onFinished: @escaping (InspectionSession) -> Void = { _ in }) {
         let context = request.context
         plan = InspectionPlan(tests: request.tests, context: context, implemented: InspectionTestRegistry.implemented)
+        isFullInspection = request.isFullInspection
         self.onFinished = onFinished
         _session = State(initialValue: InspectionSession(
             deviceModel: DeviceInfo.displayName,
@@ -48,7 +55,7 @@ struct InspectionFlowView: View {
                 }
 
                 if isCompleted {
-                    InspectionSummaryView(session: session)
+                    InspectionSummaryView(session: session, isFullInspection: isFullInspection)
                 } else if currentTestIndex < plan.runnable.count {
                     testView(for: plan.runnable[currentTestIndex])
                         .id(plan.runnable[currentTestIndex])
@@ -140,6 +147,11 @@ struct InspectionFlowView: View {
         let order = TestID.defaultOrder
         session.results.sort { (order.firstIndex(of: $0.id) ?? 0) < (order.firstIndex(of: $1.id) ?? 0) }
         session.completedAt = Date()
+        // Full inspections go to History on their own; quick tests wait for "Save to History".
+        // The summary's button shows "Saved" either way, and saving again only updates the copy.
+        if isFullInspection {
+            try? SessionLibrary(context: modelContext).save(session, isFullInspection: true)
+        }
         onFinished(session)
     }
 }

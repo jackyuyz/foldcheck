@@ -33,6 +33,8 @@ packages:
     path: Packages/ReportKit
   FoldL10n:
     path: Packages/FoldL10n
+  Library:
+    path: Packages/Library
 
 targets:
   FoldCheck:
@@ -80,6 +82,7 @@ targets:
       - package: TestsKit
       - package: ReportKit
       - package: FoldL10n
+      - package: Library
     entitlements:
       path: App/FoldCheck.entitlements
       properties:

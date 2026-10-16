@@ -1,7 +1,9 @@
 import SwiftUI
+import SwiftData
 import FoldKit
 import FoldL10n
 import TestsKit
+import Library
 
 struct ContentView: View {
     @Environment(\.appLanguage) private var language
@@ -172,4 +174,5 @@ struct FoldDebugOverlay: View {
 
 #Preview {
     ContentView()
+        .modelContainer(for: StoredSession.self, inMemory: true)
 }

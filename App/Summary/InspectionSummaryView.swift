@@ -1,13 +1,28 @@
 import SwiftUI
+import SwiftData
 import FoldL10n
 import TestsKit
 import ReportKit
+import Library
 
 struct InspectionSummaryView: View {
     let session: InspectionSession
+    let isFullInspection: Bool
     @Environment(\.appLanguage) private var language
+    @Environment(\.modelContext) private var modelContext
+    /// The saved copy of this session: non-empty once it is in History (auto-saved or by the button).
+    @Query private var savedCopies: [StoredSession]
     @State private var showingPaywall = false
     @State private var showingReport = false
+    @State private var saveFailed = false
+    
+    init(session: InspectionSession, isFullInspection: Bool = false) {
+        self.session = session
+        self.isFullInspection = isFullInspection
+        _savedCopies = Query(StoredSession.withID(session.id))
+    }
+    
+    private var isSaved: Bool { !savedCopies.isEmpty }
     
     var body: some View {
         ScrollView {
@@ -99,13 +114,34 @@ struct InspectionSummaryView: View {
                     .foregroundStyle(.white)
             }
             
-            Button {
-                // TODO: Save session
-            } label: {
-                Label(L10nKey.summarySaveHistory.text(in: language), systemImage: "clock.fill")
-                    .font(.subheadline)
-                    .foregroundStyle(.tint)
+            Button(action: saveToHistory) {
+                if isSaved {
+                    Label(L10nKey.summarySaved.text(in: language), systemImage: "checkmark.circle.fill")
+                        .font(.subheadline)
+                        .foregroundStyle(.green)
+                } else {
+                    Label(L10nKey.summarySaveHistory.text(in: language), systemImage: "clock.fill")
+                        .font(.subheadline)
+                        .foregroundStyle(.tint)
+                }
             }
+            .disabled(isSaved)
+            .accessibilityIdentifier("summary.save")
+            
+            if saveFailed && !isSaved {
+                Text(L10nKey.summarySaveFailed.text(in: language))
+                    .font(.caption)
+                    .foregroundStyle(.red)
+            }
+        }
+    }
+    
+    private func saveToHistory() {
+        do {
+            try SessionLibrary(context: modelContext).save(session, isFullInspection: isFullInspection)
+            saveFailed = false
+        } catch {
+            saveFailed = true
         }
     }
     
@@ -194,4 +230,5 @@ struct TestResultRow: View {
     session.completedAt = Date()
     
     return InspectionSummaryView(session: session)
+        .modelContainer(for: StoredSession.self, inMemory: true)
 }
