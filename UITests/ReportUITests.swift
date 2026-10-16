@@ -9,7 +9,7 @@ final class ReportUITests: XCTestCase {
 
     func testCreateReportShowsSignedPDF() throws {
         let app = XCUIApplication()
-        app.launchArguments = ["-UITestMode", "1", "-FoldMock", "nohinge"]
+        app.launchArguments = ["-UITestMode", "1", "-FoldMock", "nohinge", "-UnlockReports"]
         app.launch()
 
         tap(app.buttons["home.quick.screen"])

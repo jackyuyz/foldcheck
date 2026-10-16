@@ -35,6 +35,8 @@ packages:
     path: Packages/FoldL10n
   Library:
     path: Packages/Library
+  Store:
+    path: Packages/Store
 
 targets:
   FoldCheck:
@@ -83,6 +85,7 @@ targets:
       - package: ReportKit
       - package: FoldL10n
       - package: Library
+      - package: Store
     entitlements:
       path: App/FoldCheck.entitlements
       properties:
@@ -100,6 +103,9 @@ targets:
       - path: Tests
         excludes:
           - "**/.DS_Store"
+      # SKTestSession loads the StoreKit configuration from the test bundle.
+      - path: Configuration.storekit
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.jackyu.foldcheck.tests
@@ -130,6 +136,7 @@ schemes:
         FoldCheckUITests: [test]
     run:
       config: Debug
+      storeKitConfiguration: Configuration.storekit
       commandLineArguments:
         "-FoldDebugOverlay": false
     test:
@@ -151,6 +158,7 @@ schemes:
         FoldCheck: all
     run:
       config: Debug
+      storeKitConfiguration: Configuration.storekit
       # XcodeGen maps each key to one argument string and the value to its checkbox,
       # so the -FoldMock value must be part of the key. Tick one alternative at a time.
       commandLineArguments:

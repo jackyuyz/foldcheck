@@ -1,4 +1,5 @@
 import SwiftUI
+import Store
 import SwiftData
 import FoldKit
 import FoldL10n
@@ -12,6 +13,8 @@ struct HomeView: View {
     @Query(StoredSession.latestFullInspection) private var latestFull: [StoredSession]
     @State private var inspectionRequest: InspectionRequest?
     @State private var showingFoldStats = false
+    @State private var showingPaywall = false
+    @Environment(Store.self) private var store
     
     var body: some View {
         ScrollView {
@@ -29,6 +32,9 @@ struct HomeView: View {
             .padding()
         }
         .navigationTitle("FoldCheck")
+        .sheet(isPresented: $showingPaywall) {
+            PaywallView()
+        }
         .fullScreenCover(isPresented: $showingFoldStats) {
             FoldStatsView()
         }
@@ -148,13 +154,17 @@ struct HomeView: View {
                 }
                 .accessibilityIdentifier("home.quick.screen")
                 
-                // F5. The stats page is meant to be paid (spec §1); the paywall arrives in M6.
-                QuickActionCard(
+                                QuickActionCard(
                     title: L10nKey.homeFoldStats.text(in: language),
                     icon: "chart.bar.fill",
                     description: L10nKey.homeFoldStatsDetail.text(in: language)
                 ) {
-                    showingFoldStats = true
+                    // F5 stats are part of the purchase; counting itself is always on.
+                    if store.hasReports {
+                        showingFoldStats = true
+                    } else {
+                        showingPaywall = true
+                    }
                 }
                 .accessibilityIdentifier("home.quick.foldStats")
             }
@@ -232,4 +242,5 @@ struct QuickActionCard: View {
         HomeView()
     }
     .modelContainer(for: StoredSession.self, inMemory: true)
+    .environment(Store())
 }

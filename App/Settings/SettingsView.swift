@@ -1,12 +1,41 @@
 import SwiftUI
 import FoldL10n
+import Store
 
 struct SettingsView: View {
     @Environment(AppSettings.self) private var settings
+    @Environment(Store.self) private var store
     @AppStorage("monthlyReminders") private var monthlyReminders = false
     @AppStorage("hapticFeedback") private var hapticFeedback = true
+    @State private var remindersDenied = false
+    @State private var showingPaywall = false
+    @State private var restoreMessage: String?
 
     private var language: AppLanguage { settings.appLanguage }
+
+    /// Turning reminders on needs the purchase and notification permission; if either is
+    /// missing the toggle stays off.
+    private var remindersBinding: Binding<Bool> {
+        Binding(
+            get: { monthlyReminders },
+            set: { isOn in
+                guard isOn else {
+                    MonthlyReminder.disable()
+                    monthlyReminders = false
+                    return
+                }
+                guard store.hasReports else {
+                    showingPaywall = true
+                    return
+                }
+                Task {
+                    let scheduled = await MonthlyReminder.enable(language: language)
+                    monthlyReminders = scheduled
+                    remindersDenied = !scheduled
+                }
+            }
+        )
+    }
 
     var body: some View {
         @Bindable var settings = settings
@@ -30,8 +59,15 @@ struct SettingsView: View {
                 Text(L10nKey.settingsReportFooter.text(in: language))
             }
 
-            Section(L10nKey.settingsNotifications.text(in: language)) {
-                Toggle(L10nKey.settingsMonthly.text(in: language), isOn: $monthlyReminders)
+            Section {
+                Toggle(L10nKey.settingsMonthly.text(in: language), isOn: remindersBinding)
+                    .accessibilityIdentifier("settings.monthlyReminders")
+            } header: {
+                Text(L10nKey.settingsNotifications.text(in: language))
+            } footer: {
+                if remindersDenied {
+                    Text(L10nKey.settingsRemindersOff.text(in: language))
+                }
             }
 
             Section(L10nKey.settingsPreferences.text(in: language)) {
@@ -40,7 +76,18 @@ struct SettingsView: View {
 
             Section(L10nKey.settingsPurchases.text(in: language)) {
                 Button(L10nKey.paywallRestore.text(in: language)) {
-                    // TODO: AppStore.sync()
+                    Task {
+                        let unlocked = await store.restore()
+                        restoreMessage = unlocked
+                            ? L10nKey.paywallRestored.text(in: language)
+                            : L10nKey.paywallNothingToRestore.text(in: language)
+                    }
+                }
+                .accessibilityIdentifier("settings.restore")
+                if let restoreMessage {
+                    Text(restoreMessage)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
                 }
             }
 
@@ -56,9 +103,9 @@ struct SettingsView: View {
                     HelpView()
                 }
 
-                Link(L10nKey.paywallPrivacy.text(in: language), destination: URL(string: "https://example.com/privacy")!)
+                Link(L10nKey.paywallPrivacy.text(in: language), destination: AppLinks.privacy)
 
-                Link(L10nKey.paywallTerms.text(in: language), destination: URL(string: "https://example.com/terms")!)
+                Link(L10nKey.paywallTerms.text(in: language), destination: AppLinks.terms)
             }
 
             Section {
@@ -72,6 +119,16 @@ struct SettingsView: View {
             }
         }
         .navigationTitle(L10nKey.settingsTitle.text(in: language))
+        .sheet(isPresented: $showingPaywall) {
+            PaywallView()
+        }
+        .onChange(of: store.hasReports) { _, unlocked in
+            // A refund takes reminders away with the rest of the purchase.
+            if !unlocked && monthlyReminders {
+                MonthlyReminder.disable()
+                monthlyReminders = false
+            }
+        }
     }
 }
 
@@ -213,5 +270,6 @@ struct DebugInfoView: View {
         SettingsView()
     }
     .environment(AppSettings())
+    .environment(Store())
     .environment(\.appLanguage, AppLanguage.en)
 }

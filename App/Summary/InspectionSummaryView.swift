@@ -4,12 +4,14 @@ import FoldL10n
 import TestsKit
 import ReportKit
 import Library
+import Store
 
 struct InspectionSummaryView: View {
     let session: InspectionSession
     let isFullInspection: Bool
     @Environment(\.appLanguage) private var language
     @Environment(\.modelContext) private var modelContext
+    @Environment(Store.self) private var store
     /// The saved copy of this session: non-empty once it is in History (auto-saved or by the button).
     @Query private var savedCopies: [StoredSession]
     @State private var showingPaywall = false
@@ -103,7 +105,7 @@ struct InspectionSummaryView: View {
     private var actionButtons: some View {
         VStack(spacing: 12) {
             Button {
-                if ReportAccess.isUnlocked {
+                if store.hasReports {
                     showingReport = true
                 } else {
                     showingPaywall = true
@@ -236,4 +238,5 @@ struct TestResultRow: View {
     
     return InspectionSummaryView(session: session)
         .modelContainer(for: StoredSession.self, inMemory: true)
+        .environment(Store())
 }

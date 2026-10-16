@@ -214,8 +214,16 @@ Unit tests pass on Linux:
 - Reports are unlocked in DEBUG builds until StoreKit lands in M6; release builds show the paywall
 - Not checked yet: importing through the Files picker on a device, and QR scanning (needs a camera)
 
-### M6-M7: Pending
-- History compare, reminders, Store (M6). Saving history locally is in place
+### M6: History, reminders, Store ✅
+- `Store` package (StoreKit 2): `com.jackyu.foldcheck.reports`, one-time purchase. Loads the product, listens to `Transaction.updates` from launch, recomputes the unlock from `currentEntitlements` (unverified grants nothing, a refund locks again), handles pending approval and restore, and caches the unlock only to avoid a paywall flash
+- Paywall shows the App Store price (`displayPrice`, never hardcoded) with loading, unavailable, pending, and failed states, and closes once unlocked; terms link to Apple's standard EULA
+- AC8 gating: every test is free; PDF reports, History and compare, monthly reminders and the fold stats page need the purchase. Inspections are still saved for free users, behind a lock, so buying shows them all. `-UnlockReports` (DEBUG only) unlocks for UI tests
+- F4: tapping a saved inspection opens its summary; Compare shows two inspections side by side with each test's outcome and the metrics that show wear (touch misses, crease rating, hinge continuity and gap, pixel issues, score), marked better, worse or unchanged (`SessionComparison` in TestsKit)
+- F6: a monthly local notification on the same day (capped at 28) at 10:00, in the app language; denied permission turns the toggle back off and says where to fix it
+- `Configuration.storekit` is selected in the Run scheme. `SKTestSession` tests (purchase, refund, Ask to Buy, failure, restore) skip in command-line runs: storekitd only serves apps installed for development, and a build signed "to run locally" isn't one. Run them from Xcode with a development team
+- Before submission: replace the placeholder privacy policy URL (`AppLinks.privacy`) and enable Family Sharing for the product in App Store Connect
+
+### M7: Pending
 - Polish (M7). In-app language switching is in place; remaining work is visual polish.
 
 

@@ -1,10 +1,13 @@
 import SwiftUI
 import FoldL10n
+import Store
 
+/// S9: the one-time "FoldCheck Reports" unlock. Shows the App Store price, handles pending
+/// approval (Ask to Buy) and restore, and closes on its own once the purchase is unlocked.
 struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.appLanguage) private var language
-    @State private var isPurchasing = false
+    @Environment(Store.self) private var store
     @State private var isRestoring = false
     @State private var errorMessage: String?
     
@@ -30,6 +33,12 @@ struct PaywallView: View {
                         dismiss()
                     }
                 }
+            }
+            .onChange(of: store.hasReports, initial: true) { _, unlocked in
+                if unlocked { dismiss() }
+            }
+            .onChange(of: store.purchaseState) { _, state in
+                if state == .failed { errorMessage = L10nKey.paywallFailed.text(in: language) }
             }
             .alert(L10nKey.paywallError.text(in: language), isPresented: .constant(errorMessage != nil)) {
                 Button(L10nKey.paywallOk.text(in: language)) {
@@ -103,19 +112,46 @@ struct PaywallView: View {
     
     private var purchaseSection: some View {
         VStack(spacing: 16) {
-            VStack(spacing: 4) {
-                Text("$2.99")
-                    .font(.system(size: 36, weight: .bold, design: .rounded))
-                
-                Text(L10nKey.paywallOneTime.text(in: language))
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+            switch store.loadState {
+            case .loading:
+                ProgressView()
+                    .accessibilityIdentifier("paywall.loading")
+            case .unavailable:
+                VStack(spacing: 8) {
+                    Text(L10nKey.paywallUnavailable.text(in: language))
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                    Button(L10nKey.paywallRetry.text(in: language)) {
+                        Task { await store.loadProduct() }
+                    }
+                }
+                .accessibilityIdentifier("paywall.unavailable")
+            case .loaded:
+                if let product = store.product {
+                    VStack(spacing: 4) {
+                        // The App Store's localized price; never hardcoded.
+                        Text(product.displayPrice)
+                            .font(.system(size: 36, weight: .bold, design: .rounded))
+                            .accessibilityIdentifier("paywall.price")
+                        Text(L10nKey.paywallOneTime.text(in: language))
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                }
             }
-            
+
+            if store.purchaseState == .pending {
+                Label(L10nKey.paywallPending.text(in: language), systemImage: "hourglass")
+                    .font(.subheadline)
+                    .foregroundStyle(.orange)
+                    .accessibilityIdentifier("paywall.pending")
+            }
+
             Button {
-                purchase()
+                Task { await store.purchase() }
             } label: {
-                if isPurchasing {
+                if store.purchaseState == .purchasing {
                     ProgressView()
                         .tint(.white)
                 } else {
@@ -127,10 +163,11 @@ struct PaywallView: View {
             .padding()
             .background(.tint, in: RoundedRectangle(cornerRadius: 12))
             .foregroundStyle(.white)
-            .disabled(isPurchasing || isRestoring)
-            
+            .disabled(store.product == nil || store.purchaseState == .purchasing || isRestoring)
+            .accessibilityIdentifier("paywall.purchase")
+
             Button {
-                restore()
+                Task { await restore() }
             } label: {
                 if isRestoring {
                     ProgressView()
@@ -139,46 +176,42 @@ struct PaywallView: View {
                 }
             }
             .font(.subheadline)
-            .disabled(isPurchasing || isRestoring)
+            .disabled(store.purchaseState == .purchasing || isRestoring)
+            .accessibilityIdentifier("paywall.restore")
         }
     }
-    
+
     private var termsSection: some View {
         VStack(spacing: 8) {
             Text(L10nKey.paywallLegal.text(in: language))
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
-            
+
             HStack(spacing: 16) {
-                Button(L10nKey.paywallTerms.text(in: language)) {
-                    // TODO: Open terms
-                }
-                Button(L10nKey.paywallPrivacy.text(in: language)) {
-                    // TODO: Open privacy
-                }
+                Link(L10nKey.paywallTerms.text(in: language), destination: AppLinks.terms)
+                Link(L10nKey.paywallPrivacy.text(in: language), destination: AppLinks.privacy)
             }
             .font(.caption)
         }
     }
-    
-    private func purchase() {
-        isPurchasing = true
-        // TODO: Implement StoreKit 2 purchase
-        // For now, simulate a delay
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            isPurchasing = false
-            // dismiss()
-        }
-    }
-    
-    private func restore() {
+
+    private func restore() async {
         isRestoring = true
-        // TODO: Implement AppStore.sync()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            isRestoring = false
+        let unlocked = await store.restore()
+        isRestoring = false
+        if !unlocked {
+            errorMessage = L10nKey.paywallNothingToRestore.text(in: language)
         }
     }
+}
+
+/// Links shown on the paywall and in Settings.
+enum AppLinks {
+    /// Apple's standard license agreement, which covers a non-consumable purchase.
+    static let terms = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
+    // TODO(before submission): the real privacy policy page ("FoldCheck collects no data").
+    static let privacy = URL(string: "https://example.com/privacy")!
 }
 
 struct FeatureRow: View {
@@ -206,4 +239,5 @@ struct FeatureRow: View {
 
 #Preview {
     PaywallView()
+        .environment(Store())
 }

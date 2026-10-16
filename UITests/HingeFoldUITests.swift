@@ -69,7 +69,7 @@ final class HingeFoldUITests: XCTestCase {
     /// AC7: closed→open transitions observed in the foreground count, the page says
     /// "Folds observed by FoldCheck", and the all-time total survives a relaunch.
     func testFoldCounterCountsMockedFoldsAndPersists() throws {
-        let app = launch(["-FoldMock", "closed", "-FoldDebugOverlay", "1", "-ResetFoldCounter", "1"])
+        let app = launch(["-FoldMock", "closed", "-FoldDebugOverlay", "1", "-ResetFoldCounter", "1", "-UnlockReports"])
         tap(app.buttons["home.quick.foldStats"])
         XCTAssertEqual(element(app, "folds.heading").label, "Folds observed by FoldCheck")
         XCTAssertTrue(element(app, "folds.disclaimer").label.contains("not the device’s lifetime fold count"))
@@ -91,8 +91,11 @@ final class HingeFoldUITests: XCTestCase {
         waitForCount(element(app, "folds.allTimeCount"), 2)
 
         // Relaunch without resetting: this launch starts at 0, all time keeps 2.
+        // A debounced fold is saved on the next once-a-second tick; terminate() kills the app
+        // without a background transition, so give that tick time to run first.
+        Thread.sleep(forTimeInterval: 1.5)
         app.terminate()
-        app.launchArguments = ["-UITestMode", "1", "-FoldMock", "closed"]
+        app.launchArguments = ["-UITestMode", "1", "-FoldMock", "closed", "-UnlockReports"]
         app.launch()
         tap(app.buttons["home.quick.foldStats"])
         waitForCount(element(app, "folds.sessionCount"), 0)
@@ -100,7 +103,7 @@ final class HingeFoldUITests: XCTestCase {
     }
 
     func testFoldStatsWithoutHinge() throws {
-        let app = launch(["-FoldMock", "nohinge"])
+        let app = launch(["-FoldMock", "nohinge", "-UnlockReports"])
         tap(app.buttons["home.quick.foldStats"])
         XCTAssertTrue(element(app, "folds.notApplicable").waitForExistence(timeout: 5))
     }

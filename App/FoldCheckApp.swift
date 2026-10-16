@@ -5,6 +5,7 @@ import FoldL10n
 import TestsKit
 import ReportKit
 import Library
+import Store
 
 @main
 struct FoldCheckApp: App {
@@ -13,6 +14,7 @@ struct FoldCheckApp: App {
     @State private var mockFoldStateProvider: MockFoldStateProvider?
     @State private var settings = AppSettings()
     @State private var foldCounter = FoldCounterModel()
+    @State private var store = Store()
     private let sessionContainer = Self.makeSessionContainer()
     
     init() {
@@ -26,6 +28,13 @@ struct FoldCheckApp: App {
                 .environment(\.foldStateProvider, currentProvider)
                 .environment(settings)
                 .environment(foldCounter)
+                .environment(store)
+                .task {
+                    // Unit tests drive StoreKit through SKTestSession; querying products before
+                    // the session exists leaves StoreKit with an empty product list.
+                    guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else { return }
+                    await store.start()
+                }
                 .environment(\.appLanguage, settings.appLanguage)
                 .environment(\.reportLanguage, settings.reportLanguage)
                 .modifier(HingeBridgeModifier(provider: foldStateProvider))

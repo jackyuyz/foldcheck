@@ -1,4 +1,5 @@
 import SwiftUI
+import Store
 import SwiftData
 import FoldKit
 import FoldL10n
@@ -175,4 +176,5 @@ struct FoldDebugOverlay: View {
 #Preview {
     ContentView()
         .modelContainer(for: StoredSession.self, inMemory: true)
+        .environment(Store())
 }

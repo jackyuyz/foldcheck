@@ -3,13 +3,31 @@ import SwiftData
 import FoldL10n
 import TestsKit
 import Library
+import Store
 
 struct HistoryView: View {
     @Environment(\.appLanguage) private var language
     @Environment(\.modelContext) private var modelContext
     @Query(StoredSession.newestFirst) private var records: [StoredSession]
+    @Environment(Store.self) private var store
     @State private var selectedSessions: Set<UUID> = []
     @State private var isComparing = false
+    @State private var sheet: HistorySheet?
+
+    /// One sheet at a time; separate `.sheet` modifiers on one view interfere.
+    enum HistorySheet: Identifiable {
+        case paywall
+        case session(InspectionSession)
+        case compare(SessionComparison)
+
+        var id: String {
+            switch self {
+            case .paywall: return "paywall"
+            case .session(let session): return "session-\(session.id)"
+            case .compare(let comparison): return "compare-\(comparison.older.id)-\(comparison.newer.id)"
+            }
+        }
+    }
     
     /// Saved sessions that still decode, newest first, each with its stored record.
     private var entries: [(record: StoredSession, session: InspectionSession)] {
@@ -22,13 +40,36 @@ struct HistoryView: View {
         Group {
             if sessions.isEmpty {
                 emptyState
+            } else if !store.hasReports {
+                // F4 is part of the purchase. Sessions are still saved, so buying shows them all.
+                lockedState(count: sessions.count)
             } else {
                 sessionsList(sessions)
             }
         }
         .navigationTitle(L10nKey.historyTitle.text(in: language))
+        .sheet(item: $sheet) { sheet in
+            switch sheet {
+            case .paywall:
+                PaywallView()
+            case .session(let session):
+                NavigationStack {
+                    InspectionSummaryView(session: session)
+                        .navigationTitle(session.startedAt.formatted(date: .abbreviated, time: .shortened, in: language))
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button(L10nKey.testDone.text(in: language)) { self.sheet = nil }
+                                    .accessibilityIdentifier("history.detail.done")
+                            }
+                        }
+                }
+            case .compare(let comparison):
+                CompareView(comparison: comparison)
+            }
+        }
         .toolbar {
-            if sessions.count >= 2 {
+            if store.hasReports && sessions.count >= 2 {
                 ToolbarItem(placement: .primaryAction) {
                     Button(isComparing ? L10nKey.historyDone.text(in: language) : L10nKey.historyCompare.text(in: language)) {
                         withAnimation {
@@ -38,6 +79,7 @@ struct HistoryView: View {
                             }
                         }
                     }
+                    .accessibilityIdentifier("history.compare")
                 }
             }
         }
@@ -51,6 +93,19 @@ struct HistoryView: View {
         )
     }
     
+    private func lockedState(count: Int) -> some View {
+        ContentUnavailableView {
+            Label(L10nKey.historyLockedTitle.text(in: language), systemImage: "lock.fill")
+                .accessibilityIdentifier("history.locked")
+        } description: {
+            Text(L10nKey.historyLockedDetail.text(in: language, count: count, one: .historyLockedDetailOne))
+        } actions: {
+            Button(L10nKey.historyUnlock.text(in: language)) { sheet = .paywall }
+                .buttonStyle(.borderedProminent)
+                .accessibilityIdentifier("history.unlock")
+        }
+    }
+
     private func sessionsList(_ sessions: [InspectionSession]) -> some View {
         List {
             ForEach(sessions) { session in
@@ -61,22 +116,27 @@ struct HistoryView: View {
                 ) {
                     if isComparing {
                         toggleSelection(session.id)
+                    } else {
+                        sheet = .session(session)
                     }
                 }
+                .accessibilityIdentifier("history.row")
             }
             .onDelete(perform: deleteSessions)
         }
         .listStyle(.insetGrouped)
         .overlay(alignment: .bottom) {
             if isComparing && selectedSessions.count == 2 {
-                compareButton
+                compareButton(sessions)
             }
         }
     }
     
-    private var compareButton: some View {
+    private func compareButton(_ sessions: [InspectionSession]) -> some View {
         Button {
-            // TODO: Show comparison view
+            let picked = sessions.filter { selectedSessions.contains($0.id) }
+            guard picked.count == 2 else { return }
+            sheet = .compare(SessionComparison(picked[0], picked[1]))
         } label: {
             Label(L10nKey.historyCompareSelected.text(in: language), systemImage: "arrow.left.arrow.right")
                 .font(.headline)
@@ -85,6 +145,7 @@ struct HistoryView: View {
                 .background(.tint, in: RoundedRectangle(cornerRadius: 12))
                 .foregroundStyle(.white)
         }
+        .accessibilityIdentifier("history.compareSelected")
         .padding()
     }
     
@@ -152,6 +213,8 @@ struct SessionRow: View {
                         .foregroundStyle(.secondary)
                 }
             }
+            // The plain style only hit-tests drawn content; make the Spacer tappable too.
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }
@@ -162,4 +225,5 @@ struct SessionRow: View {
         HistoryView()
     }
     .modelContainer(for: StoredSession.self, inMemory: true)
+    .environment(Store())
 }
