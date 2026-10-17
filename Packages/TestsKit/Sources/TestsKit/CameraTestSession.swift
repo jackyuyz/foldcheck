@@ -111,7 +111,7 @@ public struct CameraTestSession: Sendable, Equatable {
         return .pass
     }
 
-    public func result(notes: String = "", finishedAt: Date = .now) -> TestResult {
+    public func result(notes: String = "", attachments: [String] = [], finishedAt: Date = .now) -> TestResult {
         let ordered = cameras.compactMap { checks[$0.id] }
         var metrics: [String: Double] = [
             TestMetricKey.camerasAvailable: Double(cameras.count),
@@ -134,6 +134,7 @@ public struct CameraTestSession: Sendable, Equatable {
             outcome: Self.outcome(cameraCount: cameras.count, checks: ordered),
             metrics: metrics,
             notes: notes,
+            attachments: attachments,
             finishedAt: finishedAt
         )
     }

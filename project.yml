@@ -16,6 +16,19 @@ settings:
     SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD: false
     ENABLE_USER_SCRIPT_SANDBOXING: true
     SWIFT_STRICT_CONCURRENCY: complete
+    # Duo SDK calls in the app and its tests compile only with iOS 27.1+.
+    "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*27.1*]": "$(inherited) FOLDCHECK_HINGE_API"
+    "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*27.2*]": "$(inherited) FOLDCHECK_HINGE_API"
+    "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*27.3*]": "$(inherited) FOLDCHECK_HINGE_API"
+    "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*27.4*]": "$(inherited) FOLDCHECK_HINGE_API"
+    "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*27.5*]": "$(inherited) FOLDCHECK_HINGE_API"
+    "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*27.6*]": "$(inherited) FOLDCHECK_HINGE_API"
+    "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*27.7*]": "$(inherited) FOLDCHECK_HINGE_API"
+    "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*27.8*]": "$(inherited) FOLDCHECK_HINGE_API"
+    "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*27.9*]": "$(inherited) FOLDCHECK_HINGE_API"
+    "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*28.*]": "$(inherited) FOLDCHECK_HINGE_API"
+    "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*29.*]": "$(inherited) FOLDCHECK_HINGE_API"
+    "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*30.*]": "$(inherited) FOLDCHECK_HINGE_API"
   configs:
     Debug:
       DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
@@ -37,6 +50,8 @@ packages:
     path: Packages/Library
   Store:
     path: Packages/Store
+  HingeInput:
+    path: Packages/HingeInput
 
 targets:
   FoldCheck:
@@ -63,21 +78,6 @@ targets:
         GENERATE_INFOPLIST_FILE: false
         SWIFT_EMIT_LOC_STRINGS: true
         DEVELOPMENT_LANGUAGE: en
-        # The hinge API (onHingeChange) ships in the iOS 27.1 SDK (assumed, spec §0). These turn
-        # on FOLDCHECK_HINGE_API only when building with that SDK or newer, so today's Xcode 26
-        # builds keep compiling; the code also checks `#available(iOS 27.1, *)` at run time.
-        "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*27.1*]": "$(inherited) FOLDCHECK_HINGE_API"
-        "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*27.2*]": "$(inherited) FOLDCHECK_HINGE_API"
-        "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*27.3*]": "$(inherited) FOLDCHECK_HINGE_API"
-        "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*27.4*]": "$(inherited) FOLDCHECK_HINGE_API"
-        "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*27.5*]": "$(inherited) FOLDCHECK_HINGE_API"
-        "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*27.6*]": "$(inherited) FOLDCHECK_HINGE_API"
-        "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*27.7*]": "$(inherited) FOLDCHECK_HINGE_API"
-        "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*27.8*]": "$(inherited) FOLDCHECK_HINGE_API"
-        "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*27.9*]": "$(inherited) FOLDCHECK_HINGE_API"
-        "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*28.*]": "$(inherited) FOLDCHECK_HINGE_API"
-        "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*29.*]": "$(inherited) FOLDCHECK_HINGE_API"
-        "SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphone*30.*]": "$(inherited) FOLDCHECK_HINGE_API"
     dependencies:
       - target: FoldCheckWidgets
         embed: true
@@ -88,6 +88,7 @@ targets:
       - package: FoldL10n
       - package: Library
       - package: Store
+      - package: HingeInput
     entitlements:
       path: App/FoldCheck.entitlements
       properties:
@@ -176,6 +177,9 @@ schemes:
     test:
       config: Debug
       gatherCoverageData: true
+      testPlans:
+        - path: FoldCheck.xctestplan
+          defaultPlan: true
       targets:
         - FoldCheckTests
         - FoldCheckUITests

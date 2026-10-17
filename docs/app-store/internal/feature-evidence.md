@@ -1,6 +1,6 @@
 # 内部功能依据 / Feature evidence
 
-仅内部使用，不复制到公开描述或审核备注。核对日期：2026-10-16；功能代码基线 `3d3b37b`，当前 HEAD `f240279` 只归档设计记录。实现存在不等于所有真实硬件、正式商店配置或发行环境已验证。
+仅内部使用，不复制到公开描述或审核备注。核对日期：2026-10-16；原始文案基线 `3d3b37b`；本轮补齐后的事实另见 `docs/review/spec-status.md` 与验证记录。实现存在不等于所有真实硬件、正式商店配置或发行环境已验证。
 
 | 文案事实 | 实现依据 | 使用边界 |
 |---|---|---|
@@ -19,7 +19,7 @@
 | 本地历史查看与两次检查对比 | [HistoryView](../../../App/History/HistoryView.swift)、[CompareView](../../../App/History/CompareView.swift)、[InspectionSummaryView](../../../App/Summary/InspectionSummaryView.swift) | 历史访问和对比受内购限制；完整检查自动保存，快速检查由用户保存；不能承诺云同步或跨设备迁移 |
 | 每月本地提醒 | [MonthlyReminder](../../../App/Settings/MonthlyReminder.swift)、[SettingsView](../../../App/Settings/SettingsView.swift) | 需解锁及通知授权；本地安排每月 10:00，日期上限 28 日；不承诺通知必达 |
 | 前台观察的折叠次数和显示状态时长 | [FoldCounterModel](../../../App/FoldCounter/FoldCounterModel.swift)、[FoldStatsView](../../../App/FoldCounter/FoldStatsView.swift) | 统计页受内购限制；不是后台监测、系统累计值或设备终身折叠次数 |
-| PDF 导出、用户分享、备注/曲线/附件与二维码 | [ReportPreviewView](../../../App/Report/ReportPreviewView.swift)、[ReportPDFRenderer](../../../App/Report/ReportPDFRenderer.swift) | 报告内容取决于完成的项目及用户提供的附件；不承诺触控热力图、保险认可、维修凭证效力或可信时间戳 |
+| PDF 导出、用户分享、备注/曲线/附件与二维码 | [ReportPreviewView](../../../App/Report/ReportPreviewView.swift)、[ReportPDFRenderer](../../../App/Report/ReportPDFRenderer.swift) | 报告内容取决于完成的项目及用户提供的附件；新触控记录有签名覆盖图，旧数量记录不补造；不承诺保险认可、维修凭证效力或可信时间戳 |
 | 免费导入 PDF 验证或扫码验证 | [VerifyView](../../../App/Verify/VerifyView.swift)、[ReportVerifier](../../../Packages/ReportKit/Sources/ReportKit/ReportVerifier.swift) | PDF 验嵌入的已签名数据；QR 仅验摘要签名；不验所有可见页面、设备身份、检测真实性或设备时钟 |
 | 安全签名及开发回退标记 | [ReportSigning](../../../App/Report/ReportSigning.swift)、[SecureEnclaveReportSigner](../../../Packages/ReportKit/Sources/ReportKit/SecureEnclaveReportSigner.swift) | 不能宣称所有环境均使用 Secure Enclave；缺少时使用明确标记的开发签名 |
 | 本地存储、无需 App 账号、无广告/分析 SDK | [FoldCheckApp](../../../App/FoldCheckApp.swift)、[PrivacyInfo](../../../App/Resources/PrivacyInfo.xcprivacy)、[project.yml](../../../project.yml) | 用户主动分享与 Apple StoreKit 服务另行说明；隐私清单不自动证明正式商店问卷或所有网络行为已审核 |

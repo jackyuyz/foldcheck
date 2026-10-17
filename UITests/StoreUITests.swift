@@ -2,6 +2,7 @@ import XCTest
 
 /// M6, AC8: every test is free; reports, history and compare, and fold stats need the
 /// purchase. `-UnlockReports` (DEBUG only) stands in for a purchase where a test needs it.
+@MainActor
 final class StoreUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false

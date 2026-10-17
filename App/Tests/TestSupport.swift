@@ -296,6 +296,11 @@ enum ResultMetricsFormatter {
                 lines.append(Line(label: L10nKey.metricCamerasWorking.text(in: language), value: "\(working) / \(tested)"))
             }
         case .audio:
+            if let available = m[TestMetricKey.receiverAvailable] {
+                let value = available == 0 ? L10nKey.outcomeNotApplicable.text(in: language)
+                    : (m[TestMetricKey.receiverConfirmed] == 1 ? "✓" : "✗")
+                lines.append(Line(label: L10nKey.audioReceiverTitle.text(in: language), value: value))
+            }
             let speakers = [TestMetricKey.speakerLeftConfirmed, TestMetricKey.speakerRightConfirmed].compactMap { m[$0] }
             if !speakers.isEmpty {
                 lines.append(Line(

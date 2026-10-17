@@ -21,12 +21,14 @@ struct AudioTestView: View {
         case starting
         case denied
         case tone(AudioChannel, played: Bool)
+        case receiver(played: Bool)
+        case receiverUnavailable
         case record
         case recording
         case playback(played: Bool)
     }
 
-    private static let totalSteps = 3
+    private static let totalSteps = 4
 
     var body: some View {
         Group {
@@ -69,9 +71,43 @@ struct AudioTestView: View {
                         }
                     }
                 }
+            case .receiver(let played):
+                TestStepScreen(step: (3, Self.totalSteps), systemImage: "phone.fill",
+                               title: L10nKey.audioReceiverTitle.text(in: language),
+                               message: played ? L10nKey.audioHeardQuestion.text(in: language) : L10nKey.audioReceiverInstruction.text(in: language), onCancel: cancel) {
+                    EmptyView()
+                } actions: {
+                    StepButton(title: L10nKey.audioPlayTone.text(in: language), prominent: !played) {
+                        guard audio.isUsingReceiver else {
+                            session.receiverAvailable = false
+                            phase = .receiverUnavailable
+                            return
+                        }
+                        guard audio.playTone(.left) else { fail(); return }
+                        phase = .receiver(played: true)
+                    }
+                    .accessibilityIdentifier("audio.receiver.play")
+                    if played {
+                        YesNoButtons(identifier: "audio.receiver.heard") { heard in
+                            // A route change must never be recorded as a working earpiece.
+                            session.receiverAvailable = audio.isUsingReceiver
+                            session.receiverHeard = audio.isUsingReceiver ? heard : nil
+                            continueToMicrophone()
+                        }
+                    }
+                }
+            case .receiverUnavailable:
+                TestStepScreen(step: (3, Self.totalSteps), systemImage: "phone.down",
+                               title: L10nKey.audioReceiverTitle.text(in: language),
+                               message: L10nKey.audioReceiverUnavailable.text(in: language), onCancel: cancel) {
+                    EmptyView()
+                } actions: {
+                    StepButton(title: L10nKey.testNext.text(in: language), action: continueToMicrophone)
+                        .accessibilityIdentifier("audio.receiver.unavailable.next")
+                }
             case .record, .recording:
                 TestStepScreen(
-                    step: (3, Self.totalSteps),
+                    step: (4, Self.totalSteps),
                     systemImage: "mic.fill",
                     title: L10nKey.audioMicTitle.text(in: language),
                     message: L10nKey.audioMicInstruction.text(in: language),
@@ -94,7 +130,7 @@ struct AudioTestView: View {
                 }
             case .playback(let played):
                 TestStepScreen(
-                    step: (3, Self.totalSteps),
+                    step: (4, Self.totalSteps),
                     systemImage: "waveform",
                     title: L10nKey.audioMicTitle.text(in: language),
                     message: played ? L10nKey.audioPlaybackQuestion.text(in: language) : L10nKey.audioPlaybackInstruction.text(in: language),
@@ -146,8 +182,14 @@ struct AudioTestView: View {
             phase = .tone(.right, played: false)
         case .right:
             session.rightHeard = heard
-            phase = .record
+            session.receiverAvailable = audio.prepareReceiver()
+            phase = session.receiverAvailable == true ? .receiver(played: false) : .receiverUnavailable
         }
+    }
+
+    private func continueToMicrophone() {
+        guard audio.activate() else { fail(); return }
+        phase = .record
     }
 
     private func record() async {
@@ -180,6 +222,7 @@ struct AudioTestView: View {
             session.leftHeard == false ? L10nKey.audioChannelLeft.text(in: language) : nil,
             session.rightHeard == false ? L10nKey.audioChannelRight.text(in: language) : nil,
             session.playbackHeard == false ? L10nKey.audioMicTitle.text(in: language) : nil,
+            session.receiverHeard == false ? L10nKey.audioReceiverTitle.text(in: language) : nil,
         ].compactMap { $0 }
         if !notHeard.isEmpty {
             lines.append(L10nKey.audioNoteNotHeard.text(in: language, notHeard.listed(in: language)))
@@ -188,6 +231,7 @@ struct AudioTestView: View {
             lines.append(L10nKey.audioNoteQuiet.text(in: language, Int(peak.rounded())))
         }
         if let extraNote { lines.append(extraNote) }
+        if session.receiverAvailable == false { lines.append(L10nKey.audioReceiverUnavailable.text(in: language)) }
         onFinish(session.result(notes: lines.joined(separator: "\n")))
     }
 
@@ -243,10 +287,33 @@ final class AudioTestController {
             let session = AVAudioSession.sharedInstance()
             try session.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker])
             try session.setActive(true)
+            try session.overrideOutputAudioPort(.speaker)
             return true
         } catch {
             return false
         }
+    }
+
+    var isUsingReceiver: Bool {
+        let outputs = AVAudioSession.sharedInstance().currentRoute.outputs
+        return outputs.count == 1 && outputs.first?.portType == .builtInReceiver
+    }
+
+    /// No receiver is invented for simulators, Bluetooth, headphones or speaker-only devices.
+    func prepareReceiver() -> Bool {
+        player?.stop()
+        #if targetEnvironment(simulator)
+        return false
+        #else
+        let session = AVAudioSession.sharedInstance()
+        guard session.currentRoute.outputs.allSatisfy({ [.builtInSpeaker, .builtInReceiver].contains($0.portType) }) else { return false }
+        do {
+            try session.setCategory(.playAndRecord, mode: .default, options: [])
+            try session.overrideOutputAudioPort(.none)
+            try session.setActive(true)
+            return isUsingReceiver
+        } catch { return false }
+        #endif
     }
 
     func playTone(_ channel: AudioChannel) -> Bool {

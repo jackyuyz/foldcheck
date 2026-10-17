@@ -1,7 +1,8 @@
 import XCTest
 
-/// M5: from a finished test to a signed PDF. The simulator on Apple silicon has a Secure
-/// Enclave, so the report is signed with a real key and shows no development banner.
+/// M5: from a finished test to a PDF preview. ReportPDFTests covers cryptographic
+/// verification separately; physical-device key backing remains an acceptance check.
+@MainActor
 final class ReportUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false

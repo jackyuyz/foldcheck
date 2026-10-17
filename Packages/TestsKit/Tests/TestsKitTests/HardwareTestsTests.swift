@@ -4,6 +4,12 @@ import Foundation
 
 @Suite("Cameras (T5)")
 struct CameraTestTests {
+    @Test("Capture photos are opt-in attachments")
+    func photoAttachments() {
+        let session = CameraTestSession(cameras: [])
+        #expect(session.result().attachments.isEmpty)
+        #expect(session.result(attachments: ["camera-example.jpg"]).attachments == ["camera-example.jpg"])
+    }
     let back = CameraInfo(id: "back", name: "Back Camera", position: .back)
     let front = CameraInfo(id: "front", name: "Front Camera", position: .front)
     let stats = FrameStats(meanLuma: 0.4, sharpness: 0.05)
@@ -52,6 +58,26 @@ struct CameraTestTests {
 
 @Suite("Audio (T6)")
 struct AudioTestTests {
+    @Test("An unavailable receiver is not a failure; an available one needs confirmation")
+    func receiver() {
+        var session = AudioTestSession()
+        session.leftHeard = true
+        session.rightHeard = true
+        session.playbackHeard = true
+        session.micPeakDB = -20
+        session.receiverAvailable = false
+        #expect(session.outcome == .pass)
+        #expect(session.result().metrics[TestMetricKey.receiverAvailable] == 0)
+        #expect(session.result().metrics[TestMetricKey.receiverConfirmed] == nil)
+        session.receiverAvailable = true
+        #expect(session.outcome == .attention)
+        session.receiverHeard = false
+        #expect(session.outcome == .attention)
+        #expect(session.result().metrics[TestMetricKey.receiverConfirmed] == 0)
+        session.receiverHeard = true
+        #expect(session.outcome == .pass)
+        #expect(session.result().metrics[TestMetricKey.receiverConfirmed] == 1)
+    }
     @Test("Tone WAV has a valid header and sound in one channel only")
     func tone() {
         let wav = ToneGenerator.wav(channel: .right, duration: 0.1, sampleRate: 8_000)

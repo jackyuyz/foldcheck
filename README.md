@@ -37,7 +37,7 @@ UI mockups in `docs/ui/png/` are drawn for iPhone Duo: a wide inner display with
 
 ### Prerequisites
 
-- **Xcode 27.1 RC** (`/Applications/Xcode-27.1RC.app`, build 27A9275) with the **iOS 27.1 iPhone Duo simulator**. The system-selected Xcode may be older; set `DEVELOPER_DIR` for commands below.
+- **Xcode 27.1 RC** (build 27A9275; currently `/Applications/Xcode.app` on this host, formerly `/Applications/Xcode-27.1RC.app`) with the **iOS 27.1 iPhone Duo simulator**. The system-selected Xcode may be older; set `DEVELOPER_DIR` for commands below.
 - [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`)
 - Swift 6 (use the toolchain bundled with Xcode 27.1 RC)
 
@@ -51,7 +51,7 @@ UI mockups in `docs/ui/png/` are drawn for iPhone Duo: a wide inner display with
 
 2. Select the toolchain for this shell and generate the Xcode project:
    ```bash
-   export DEVELOPER_DIR=/Applications/Xcode-27.1RC.app/Contents/Developer
+   export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
    xcodegen generate
    ```
 
@@ -64,20 +64,30 @@ UI mockups in `docs/ui/png/` are drawn for iPhone Duo: a wide inner display with
 
 ### Running Tests
 
-**Swift Package tests (works on Linux and macOS):**
+**Swift Package tests (macOS, using the selected Xcode toolchain):**
 ```bash
 cd Packages/FoldKit && swift test
 cd Packages/HingeAnalysis && swift test
 cd Packages/TestsKit && swift test
 cd Packages/ReportKit && swift test
 cd Packages/FoldL10n && swift test
-cd Packages/Library && swift test     # SwiftData: tests run on macOS; the module is empty on Linux
+cd Packages/Library && swift test     # SwiftData: macOS only
+cd Packages/Store && swift test
+cd Packages/HingeInput && swift test  # SwiftUI: macOS only
 ```
 
 **App tests (requires Xcode):**
 ```bash
-DEVELOPER_DIR=/Applications/Xcode-27.1RC.app/Contents/Developer xcodebuild test -scheme FoldCheck -destination 'platform=iOS Simulator,name=iPhone Duo' -parallel-testing-enabled NO
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild test -scheme FoldCheck -destination 'platform=iOS Simulator,name=iPhone Duo' -parallel-testing-enabled NO
 ```
+
+### Continuous integration and simulator regression
+
+`.github/workflows/ci.yml` runs all eight packages on `macos-26` and the App single-device UI suite, StoreKit tests and Release simulator build on GitHub’s `xcode-27` preview image. `scripts/ci/packages.sh` and `scripts/ci/simulator.sh` are also runnable locally with `DEVELOPER_DIR`; `FOLDCHECK_SIMULATOR_ID`, `FOLDCHECK_DERIVED_DATA` and `FOLDCHECK_RESULT_BUNDLE` can override paths/device. Use a fresh result-bundle path on repeated runs. No signing secrets, App Store uploads or private posture CLI are involved. Hosted SDK versions are logged; a 27.0 runner exercises the fallback, not Duo’s 27.1 APIs. Local Duo checks must use 27.1 RC. [GitHub image announcement](https://github.com/actions/runner-images/issues/14404).
+
+`-UITestMode 1 -AutoCompleteTests pass` is DEBUG-only. It completes a sample full inspection in an isolated in-memory history, with a visible sample banner and notes on every generated result. It tests summary/report plumbing; it never establishes hardware health or writes to the real widget snapshot. Other UI tests drive the actual controls.
+
+M2 blocks tests in partial iPhone windows and preserves the mounted runner. iPad compatibility mode discloses its window-only scope. Newly saved touch tests retain the physical grid and covered cells for a signed PDF heatmap; historical count-only results remain unchanged.
 
 ### Mock Hinge for Testing
 
@@ -104,7 +114,7 @@ user moved the hinge when asked. With a static mock (`open`, `closed`) it ends U
 
 ### Swift Packages (Platform-Independent)
 
-All business logic is in Swift Packages that build and test on Linux:
+Business logic lives in Swift Packages. The shared HingeInput view requires SwiftUI; Library uses SwiftData. CI tests all eight packages on macOS:
 
 - **FoldKit**: Core fold state primitives (`FoldState`, `FoldPosture`, `FoldStateProvider` protocol, `MockFoldStateProvider` for testing, `RelativeAngleTracker`, `DuoDisplaySpec`)
 - **HingeAnalysis**: Hinge sweep analysis (`HingeSample`, `HingeSweepAnalyzer`, `HingeSweepReport` with quality assessment)
@@ -164,23 +174,23 @@ Crease width, point sizes, and `UIScreen.scale` are still unknown. They are `nil
 
 ## Test Results (M8)
 
-Swift Package tests passed on macOS using Xcode 27.1 RC, build 27A9275 (269 total):
+Swift Package tests passed on macOS using Xcode 27.1 RC, build 27A9275 (277 total):
 
 | Package | Tests | Status |
 |---------|-------|--------|
 | FoldKit | 46 | ✅ Pass |
 | HingeAnalysis | 37 | ✅ Pass |
-| TestsKit | 116 | ✅ Pass |
+| TestsKit | 123 | ✅ Pass |
 | ReportKit | 41 | ✅ Pass |
 | FoldL10n | 10 | ✅ Pass |
 | Library | 13 | ✅ Pass |
 | Store | 6 | ✅ Pass |
+| HingeInput | 1 | ✅ Pass |
 
 ## Implemented Milestones
 
 These headings describe implemented baseline features, not completed release acceptance.
-The [spec status audit](docs/review/spec-status.md) lists remaining CI/shared-module work,
-Duo camera/earpiece/full-screen gaps, physical-device checks and purchase/submission work.
+The [spec status audit](docs/review/spec-status.md) distinguishes implemented simulator-testable work from remaining physical-device, human and purchase/submission acceptance.
 
 ### M1: Skeleton ✅
 - FoldKit package with fold state management
@@ -204,8 +214,8 @@ Duo camera/earpiece/full-screen gaps, physical-device checks and purchase/submis
 - The real hinge bridge (`onHingeChange`) compiles only with the iOS 27.1+ SDK (`FOLDCHECK_HINGE_API`, set in project.yml) and runs only on iOS 27.1+
 
 ### M4: Hardware tests ✅
-- T5 cameras: every camera from `AVCaptureDevice.DiscoverySession` is previewed in turn; Capture keeps only brightness and sharpness from a downsampled luma frame (no image stored) and the user says whether the picture looks right. No frame → Fail; no cameras (the simulator) → Unavailable
-- T6 audio: a generated tone in the left channel, then the right, then a 3 s recording with a level meter played back; each confirmed by the user. The recording is a temporary file deleted when the test ends
+- T5 cameras: every camera from `AVCaptureDevice.DiscoverySession` is previewed in turn; Capture keeps brightness/sharpness stats and asks whether the picture looks right. Duo-specific inner/outer types and the AVKit direction coordinator are guarded by SDK/runtime availability; horizon rotation keeps preview/capture aligned. Images stay in memory until the user opts to attach them at test completion. No frame → Fail; no cameras (the simulator) → Unavailable
+- T6 audio: a generated tone in the left channel, then the right, a separately routed earpiece step where `builtInReceiver` is available, then a 3 s recording with a level meter played back; each confirmed by the user. The recording is a temporary file deleted when the test ends
 - T7 Touch ID: one `LAContext` match. Only planned on devices that report Touch ID, so Face ID iPhones show it as Not applicable and no Face ID usage string is needed. Not enrolled or locked out → Attention; no match → Fail
 - T8 sensors and haptics: accelerometer (≈1 g) and gyroscope (a visible turn) over 4 s, the proximity sensor, and three haptic taps the user confirms. Parts the device doesn't offer are Unavailable, never Fail
 - T9 buttons: volume up and down detected through `AVAudioSession.outputVolume`; the side button, Action button and Camera Control can't be observed, so the user checks them off
@@ -215,10 +225,10 @@ Duo camera/earpiece/full-screen gaps, physical-device checks and purchase/submis
 
 ### M5: Reports ✅
 - F2 PDF (`ReportPDFRenderer`, US Letter): device model, OS, storage, date and time zone, summary, every result with its metrics and notes, the hinge chart, attached crease photos, the signature with a QR code, and the disclaimer. Saved in `Application Support/Reports` and shared from the preview
-- F3 signing: a per-install P-256 key created in the Secure Enclave on first use; the Keychain keeps only its encrypted `dataRepresentation` (this device only). Without a Secure Enclave the development software key signs and the report says "Development build (unsigned)". The Apple silicon simulator has a Secure Enclave, so simulator reports are signed for real
+- F3 signing: a per-install P-256 key created in the Secure Enclave on first use; the Keychain keeps only its encrypted `dataRepresentation` (this device only). Without a Secure Enclave the development software key signs and the report says "Development build (unsigned)". The signer is selected using runtime `SecureEnclave.isAvailable`; simulator signing checks do not replace physical-device key-storage validation
 - The PDF's Subject carries a `ReportBundle`: the exact signed canonical-JSON bytes plus the envelope. `ReportVerifier` hashes those bytes, so any changed byte fails (AC4)
 - Verify: importing a PDF checks content and signature and lists the signed results to compare with the pages; scanning the QR (VisionKit) checks the signature only. Both say whether this installation or another one (key fingerprint) signed it
-- Reports are unlocked in DEBUG builds until StoreKit lands in M6; release builds show the paywall
+- Reports require the StoreKit unlock; `-UnlockReports` provides an explicit DEBUG-only override for UI tests
 - Not checked yet: importing through the Files picker on a device, and QR scanning (needs a camera)
 
 ### M6: History, reminders, Store ✅
@@ -227,12 +237,12 @@ Duo camera/earpiece/full-screen gaps, physical-device checks and purchase/submis
 - AC8 gating: every test is free; PDF reports, History and compare, monthly reminders and the fold stats page need the purchase. Inspections are still saved for free users, behind a lock, so buying shows them all. `-UnlockReports` (DEBUG only) unlocks for UI tests
 - F4: tapping a saved inspection opens its summary; Compare shows two inspections side by side with each test's outcome and the metrics that show wear (touch misses, crease rating, hinge continuity and gap, pixel issues, score), marked better, worse or unchanged (`SessionComparison` in TestsKit)
 - F6: a monthly local notification on the same day (capped at 28) at 10:00, in the app language; denied permission turns the toggle back off and says where to fix it
-- `Configuration.storekit` is selected in the Run scheme. `SKTestSession` tests cover purchase, refund, Ask to Buy, failure and restore. All five passed in the locally signed Xcode 27.1 RC command-line run on this host. They skip if the local StoreKit environment cannot load products; device/Sandbox validation still needs the owner's development team
+- `Configuration.storekit` is selected in the Run scheme and explicitly bound to Test through `FoldCheck.xctestplan`. `SKTestSession` tests cover purchase, refund, Ask to Buy, failure and restore. All six local cases include approval and decline, and pass with the explicit local StoreKit test plan without an App Store account. All six pass on isolated iPhone 17 / iOS 27.0 and Duo / iOS 27.1 simulators. The full iPhone run passes 22 app tests and 36 UI tests (2 Duo-only skips), the Duo targeted run passes 35 (1 single-column skip), actual iPad scope disclosure passes, and the Release simulator build succeeds; see [validation](docs/review/simulator-gaps-validation.md). Asynchronous operations have a 15 s deadline; missing local products fail rather than skip. Test stores stop their transaction listeners and reset SKTestSession state. Real device/Sandbox validation is separate
 - Before submission: replace the placeholder privacy policy URL (`AppLinks.privacy`) and enable Family Sharing for the product in App Store Connect
 
 ### M7: Polish ✅
 - Adaptive Home, test introductions and Summary: `ArrangementView` panels following the actual reserved fold region in either orientation (outside scroll views), a single reading column on the cover; wide panels scroll independently at accessibility text sizes. `reservedRegions(.division, .includeInactive)` is observed across layout changes; layout follows geometry, not hinge angles. The hinge gauge uses the system navigation toolbar to avoid covering the cover-screen rail.
-- Accessibility: optional physical single-cell tapping in T1 (Settings or the test introduction); VoiceOver direct-touch guidance; visual tests can be skipped with a recorded “needs sighted help” reason. No synthetic touches or automatic Pass results.
+- Accessibility: optional physical single-cell tapping in T1 (Settings or the test introduction); VoiceOver direct-touch guidance; visual tests can be skipped with a recorded “needs sighted help” reason. Production inspections require actual input; the explicit DEBUG-only auto-completion hook below uses clearly labeled, isolated sample data.
 - Scrollable test introductions, larger canvas controls, localized control labels, semantic result colors, and Reduce Motion support for app animations. The Home last-inspection action now opens the real summary behind the purchase gate. Developer settings are DEBUG-only.
 - Nine new strings translated into all six catalogs; format-placeholder parity checks; English and Simplified Chinese PDF rendering and interaction coverage (AC10).
 - Actual Duo review screenshots and bilingual sample PDF pages are generated by `PolishUITests` and `ReportPDFTests` using DEBUG-only, isolated in-memory sample sessions (`-ScreenshotFixtures`). No real inspection history is changed.

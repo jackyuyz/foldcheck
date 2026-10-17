@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  packages:
+    name: Swift packages
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test every local package
+        run: bash scripts/ci/packages.sh
+
+  simulator:
+    name: iPhone simulator and Release build
+    # GitHub's Xcode 27 preview image. It may still have 27.0; that lane exercises
+    # the guarded fallback, not the Duo APIs. Duo 27.1 RC is separately tested locally.
+    runs-on: xcode-27
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew list xcodegen >/dev/null 2>&1 || brew install xcodegen
+      - name: Generate, test and build
+        run: bash scripts/ci/simulator.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: simulator-results
+          path: TestResults/CI.xcresult
+          if-no-files-found: warn
+          retention-days: 7

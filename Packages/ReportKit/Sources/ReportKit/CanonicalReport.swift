@@ -94,6 +94,7 @@ public struct CanonicalTestResult: Codable, Sendable, Equatable {
     public var notes: String
     public var display: String?
     public var finishedAt: Date
+    public var touchHeatmap: TouchHeatmap?
     
     public init(
         testID: String,
@@ -101,7 +102,8 @@ public struct CanonicalTestResult: Codable, Sendable, Equatable {
         metrics: [String: Double],
         notes: String,
         display: String?,
-        finishedAt: Date
+        finishedAt: Date,
+        touchHeatmap: TouchHeatmap? = nil
     ) {
         self.testID = testID
         self.outcome = outcome
@@ -109,6 +111,7 @@ public struct CanonicalTestResult: Codable, Sendable, Equatable {
         self.notes = notes
         self.display = display
         self.finishedAt = finishedAt
+        self.touchHeatmap = touchHeatmap
     }
     
     public static func from(_ result: TestResult) -> CanonicalTestResult {
@@ -118,7 +121,8 @@ public struct CanonicalTestResult: Codable, Sendable, Equatable {
             metrics: result.metrics,
             notes: result.notes,
             display: result.display?.rawValue,
-            finishedAt: result.finishedAt
+            finishedAt: result.finishedAt,
+            touchHeatmap: result.touchHeatmap
         )
     }
 }

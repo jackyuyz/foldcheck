@@ -48,6 +48,8 @@ public struct TestResult: Codable, Sendable, Equatable, Identifiable {
 
     /// Downsampled chart data (hinge sweep plot); empty for most tests.
     public var series: [TestSeriesPoint]
+    /// nil for historical records that kept counts only; never reconstruct their contacts.
+    public var touchHeatmap: TouchHeatmap?
     
     public init(
         id: TestID,
@@ -57,7 +59,8 @@ public struct TestResult: Codable, Sendable, Equatable, Identifiable {
         display: DisplayKind? = nil,
         attachments: [String] = [],
         finishedAt: Date = .now,
-        series: [TestSeriesPoint] = []
+        series: [TestSeriesPoint] = [],
+        touchHeatmap: TouchHeatmap? = nil
     ) {
         self.id = id
         self.outcome = outcome
@@ -67,10 +70,11 @@ public struct TestResult: Codable, Sendable, Equatable, Identifiable {
         self.attachments = attachments
         self.finishedAt = finishedAt
         self.series = series
+        self.touchHeatmap = touchHeatmap
     }
 
     enum CodingKeys: String, CodingKey {
-        case id, outcome, metrics, notes, display, attachments, finishedAt, series
+        case id, outcome, metrics, notes, display, attachments, finishedAt, series, touchHeatmap
     }
 
     /// Results saved before `series` existed decode with an empty series.
@@ -84,6 +88,7 @@ public struct TestResult: Codable, Sendable, Equatable, Identifiable {
         attachments = try container.decode([String].self, forKey: .attachments)
         finishedAt = try container.decode(Date.self, forKey: .finishedAt)
         series = try container.decodeIfPresent([TestSeriesPoint].self, forKey: .series) ?? []
+        touchHeatmap = try container.decodeIfPresent(TouchHeatmap.self, forKey: .touchHeatmap)
     }
     
     /// Create a result for a skipped test
@@ -172,6 +177,8 @@ public enum TestMetricKey {
     /// Loudest level during the recording, dBFS.
     public static let micPeakLevel = "micPeakLevel"
     public static let micPlaybackConfirmed = "micPlaybackConfirmed"
+    public static let receiverAvailable = "receiverAvailable"
+    public static let receiverConfirmed = "receiverConfirmed"
 
     // TouchID
     public static let biometryAvailable = "biometryAvailable"

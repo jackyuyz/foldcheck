@@ -8,6 +8,26 @@ import Store
 @MainActor
 final class StorePurchaseTests: XCTestCase {
     private var session: SKTestSession!
+    private var stores: [Store] = []
+
+    private enum TestError: Error { case timedOut, productsUnavailable }
+
+    /// StoreKit operations can outlive cancellation. An unstructured task and an XCTest
+    /// deadline let the test fail without waiting forever for a task group's child to exit.
+    private func complete(_ name: String = "operation", _ operation: @escaping @MainActor () async throws -> Void) async throws {
+        let completed = expectation(description: "StoreKit \(name) completed")
+        var finished = false
+        var failure: Error?
+        let task = Task { @MainActor in
+            do { try await operation() } catch { failure = error }
+            finished = true
+            completed.fulfill()
+        }
+        await fulfillment(of: [completed], timeout: 15)
+        task.cancel()
+        guard finished else { throw TestError.timedOut }
+        if let failure { throw failure }
+    }
 
     override func setUp() async throws {
         session = try SKTestSession(configurationFileNamed: "Configuration")
@@ -17,22 +37,25 @@ final class StorePurchaseTests: XCTestCase {
     }
 
     override func tearDown() async throws {
+        stores.forEach { $0.stop() }
+        stores = []
         // Do not leave the restore test's purchase active for subsequent free-user UI tests.
         session?.clearTransactions()
+        session?.resetToDefaultState()
         session = nil
         try await super.tearDown()
     }
 
-    /// StoreKit's local test environment only serves apps installed for development. A
-    /// command-line build signed "to run locally" isn't one (storekitd logs "not installed for
-    /// development" and returns no products), so these tests skip there and run from Xcode
-    /// with a development team.
+    /// A missing local product is a configuration failure, never a passing/skipped purchase
+    /// suite. The simulator uses the bundled configuration, without an App Store account.
     private func makeStore() async throws -> Store {
         let defaults = UserDefaults(suiteName: "StorePurchaseTests-\(UUID().uuidString)")!
         let store = Store(defaults: defaults, arguments: [])
-        await store.start()
+        stores.append(store)
+        try await complete("start store") { await store.start() }
         guard store.loadState == .loaded else {
-            throw XCTSkip("StoreKit test environment unavailable: no products from Configuration.storekit")
+            XCTFail("No local StoreKit product from Configuration.storekit")
+            throw TestError.productsUnavailable
         }
         return store
     }
@@ -47,7 +70,7 @@ final class StorePurchaseTests: XCTestCase {
 
     func testPurchaseUnlocksAndRefundLocks() async throws {
         let store = try await makeStore()
-        await store.purchase()
+        try await complete("purchase") { await store.purchase() }
         XCTAssertTrue(store.hasReports)
         XCTAssertEqual(store.purchaseState, .idle)
 
@@ -66,24 +89,46 @@ final class StorePurchaseTests: XCTestCase {
     func testAskToBuyWaitsForApproval() async throws {
         session.askToBuyEnabled = true
         let store = try await makeStore()
-        await store.purchase()
+        try await complete("purchase") { await store.purchase() }
         XCTAssertEqual(store.purchaseState, .pending)
+        XCTAssertFalse(store.hasReports)
+
+        let pending = try XCTUnwrap(session.allTransactions().first { $0.pendingAskToBuyConfirmation })
+        try session.approveAskToBuyTransaction(identifier: pending.identifier)
+        // Deliberately don't call refreshEntitlements: approval must reach the launch listener.
+        try await complete("approval update") {
+            while !store.hasReports { try await Task.sleep(for: .milliseconds(50)) }
+        }
+        XCTAssertEqual(store.purchaseState, .idle)
+    }
+
+    func testAskToBuyDeclinedUnlocksNothing() async throws {
+        session.askToBuyEnabled = true
+        let store = try await makeStore()
+        try await complete("purchase") { await store.purchase() }
+        XCTAssertEqual(store.purchaseState, .pending)
+        XCTAssertFalse(store.hasReports)
+        let pending = try XCTUnwrap(session.allTransactions().first { $0.pendingAskToBuyConfirmation })
+        try session.declineAskToBuyTransaction(identifier: pending.identifier)
+        try await complete("refresh entitlements") { await store.refreshEntitlements() }
         XCTAssertFalse(store.hasReports)
     }
 
     func testFailedPurchaseUnlocksNothing() async throws {
-        session.failTransactionsEnabled = true
+        try await session.setSimulatedError(.generic(.unknown), forAPI: .purchase)
         let store = try await makeStore()
-        await store.purchase()
+        try await complete("purchase") { await store.purchase() }
         XCTAssertEqual(store.purchaseState, .failed)
         XCTAssertFalse(store.hasReports)
     }
 
     func testRestoreFindsAnEarlierPurchase() async throws {
         let store = try await makeStore()
-        try await session.buyProduct(identifier: StoreProduct.reportsID)
-        let restored = await store.restore()
-        XCTAssertTrue(restored)
+        try await complete("external local purchase") { try await self.session.buyProduct(identifier: StoreProduct.reportsID) }
+        try await complete("restore") {
+            let restored = await store.restore()
+            XCTAssertTrue(restored)
+        }
     }
 }
 

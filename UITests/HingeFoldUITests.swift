@@ -2,12 +2,10 @@ import XCTest
 
 /// M3: hinge sweep (T4, AC2) and fold counter (F5, AC7), driven by `-FoldMock` on a regular
 /// iPhone simulator. The hinge test replays the mock's launch script whenever a sweep starts.
+@MainActor
 final class HingeFoldUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
-        // The fold debug overlay's buttons are tapped by position; landscape moves them under
-        // the toolbar's hinge gauge.
-        XCUIDevice.shared.orientation = .portrait
     }
 
     // MARK: T4
@@ -169,6 +167,8 @@ final class HingeFoldUITests: XCTestCase {
     }
 
     private func launch(_ arguments: [String]) -> XCUIApplication {
+        // Keep the fold debug buttons clear of the toolbar gauge.
+        XCUIDevice.shared.orientation = .portrait
         let app = XCUIApplication()
         app.launchArguments = ["-UITestMode", "1"] + arguments
         app.launch()

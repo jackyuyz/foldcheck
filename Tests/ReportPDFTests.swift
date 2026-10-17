@@ -11,6 +11,39 @@ import ReportKit
 /// AC4: the PDF carries device model, OS, date and time zone, every result, the disclaimer
 /// and a QR code, and the embedded signed data verifies until any byte of it changes.
 final class ReportPDFTests: XCTestCase {
+    @MainActor
+    func testTouchHeatmapSurvivesSigningAndPDFRendering() async throws {
+        let layout = TouchGridLayout(size: CGSize(width: 400, height: 800), spec: .duoInner, includeCreaseBand: false)
+        var grid = TouchGridSession(layout: layout)
+        grid.touch(at: CGPoint(x: 20, y: 20))
+        var inspection = session()
+        inspection.setResult(grid.result(id: .touchGridOuter, display: .outer))
+        let signer = SoftwareReportSigner()
+        let report = CanonicalReport.from(session: inspection)
+        let bundle = try await ReportBundle.sign(report, signer: signer)
+        let decoded = try bundle.report()
+        XCTAssertEqual(decoded.results.first { $0.testID == TestID.touchGridOuter.rawValue }?.touchHeatmap,
+                       inspection.results.first { $0.id == .touchGridOuter }?.touchHeatmap)
+        let content = ReportContentAssembler().assemble(session: inspection, envelope: bundle.envelope, language: .en)
+        let pdf = try ReportPDFRenderer(session: inspection, content: content, bundle: bundle, language: .en).render()
+        let document = try XCTUnwrap(PDFDocument(data: pdf))
+        XCTAssertTrue(try XCTUnwrap(document.string).contains("Touch map (grid at start)"))
+        let mapPage = try XCTUnwrap((0..<document.pageCount).compactMap { document.page(at: $0) }.first { $0.string?.contains("Touch map (grid at start)") == true })
+        XCTAssertTrue(try XCTUnwrap(mapPage.string).contains(TestID.touchGridOuter.localizedName(in: .en, hasHinge: true)),
+                      "A map that moves to another page must retain its component label")
+        let image = mapPage.thumbnail(of: CGSize(width: 1224, height: 1584), for: .mediaBox)
+        let attachment = XCTAttachment(image: image)
+        attachment.name = "Touch-heatmap-report"
+        attachment.lifetime = .keepAlways
+        add(attachment)
+        let key = try await signer.getPublicKey()
+        guard case .valid = ReportVerifier.verify(bundle, ownPublicKey: key) else { return XCTFail("Heatmap bundle must verify") }
+        var changed = report
+        let index = try XCTUnwrap(changed.results.firstIndex { $0.testID == TestID.touchGridOuter.rawValue })
+        changed.results[index].touchHeatmap?.cells[0].covered.toggle()
+        let tampered = ReportBundle(canonicalJSON: try changed.toCanonicalJSON(), envelope: bundle.envelope)
+        XCTAssertEqual(ReportVerifier.verify(tampered, ownPublicKey: key), .invalid(.contentChanged))
+    }
     private func session() -> InspectionSession {
         var session = InspectionSession(
             deviceModel: "iPhone Duo (Simulator)",

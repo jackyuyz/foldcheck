@@ -2,6 +2,7 @@ import XCTest
 
 /// M2: touch grid (T1), pixels (T2) and crease (T3), driven through `-FoldMock` on a regular
 /// iPhone simulator. Mocking changes hinge signals only, so the "inner display" is the phone screen.
+@MainActor
 final class DisplayTouchUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false

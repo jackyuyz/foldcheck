@@ -41,7 +41,8 @@ struct WidgetHealthSync: ViewModifier {
         let args = ProcessInfo.processInfo.arguments
         guard !args.contains("-ScreenshotFixtures"), !args.contains("-EmptyHistoryFixtures"),
               !args.contains("-FoldMock"), !args.contains("-UITestMode"),
-              ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else { return }
+              ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil,
+              NSClassFromString("XCTestCase") == nil else { return }
         #endif
         var context = DeviceInfo.context(foldState: provider.state)
         if hasObservedHinge && !context.hasHinge {

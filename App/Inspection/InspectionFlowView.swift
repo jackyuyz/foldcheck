@@ -76,8 +76,27 @@ struct InspectionFlowView: View {
                 }
             }
             .onAppear {
+                #if DEBUG
+                if UITestConfiguration.autoCompletesTests(), session.completedAt == nil {
+                    for id in plan.runnable {
+                        session.setResult(TestResult(id: id, outcome: .pass, notes: "AUTOMATED SAMPLE DATA — no hardware measurement / 自动化示例数据，非硬件测量"))
+                    }
+                    finalize()
+                    isCompleted = true
+                }
+                #endif
                 if isCompleted { finalize() }
             }
+            #if DEBUG
+            .safeAreaInset(edge: .bottom) {
+                if UITestConfiguration.autoCompletesTests() {
+                    Text("AUTOMATED SAMPLE DATA / 自动化示例数据")
+                        .font(.caption.bold()).padding(8)
+                        .frame(maxWidth: .infinity).background(.yellow.opacity(0.25))
+                        .accessibilityIdentifier("inspection.automatedSample")
+                }
+            }
+            #endif
         }
         .environment(\.inspectionHasHinge, session.hasHinge)
         .foldDebugOverlay()
@@ -188,6 +207,7 @@ struct TestContainerView: View {
             }
         }
         .observeFoldState($foldState)
+        .modifier(InspectionWindowGuard(isRunning: isRunning))
     }
 
     private var intro: some View {
@@ -275,7 +295,12 @@ struct TestContainerView: View {
     @ViewBuilder
     private var runner: some View {
         let finish: (TestResult) -> Void = { result in
-            pendingResult = result
+            var scopedResult = result
+            if (UIDevice.current.userInterfaceIdiom == .pad || DeviceInfo.modelIdentifier.hasPrefix("iPad")),
+               [.touchGridOuter, .touchGridInner, .pixels, .crease].contains(result.id) {
+                scopedResult.notes += (scopedResult.notes.isEmpty ? "" : "\n") + L10nKey.windowIPadWarning.text(in: language)
+            }
+            pendingResult = scopedResult
             isRunning = false
         }
         let cancel = { isRunning = false }

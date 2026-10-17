@@ -138,7 +138,8 @@ public struct TouchGridSession: Sendable, Equatable {
             metrics: metrics,
             notes: notes,
             display: display,
-            finishedAt: finishedAt
+            finishedAt: finishedAt,
+            touchHeatmap: TouchHeatmap(layout: layout, covered: covered)
         )
     }
 

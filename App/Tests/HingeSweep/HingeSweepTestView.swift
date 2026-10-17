@@ -1,4 +1,5 @@
 import SwiftUI
+import HingeInput
 import FoldKit
 import FoldL10n
 import TestsKit
@@ -26,7 +27,7 @@ struct HingeSweepTestView: View {
         self.onFinish = onFinish
         self.onCancel = onCancel
         _foldState = State(initialValue: initialFoldState)
-        _manualAngle = State(initialValue: initialFoldState.angleDegrees.map { min(max($0, 0), 180) } ?? 90)
+        _manualAngle = State(initialValue: ManualHingeAngle.clamped(initialFoldState.angleDegrees))
     }
 
     var body: some View {
@@ -121,13 +122,7 @@ struct HingeSweepTestView: View {
                 Text(L10nKey.hingeManual.text(in: language))
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                Slider(value: $manualAngle, in: 0...180, step: 1) {
-                    Text(L10nKey.hingeManual.text(in: language))
-                } minimumValueLabel: {
-                    Text(verbatim: "0°")
-                } maximumValueLabel: {
-                    Text(verbatim: "180°")
-                }
+                ManualHingeControl(angle: $manualAngle, title: L10nKey.hingeManual.text(in: language))
                 .accessibilityIdentifier("hinge.manual")
                 .onChange(of: manualAngle) { _, angle in
                     if isRecording(at: .now) {

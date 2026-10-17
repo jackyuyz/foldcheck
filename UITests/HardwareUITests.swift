@@ -2,6 +2,7 @@ import XCTest
 
 /// M4 hardware tests in the simulator, which has no cameras, motion sensors, proximity
 /// sensor, or haptics. Audio and Touch ID need system prompts and are left to manual runs.
+@MainActor
 final class HardwareUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
@@ -9,8 +10,7 @@ final class HardwareUITests: XCTestCase {
 
     /// No cameras is Unavailable, without asking for camera access.
     func testCamerasUnavailableWithoutCameras() throws {
-        let app = startFullInspection(skipping: 2)
-        XCTAssertTrue(app.staticTexts["Test 3 of 6"].waitForExistence(timeout: 5))
+        let app = startHardwareTest("cameras")
         tap(app.buttons["test.start"])
         XCTAssertTrue(element(app, "result.outcome").waitForExistence(timeout: 10))
         XCTAssertEqual(element(app, "result.outcome").label, "Unavailable")
@@ -18,8 +18,7 @@ final class HardwareUITests: XCTestCase {
 
     /// Every sensor part missing is Unavailable, never Fail.
     func testSensorsUnavailableInSimulator() throws {
-        let app = startFullInspection(skipping: 4)
-        XCTAssertTrue(app.staticTexts["Test 5 of 6"].waitForExistence(timeout: 5))
+        let app = startHardwareTest("sensors")
         tap(app.buttons["test.start"])
         tap(app.buttons["sensors.motionStart"])
         XCTAssertTrue(element(app, "result.outcome").waitForExistence(timeout: 15))
@@ -29,8 +28,7 @@ final class HardwareUITests: XCTestCase {
     /// Volume presses that never arrive plus a checklist answer make Attention, with the
     /// buttons listed on the result.
     func testButtonsChecklist() throws {
-        let app = startFullInspection(skipping: 5)
-        XCTAssertTrue(app.staticTexts["Test 6 of 6"].waitForExistence(timeout: 5))
+        let app = startHardwareTest("buttons")
         tap(app.buttons["test.start"])
         tap(app.buttons["buttons.volumeNotWorking"])
         tap(app.buttons["buttons.volumeNotWorking"])
@@ -48,15 +46,13 @@ final class HardwareUITests: XCTestCase {
 
     // MARK: Helpers
 
-    /// Full inspection on a device without a hinge, skipping the first `count` tests.
-    private func startFullInspection(skipping count: Int) -> XCUIApplication {
+    /// Run the selected part directly: Duo's Touch ID changes the full plan's step count.
+    private func startHardwareTest(_ component: String) -> XCUIApplication {
+        XCUIDevice.shared.orientation = .portrait
         let app = XCUIApplication()
         app.launchArguments = ["-UITestMode", "1", "-FoldMock", "nohinge"]
         app.launch()
-        tap(app.buttons["home.start"])
-        for _ in 0..<count {
-            tap(app.buttons["test.skip"])
-        }
+        tap(app.buttons["home.part.\(component)"])
         return app
     }
 

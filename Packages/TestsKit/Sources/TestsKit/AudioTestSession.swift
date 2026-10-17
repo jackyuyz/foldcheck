@@ -64,6 +64,9 @@ public struct AudioTestSession: Sendable, Equatable {
     /// Loudest level during the recording, in dBFS (0 is full scale).
     public var micPeakDB: Double?
     public var playbackHeard: Bool?
+    /// nil for older runs; false when the system could not route to builtInReceiver.
+    public var receiverAvailable: Bool?
+    public var receiverHeard: Bool?
     /// The audio system failed to play or record (not a user answer).
     public var hardwareError = false
 
@@ -76,7 +79,8 @@ public struct AudioTestSession: Sendable, Equatable {
         if hardwareError { return .fail }
         let heard = [leftHeard, rightHeard, playbackHeard].map { $0 == true }
         let micLoudEnough = (micPeakDB ?? -.infinity) >= Self.quietMicThresholdDB
-        return heard.allSatisfy { $0 } && micLoudEnough ? .pass : .attention
+        let receiverOK = receiverAvailable != true || receiverHeard == true
+        return heard.allSatisfy { $0 } && micLoudEnough && receiverOK ? .pass : .attention
     }
 
     public func result(notes: String = "", finishedAt: Date = .now) -> TestResult {
@@ -85,6 +89,8 @@ public struct AudioTestSession: Sendable, Equatable {
         if let rightHeard { metrics[TestMetricKey.speakerRightConfirmed] = rightHeard ? 1 : 0 }
         if let micPeakDB { metrics[TestMetricKey.micPeakLevel] = micPeakDB }
         if let playbackHeard { metrics[TestMetricKey.micPlaybackConfirmed] = playbackHeard ? 1 : 0 }
+        if let receiverAvailable { metrics[TestMetricKey.receiverAvailable] = receiverAvailable ? 1 : 0 }
+        if receiverAvailable == true, let receiverHeard { metrics[TestMetricKey.receiverConfirmed] = receiverHeard ? 1 : 0 }
         return TestResult(id: .audio, outcome: outcome, metrics: metrics, notes: notes, finishedAt: finishedAt)
     }
 }

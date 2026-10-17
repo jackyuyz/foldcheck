@@ -100,9 +100,9 @@
 | `fullyOpen` | Inner display T1/T2/T3; inner camera test |
 | Transitions | Expected during T4; elsewhere: a test in progress pauses with "Display changed: continue on this screen?" and records which display each result belongs to |
 | Rotation | Touch grid chooses its physical cells once at test start, using the system division region (portrait: horizontal crease; landscape: vertical). Rendering and touch coordinates rotate together; cell IDs, total and coverage remain fixed through 90°/180° rotations. Switching between inner and outer displays starts a separate grid. Reports store the final orientation |
-| Split View | Tests require full screen → blocking explanation |
+| Split View | Tests require full screen → blocking explanation; preserve the mounted runner and coverage when resized |
 | `noHinge` | Hinge-dependent tests (T3, T4, F5, crease band in T1) are marked "Not applicable on this device"; all others run |
-| iPad compat | Same as noHinge; display tests cover the compat window only → warn |
+| iPad compat | Same as noHinge; display tests cover the compat window only → warn before starting and record that scope in display-result notes |
 
 ## 4. Flows and screens
 
@@ -228,7 +228,7 @@ Rules:
 - Launch argument `-FoldMock <value>` swaps in `MockFoldStateProvider`. Values: `nohinge`, `closed`, `open`, `half:<deg>`, `sweep:<from>-<to>:<seconds>`, `script:<bundled-json-name>`. It is only honored in DEBUG builds or when `-UITestMode 1` is present.
 - Every hinge-driven interaction must also have a non-hinge control (slider, buttons, drag, or tilt) with identical results. This covers non-Duo devices, VoiceOver users, and App Review on devices without a hinge.
 
-**Implemented modules:** `FoldKit`, `FoldL10n` (six JSON catalogs), `TestsKit` (pure test/session models; SwiftUI runners live in App), `HingeAnalysis` (pure sweep analysis), `ReportKit` (canonical JSON, signing, QR, verify; UIKit PDF renderer in App), `Library` (SwiftData sessions and minimal widget snapshots), `Store`, `App`, and the `Widgets` extension. The originally planned standalone shared `HingeInput` extraction is deferred; current manual input is in App. The type/protocol sketch below is the original design sketch; `InspectionSession` is now a Codable value and `Library.StoredSession` is its SwiftData wrapper.
+**Implemented modules:** `FoldKit`, `FoldL10n` (six JSON catalogs), `TestsKit` (pure test/session models; SwiftUI runners live in App), `HingeAnalysis` (pure sweep analysis), `ReportKit` (canonical JSON, signing, QR, verify; UIKit PDF renderer in App), `Library` (SwiftData sessions and minimal widget snapshots), `Store`, `HingeInput` (shared manual SwiftUI slider and finite/clamped initial value), `App`, and the `Widgets` extension. The type/protocol sketch below is the original design sketch; `InspectionSession` is now a Codable value and `Library.StoredSession` is its SwiftData wrapper.
 
 **Key types:**
 ```swift
@@ -326,7 +326,7 @@ How to simulate fold states and hinge angles:
 
 **Unit:** HingeAnalysis with synthetic sweeps (clean, gappy, jittery, reversed, partial range) → expected metrics; status sequence detection; touch grid coverage math (cell mapping incl. crease band from `DisplaySpec`); report canonical JSON stability (golden); sign/verify round-trip with a software key; tamper detection (flip one byte → invalid); QR payload size within version-10 QR capacity; device-name mapping; outcome aggregation; Store gating.
 
-**UI tests:** `-UITestMode 1 -FoldMock sweep:10-180:6` → hinge test shows Pass with continuity metrics; `-FoldMock script:<gappy.json>` → Attention; `-FoldMock nohinge` → hinge tests "Not applicable"; full inspection with tests auto-completed via a DEBUG hook `-AutoCompleteTests pass` → summary → report generation (paid via StoreKit test config) → PDF exists; verify flow imports that PDF → valid.
+**UI tests:** `-UITestMode 1 -FoldMock sweep:10-180:6` → hinge test shows Pass with continuity metrics; `-FoldMock script:<gappy.json>` → Attention; `-FoldMock nohinge` → hinge tests "Not applicable"; full inspection with tests auto-completed via `-UITestMode 1 -AutoCompleteTests pass` (DEBUG only, isolated in-memory history, visible sample-data banner and per-result notes; never hardware evidence) → summary → report generation (paid via StoreKit test config) → PDF exists; verify flow imports that PDF → valid.
 
 **Real device needed:** real hinge data (range, rate, jitter) for thresholds; touch along the crease; camera list; brightness behavior per display; Secure Enclave signing.
 
@@ -355,21 +355,21 @@ How to simulate fold states and hinge angles:
 
 ## 10. Milestones
 
-Status audited against the repository on 2026-10-16, starting at `09c5c38`. “Implemented” means code exists, not that physical-device or submission acceptance passed. The M8 addition was explicitly requested after M7; it does not waive the open items below.
+Status audited against the repository on 2026-10-17, starting at `09c5c38`. “Implemented” means code exists, not that physical-device or submission acceptance passed. The M8 addition was explicitly requested after M7; it does not waive the open items below.
 
 | # | Milestone | Repository status | Still open |
 |---|---|---|---|
 | M0 | Spike | Simulator hinge, display and signing paths exist; **physical spike incomplete** | Actual Duo sampling thresholds, per-display brightness/camera list, proximity, real-device Secure Enclave verification |
-| M1 | Skeleton | Core implemented; **partial against original task list** | No CI workflow in the repo; no standalone shared `HingeInput` package (manual hinge controls currently live in App). Record extraction as deferred, rather than claim the originally proposed shared module shipped |
-| M2 | Display & touch | T1–T3 implemented; AC3 scripted coverage test exists | Physical crease/touch scaling and both-display brightness/transition checks; no full-screen/Split View blocking explanation or iPad compatibility-window warning from §3 is implemented |
+| M1 | Skeleton | Implemented, including eight-package CI and shared `HingeInput` | GitHub runner execution is distinct from local validation. Hosted Xcode 27 may use 27.0; Duo API/runtime checks use local 27.1 RC |
+| M2 | Display & touch | T1–T3, full-screen guard, iPad compatibility disclosure, saved touch heatmaps and AC3 coverage script implemented | Physical crease/touch scaling and both-display brightness/transition checks; historical count-only records have no reconstructable heatmap |
 | M3 | Hinge & fold count | T4/HingeAnalysis/F5 implemented, synthetic tests exist | Physical thresholds and long-running foreground validation; never lifetime/background count |
-| M4 | Hardware | T5–T9 baseline implemented; **partial against detailed T5/T6 scope** | Camera code currently uses generic DiscoverySession types; Duo-specific camera discovery/direction-coordinator coverage needs implementation/API/device verification. Camera captures keep numerical stats only (no opt-in captured-photo attachment). No separately routed earpiece step (current audio route explicitly uses loudspeaker). Real hardware checks remain |
-| M5 | Reports | PDF, signing, QR/import verification implemented | Physical signing/scan/import and release signing checks. Verification covers embedded signed data, not all PDF bytes or visible pages |
-| M6 | History/reminders/Store | Features implemented; **purchase acceptance incomplete** | iOS 27 Ask to Buy test hang unresolved; real Sandbox purchase/restore/refund/pending, notification delivery, product setup/Family Sharing |
+| M4 | Hardware | T5–T9 implemented, including guarded Duo camera types/AVKit direction coordinator, rotation coordination, opt-in captured photos, and separately routed earpiece | Real camera discovery/direction/frame quality and receiver routing need hardware. Simulator has no cameras/earpiece; Unavailable / N/A is expected |
+| M5 | Reports | PDF, signing, QR/import verification and signed touch heatmaps implemented | Physical signing/scan/import and release signing checks. Verification covers embedded signed data, not all PDF bytes or visible pages |
+| M6 | History/reminders/Store | Features implemented; **purchase acceptance incomplete** | Local Ask to Buy has bounded waits, approval/decline and listener cleanup; real Sandbox purchase/restore/refund/pending, notification delivery, product setup/Family Sharing remain |
 | M7 | Polish | UI/a11y options, six catalogs, review drafts and QA screenshots implemented | Human VoiceOver/Reduce Motion review; first-use ≤6 minute test (AC1), actual inspection-data proxy audit (AC9), final Release/store screenshots, real privacy/support contacts, distribution/App Store Connect configuration |
 | M8 | Dashboard widget | Lightweight extension added after dashboard fixes; see §4.1 | Validation and remaining device checks recorded in `docs/review/widget-validation.md`; not an App Store submission |
 
-Further test-plan drift: §8 describes an `-AutoCompleteTests pass` end-to-end hook that is not implemented. Existing tests drive real UI controls instead; do not claim that specific automated full-inspection shortcut exists. Existing AC3 coverage is implemented in `DisplayTouchUITests` and is not part of this gap.
+The §8 DEBUG auto-completion hook is implemented with explicit UI-test opt-in, isolated history and sample-data labels. `SimulatorGapUITests` checks full-inspection-to-PDF plumbing, not hardware. Ordinary tests still exercise actual controls. New touch results save normalized physical cells and coverage, which are included in signed canonical report data and rendered in PDFs (solid = touched, cross = missed); old results decode with no map. Rotating preserves the original grid. Photo files remain local and are included visually only when selected; the signature still does not cover every PDF page byte or photo byte.
 
 Original estimate for M0–M7 was ≈13.5 dev-days. M8 is an incremental scope addition, not evidence that all remaining acceptance work is complete. See `docs/review/spec-status.md` for source evidence and release priorities.
 
@@ -384,4 +384,4 @@ Original estimate for M0–M7 was ≈13.5 dev-days. M8 is an incremental scope a
 
 
 ---
-*Spec version 1.1 · updated 2026-10-16 · Prepared for Jack Yu. M8 and repository status audit added. Original hinge API facts were checked on 2026-10-13; WidgetKit extension/timeline/App Group guidance checked against Apple documentation and Xcode 27.1 (27A9275). Items marked UNCONFIRMED or "verify" still require validation.*
+*Spec version 1.2 · updated 2026-10-17 · Prepared for Jack Yu. M8, CI and simulator-testable M1/M2/M4/M6 gaps implemented; physical/submission acceptance remains separate. Original hinge API facts were checked on 2026-10-13; WidgetKit extension/timeline/App Group guidance checked against Apple documentation and Xcode 27.1 (27A9275). Items marked UNCONFIRMED or "verify" still require validation.*

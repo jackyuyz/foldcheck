@@ -86,6 +86,11 @@ struct ReportPDFRenderer {
             if !result.series.isEmpty {
                 page.chart(result.series)
             }
+            if let heatmap = result.touchHeatmap, !heatmap.cells.isEmpty {
+                let mapTitle = [name, result.display?.localizedName(in: language)].compactMap { $0 }.joined(separator: " · ")
+                page.touchMap(heatmap, title: mapTitle)
+                page.text(L10nKey.reportTouchMapLegend.text(in: language), font: .systemFont(ofSize: 9), color: PDFColor.secondary, after: 4)
+            }
             for filename in result.attachments {
                 if let url = try? AttachmentStore.directory.appendingPathComponent(filename),
                    let image = UIImage(contentsOfFile: url.path) {
@@ -279,5 +284,35 @@ private struct PageWriter {
         ensureSpace(size.height + 8)
         image.draw(in: CGRect(origin: CGPoint(x: margin, y: y), size: size))
         y += size.height + 8
+    }
+
+    mutating func touchMap(_ map: TouchHeatmap, title: String) {
+        guard map.aspectRatio.isFinite, map.aspectRatio > 0 else { return }
+        let mapWidth = min(width, 220 * map.aspectRatio)
+        let height = mapWidth / map.aspectRatio
+        // Keep the component/display label with the map even when it starts a new page.
+        ensureSpace(height + 60)
+        text(title, font: .boldSystemFont(ofSize: 11), after: 6)
+        for cell in map.cells {
+            let rect = CGRect(x: margin + cell.x * mapWidth, y: y + cell.y * height,
+                              width: cell.width * mapWidth, height: cell.height * height).insetBy(dx: 0.5, dy: 0.5)
+            (cell.covered ? UIColor(red: 0.05, green: 0.48, blue: 0.27, alpha: 1) : UIColor.white).setFill()
+            UIBezierPath(rect: rect).fill()
+            UIColor.darkGray.setStroke()
+            let border = UIBezierPath(rect: rect)
+            border.lineWidth = cell.isCreaseBand ? 0.7 : 0.3
+            border.stroke()
+            if !cell.covered {
+                let cross = UIBezierPath()
+                cross.move(to: CGPoint(x: rect.minX, y: rect.minY))
+                cross.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+                cross.move(to: CGPoint(x: rect.maxX, y: rect.minY))
+                cross.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+                UIColor.systemRed.setStroke()
+                cross.lineWidth = 0.5
+                cross.stroke()
+            }
+        }
+        y += height + 8
     }
 }

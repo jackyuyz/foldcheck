@@ -1,32 +1,29 @@
-# Spec 阶段核对（2026-10-16）
+# Spec 阶段核对（2026-10-17）
 
-基线 `09c5c38`，随后增加 M8 Widget。按代码、现有测试及验证记录核对；没有把模拟器结果当作真机或上架验收。完整状态表已写回 `docs/foldcheck-spec.md` §10。
+基线 `6f31983`；本轮直接在 main 补齐不依赖真机及上架配置的缺口。实现与验收分开记录，完整阶段表见 `docs/foldcheck-spec.md` §10。
 
-## 确实尚未实现的项
+## 本轮补齐
 
-| 优先级 | 所属阶段 | 差距 | 代码证据 / 建议 |
-| --- | --- | --- | --- |
-| 高 | M1 | CI 尚未落地 | 仓库没有 `.github/workflows/`；本地测试通过不等于持续集成。先增加七个 Swift 包的检查，再配置满足 SDK/模拟器要求的 App runner |
-| 高 | M4 / T5 | Duo 专用摄像头枚举和方向协调路径未落地 | `App/Tests/Hardware/CameraTestView.swift` 目前只发现通用 wide/ultra-wide/telephoto。不能宣称已验证覆盖所有 Duo 内外摄像头；需 SDK API 与真实设备核对 |
-| 中 | M2 / §3 | 多任务全屏阻挡说明、iPad 兼容窗口提示 | `fullScreenCover` 只是 App 内呈现方式，不能代替窗口是否覆盖实际显示区域的检测和提示；当前无该防护 |
-| 中 | M4 / T6 | 单独路由的听筒测试 | `AudioTestController.activate()` 明确使用 `.defaultToSpeaker`，当前只有左右声道音调和麦克风回放；应实现可路由时的听筒步骤或明确缩减规格 |
-| 低 | M4 / T5 | 相机测试帧自愿附加到报告 | 当前 Capture 只保留数值，不存照片。T3 已实现外部照片导入；两者不要混淆 |
-| 低 | M1 | 独立共享 HingeInput 包 | 当前 `Packages/` 无此包；手动铰链输入已直接集成 App。建议等组合应用复用需要明确后再提取，不阻挡当前检查流程 |
-| 测试工具 | §8 | `-AutoCompleteTests pass` 快捷钩子 | 当前没有该参数。现有 UI 测试实际操作控件；完整检查的自动跳转钩子应标未实现，不能当作已有测试证据 |
+| 阶段 | 已实现 | 验证依据与边界 |
+| --- | --- | --- |
+| M6 | StoreKit 异步操作 15 秒测试时限；批准、拒绝、购买、退款、恢复；停止测试 Store 的交易监听、重置 SKTestSession；批准后清除 pending 状态；防止重复同时购买 | `StorePurchaseTests` 六项本地测试实际通过，不再因商品缺失而 skip。在干净模拟器中复现了误走 Sandbox 登录后的超时；增加显式本地 Test Plan 后六项再次通过，并增强 unit-test host 启动防护；最终代码在独立 iPhone 17 / iOS 27.0 与 Duo / iOS 27.1 均六项通过。同类无响应现在会明确超时失败；CI 还有整项/整轮时限。正式 Sandbox 不在本轮验收范围 |
+| M1 | `.github/workflows/ci.yml`、可复用包测试与模拟器脚本、独立 `HingeInput` 包 | 八包 macOS 测试；App 单测/UI 与 Release 模拟器构建。GitHub 的 `xcode-27` 是预览镜像，可能仍为 27.0；该环境只能验证回退路径，不能代替本机 27.1 RC Duo 路径。CI 不上传 App、无需发行密钥或私有姿态 CLI |
+| M2 | 窗口/显示屏坐标对比；非全屏阻挡说明；保留 runner 状态；iPad 兼容窗口提示和显示结果范围备注 | 纯几何测试、DEBUG 注入阻挡、实际 iPad 模拟器范围提示、真实 Duo 内屏两栏和半折叠浅色/深色检查。不能把 iPad 兼容窗口当作整块 iPad 面板 |
+| M4 / T5 | Duo inner/outer ultra-wide 枚举、AVKit direction coordinator、预览及采集旋转协调 | API 来自本机 27.1 RC SDK，受 `FOLDCHECK_HINGE_API` 和 `#available` 双重保护。隐藏/暂停镜头为 N/A；真正的采集配置失败为 Fail。模拟器无摄像头，不是实际发现/成像证明 |
+| M4 / T5 | 捕获照片自愿附加 | 默认不写图片；选中照片在完成测试时通过既有 1600 px JPEG 存储写入本机并进入 PDF。取消时丢弃内存草稿。图片保存失败写入结果说明；不能据此宣称 PDF 所有图片字节受签名覆盖 |
+| M4 / T6 | 独立听筒步骤 | 只把系统 `builtInReceiver` 路由当作听筒；模拟器明确未测试。不可用不会让整项失败；实际可路由时必须由用户确认。恢复扬声器后继续麦克风流程 |
+| M2 / M5 | 原审计漏列的触控热图 | 新记录保存初始物理网格的归一化格子及覆盖，纳入签名数据并绘入 PDF；实心/叉号同时区分已触及和未触及。旧记录没有格子数据，保持无热图，不补造位置 |
+| §8 测试工具 | `-UITestMode 1 -AutoCompleteTests pass` | 仅 DEBUG、内存历史隔离、明显的示例标记及每项说明，不写真实 Widget 快照。UI 验证全检查到 PDF 的连接；不是硬件检查通过的证据 |
 
-没有发现整套 M2、M3、M5 或 M6 功能完全没做；主要模块均已有代码和测试。AC3 的全网格滑动覆盖脚本在 `UITests/DisplayTouchUITests.swift`，已实现，不应列成缺失。
+详细执行结果、模拟器环境与剩余限制见 `simulator-gaps-validation.md`。CI 代码存在、本地脚本通过和 GitHub 远端执行通过是三个不同事实。
 
-其他实现差异与功能遗漏分开记录：图标按用户决定保留现有绿底勾；本地化用六种语言 JSON catalogs；TestsKit 保留纯模型、SwiftUI 测试界面放在 App；`InspectionSession` 是 Codable 值，`Library.StoredSession` 才是 SwiftData 模型。后面三项是当前代码的架构选择，并非额外待做页面，也不代表原始类型/协议草图已经逐字实现；spec 的设计/模块说明已据此澄清。
+## 仍需真机、人工或上架配置
 
-## 已实现，但仍未完成验收
+- **M0 / M3**：铰链采样精度、频率、量化与阈值；真实触控尺寸和折痕带；内外屏亮度独立恢复；长时间前台统计。
+- **M4 / M5**：真实 Duo 镜头可用性与折叠后的方向变化、画面和照片方向；听筒/扬声器/麦克风、Touch ID、邻近/运动/触感/按键、Secure Enclave；摄像头扫码和 Files 导入人测。
+- **M6**：正式 Sandbox 购买/恢复/退款/待批准、商品和 Family Sharing、通知实际投递。
+- **M7**：AC1 首用 ≤6 分钟人测、AC9 实际代理网络审计、人工 VoiceOver/Reduce Motion、外语母语校对、正式 Release 商店截图。
+- **上架**：真实隐私 URL / 支持邮箱、开发团队与发行签名、App Store Connect 商品及隐私申报。中英文上架文案仍是草稿，无商店提交。
+- **M8**：真实锁屏隐私、系统 tint、发行 App Group 权限等仍按 `widget-validation.md` 待验收。
 
-- **M0 / M3 真机**：铰链采样精度、频率、量化、阈值、触控折痕带比例、内外屏亮度恢复、真实摄像头、Touch ID、邻近/音频/按键/触感、Secure Enclave。需要真实设备，不宜通过虚构测量补齐。
-- **M6 购买**：`Tests/StorePurchaseTests.swift` 的 iOS 27 Ask to Buy 挂起尚未解决。之前相关本地检查不等于本轮所有购买用例通过；正式 Sandbox、购买/恢复/退款/待批准、商品和 Family Sharing 配置仍要确认。
-- **M7 验收**：AC1 首次使用 ≤6 分钟的人测、AC9 实际代理网络审计、人工 VoiceOver/Reduce Motion、通知真实投递、摄像头二维码和 Files 导入、外语母语校对。
-- **上架**：`AppLinks.privacy` / `support@example.com` 为占位，开发团队与发行签名、App Store Connect 商品及隐私申报、正式 Release 截图尚待配置。已写好的中英文上架文案是草稿，不是已提交或已发行证据。
-
-## M8 决定
-
-新增免费、只读的健康概览 Widget 有价值：它复用用户已经保存的检查，减少为查看状态而打开 App 的步骤，不引入后台硬件采集。实现范围为桌面小/中尺寸、锁屏矩形、空状态、应用内六语言和点按打开首页。刷新受 WidgetKit 调度；没有实时诊断、后台折叠统计或购买门槛变化。
-
-实现与实际验证边界见 `docs/review/widget-validation.md`。上述既有缺口保留为明确待办，本轮没有顺带将它们标成已完成。
+没有发现整套 M2、M3、M5、M6 完全未做。六语言 JSON catalogs、TestsKit 纯模型/App SwiftUI runner、Codable `InspectionSession` + SwiftData `StoredSession` 是已明确记录的架构选择。图标继续保留用户选定的绿底勾。

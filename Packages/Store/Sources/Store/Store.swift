@@ -31,7 +31,7 @@ public final class Store {
     static let cacheKey = "store.hasReports"
     private let defaults: UserDefaults
     private let forcedUnlock: Bool
-    private var updates: Task<Void, Never>?
+    @ObservationIgnored private var updates: Task<Void, Never>?
 
     /// - Parameter arguments: in DEBUG builds `-UnlockReports` unlocks everything for UI tests.
     public init(defaults: UserDefaults = .standard, arguments: [String] = ProcessInfo.processInfo.arguments) {
@@ -49,6 +49,7 @@ public final class Store {
         if updates == nil {
             updates = Task { [weak self] in
                 for await result in Transaction.updates {
+                    guard !Task.isCancelled else { break }
                     if case .verified(let transaction) = result {
                         await transaction.finish()
                     }
@@ -59,6 +60,14 @@ public final class Store {
         await loadProduct()
         await refreshEntitlements()
     }
+
+    /// Release the transaction listener when its owner goes away (also isolates test stores).
+    public func stop() {
+        updates?.cancel()
+        updates = nil
+    }
+
+    deinit { updates?.cancel() }
 
     public func loadProduct() async {
         loadState = .loading
@@ -79,7 +88,7 @@ public final class Store {
     }
 
     public func purchase() async {
-        guard let product else { return }
+        guard let product, purchaseState != .purchasing else { return }
         purchaseState = .purchasing
         do {
             switch try await product.purchase() {
@@ -112,6 +121,7 @@ public final class Store {
     private func apply(_ unlocked: Bool) {
         defaults.set(unlocked, forKey: Self.cacheKey)
         hasReports = forcedUnlock || unlocked
+        if unlocked && purchaseState == .pending { purchaseState = .idle }
     }
 
     private static func snapshot(of result: VerificationResult<Transaction>) -> TransactionSnapshot {

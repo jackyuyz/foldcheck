@@ -1,0 +1,39 @@
+{
+  "configurations" : [
+    {
+      "id" : "BC5BB12A-393F-48F9-9FAF-A6CF3A9721A1",
+      "name" : "Local StoreKit",
+      "options" : {}
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : true,
+    "storeKitConfigurationFileReference" : {
+      "identifier" : "Configuration.storekit"
+    },
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:FoldCheck.xcodeproj",
+      "identifier" : "563F8D2D94867072574B81C1",
+      "name" : "FoldCheck"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:FoldCheck.xcodeproj",
+        "identifier" : "9D3823983A2BD72B1B31312F",
+        "name" : "FoldCheckTests"
+      }
+    },
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:FoldCheck.xcodeproj",
+        "identifier" : "9F9389FDE946455C3CDC61AE",
+        "name" : "FoldCheckUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

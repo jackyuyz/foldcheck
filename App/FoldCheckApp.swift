@@ -18,7 +18,7 @@ struct FoldCheckApp: App {
     private let sessionContainer = Self.makeSessionContainer()
     private let viewPreferences: UserDefaults = {
         #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("-ScreenshotFixtures") || ProcessInfo.processInfo.arguments.contains("-EmptyHistoryFixtures") {
+        if ProcessInfo.processInfo.arguments.contains("-ScreenshotFixtures") || ProcessInfo.processInfo.arguments.contains("-EmptyHistoryFixtures") || UITestConfiguration.autoCompletesTests() {
             let defaults = UserDefaults(suiteName: "foldcheck.review")!
             defaults.set(false, forKey: "touchTapMode")
             return defaults
@@ -43,7 +43,8 @@ struct FoldCheckApp: App {
                 .task {
                     // Unit tests drive StoreKit through SKTestSession; querying products before
                     // the session exists leaves StoreKit with an empty product list.
-                    guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else { return }
+                    guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil,
+                          NSClassFromString("XCTestCase") == nil else { return }
                     await store.start()
                 }
                 .tint(InspectionStyle.tint)
@@ -86,10 +87,10 @@ struct FoldCheckApp: App {
     /// outside the shared app group and with no CloudKit database, so nothing is synced or uploaded.
     private static func makeSessionContainer() -> ModelContainer {
         #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("-ScreenshotFixtures") || ProcessInfo.processInfo.arguments.contains("-EmptyHistoryFixtures") {
+        if ProcessInfo.processInfo.arguments.contains("-ScreenshotFixtures") || ProcessInfo.processInfo.arguments.contains("-EmptyHistoryFixtures") || UITestConfiguration.autoCompletesTests() {
             let configuration = ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
             let container = try! ModelContainer(for: StoredSession.self, configurations: configuration)
-            if !ProcessInfo.processInfo.arguments.contains("-EmptyHistoryFixtures") {
+            if ProcessInfo.processInfo.arguments.contains("-ScreenshotFixtures") {
                 try! ScreenshotFixtures.populate(container)
             }
             return container

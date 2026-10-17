@@ -2,6 +2,16 @@ import Foundation
 
 /// Stable localization key. English is the fallback.
 public enum L10nKey: String, CaseIterable, Sendable, Hashable {
+    case windowFullScreenTitle = "window.fullScreenTitle"
+    case windowFullScreenMessage = "window.fullScreenMessage"
+    case windowIPadWarning = "window.iPadWarning"
+    case audioReceiverTitle = "audio.receiverTitle"
+    case audioReceiverInstruction = "audio.receiverInstruction"
+    case audioReceiverUnavailable = "audio.receiverUnavailable"
+    case camAttachPhoto = "cam.attachPhoto"
+    case camAttachmentError = "cam.attachmentError"
+
+    case reportTouchMapLegend = "report.touchMapLegend"
     case widgetTitle = "widget.title"
     case widgetDescription = "widget.description"
     case widgetEmpty = "widget.empty"
