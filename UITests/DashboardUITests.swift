@@ -61,6 +61,82 @@ final class DashboardUITests: XCTestCase {
         add(attachment)
     }
 
+    func testSplitOverviewStaysPutWhilePartsScroll() throws {
+        // Empty history gives a genuinely fitting overview, including its bottom padding.
+        // A saved English overview can overflow slightly even though History is hittable.
+        let app = launchForScrolling(emptyHistory: true)
+        let (overview, parts) = try splitScrollViews(app)
+        let score = element(app, "home.health.score")
+        XCTAssertTrue(element(app, "home.health.empty").exists)
+        XCTAssertTrue(app.buttons["home.start"].isHittable)
+        let origin = score.frame.minY
+        overview.swipeUp()
+        XCTAssertEqual(score.frame.minY, origin, accuracy: 1)
+        parts.swipeUp()
+        XCTAssertTrue(app.buttons["home.part.buttons"].isHittable)
+        // The shared navigation title may collapse on the first right-column scroll.
+        // Once it has, further scrolling must not change the overview's position.
+        let settledOrigin = score.frame.minY
+        parts.swipeUp()
+        XCTAssertEqual(score.frame.minY, settledOrigin, accuracy: 1)
+        overview.swipeUp()
+        XCTAssertEqual(score.frame.minY, settledOrigin, accuracy: 1)
+    }
+
+    func testOverflowingSplitOverviewCanReachHistory() throws {
+        let app = launchForScrolling(largeText: true)
+        let (overview, parts) = try splitScrollViews(app)
+        let score = element(app, "home.health.score")
+        let scoreOrigin = score.frame.minY
+        let partsOrigin = parts.frame
+        let hingeOrigin = app.buttons["home.quick.hinge"].frame.minY
+        let history = app.buttons["home.lastInspection"]
+        XCTAssertFalse(history.isHittable, "Large text must overflow this viewport")
+        for _ in 0..<6 {
+            if history.isHittable { break }
+            overview.swipeUp()
+        }
+        XCTAssertTrue(history.isHittable)
+        XCTAssertLessThan(score.frame.minY, scoreOrigin)
+        XCTAssertEqual(parts.frame, partsOrigin)
+        XCTAssertEqual(app.buttons["home.quick.hinge"].frame.minY, hingeOrigin, accuracy: 1)
+    }
+
+    func testStackedDashboardStillScrollsToParts() throws {
+        let app = launchForScrolling()
+        try XCTSkipUnless(element(app, "layout.stacked").exists, "Requires a single-column display")
+        let score = element(app, "home.health.score")
+        let origin = score.frame.minY
+        let buttons = app.buttons["home.part.buttons"]
+        for _ in 0..<6 {
+            if buttons.isHittable { break }
+            app.swipeUp()
+        }
+        XCTAssertTrue(buttons.isHittable)
+        XCTAssertLessThan(score.frame.minY, origin)
+    }
+
+    private func launchForScrolling(largeText: Bool = false, emptyHistory: Bool = false) -> XCUIApplication {
+        if XCUIScreen.screens.count == 1 { XCUIDevice.shared.orientation = .portrait }
+        let app = XCUIApplication()
+        app.launchArguments = ["-UITestMode", "1", "-FoldMock", "open",
+                               emptyHistory ? "-EmptyHistoryFixtures" : "-ScreenshotFixtures",
+                               "-foldcheck.appLanguage", "en"]
+        if largeText {
+            app.launchArguments += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
+        }
+        app.launch()
+        XCTAssertTrue(element(app, "home.health.score").waitForExistence(timeout: 5))
+        return app
+    }
+
+    private func splitScrollViews(_ app: XCUIApplication) throws -> (XCUIElement, XCUIElement) {
+        let overview = app.scrollViews.containing(.button, identifier: "home.start").firstMatch
+        let parts = app.scrollViews.containing(.button, identifier: "home.quick.hinge").firstMatch
+        try XCTSkipUnless(parts.frame.minX > overview.frame.midX, "Requires a two-column inner display")
+        return (overview, parts)
+    }
+
     private func element(_ app: XCUIApplication, _ identifier: String) -> XCUIElement {
         app.descendants(matching: .any)[identifier].firstMatch
     }

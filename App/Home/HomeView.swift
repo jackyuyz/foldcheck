@@ -21,7 +21,7 @@ struct HomeView: View {
     @Environment(Store.self) private var store
 
     var body: some View {
-        InspectionPanels {
+        InspectionPanels(primaryScrollsOnlyWhenNeeded: true) {
             VStack(spacing: 24) {
                 if let health = healthCache.health {
                     HealthSummaryPanel(health: health) {

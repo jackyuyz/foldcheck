@@ -6,6 +6,8 @@ import TestsKit
 /// in a List or ScrollView. Each column scrolls independently at accessibility text sizes.
 struct InspectionPanels<Primary: View, Secondary: View>: View {
     @State private var divisionFrame: CGRect?
+    /// Opt in only for the dashboard overview; stacked layouts keep their shared scroller.
+    var primaryScrollsOnlyWhenNeeded = false
     @ViewBuilder var primary: () -> Primary
     @ViewBuilder var secondary: () -> Secondary
 
@@ -35,7 +37,7 @@ struct InspectionPanels<Primary: View, Secondary: View>: View {
         #if FOLDCHECK_HINGE_API
         if #available(iOS 27.1, *) {
             ArrangementView {
-                panel(primary)
+                panel(primary, onlyWhenNeeded: primaryScrollsOnlyWhenNeeded)
             } secondary: {
                 panel(secondary)
             }
@@ -51,18 +53,54 @@ struct InspectionPanels<Primary: View, Secondary: View>: View {
 
     private var fallbackPanels: some View {
         HStack(alignment: .top, spacing: 24) {
-            panel(primary)
+            panel(primary, onlyWhenNeeded: primaryScrollsOnlyWhenNeeded)
             panel(secondary)
         }
     }
 
-    private func panel<Content: View>(_ content: () -> Content) -> some View {
+    @ViewBuilder
+    private func panel<Content: View>(_ content: @escaping () -> Content, onlyWhenNeeded: Bool = false) -> some View {
+        if onlyWhenNeeded {
+            FittingPanelScrollView {
+                panelContent(content)
+            }
+        } else {
+            ScrollView {
+                panelContent(content)
+            }
+        }
+    }
+
+    private func panelContent<Content: View>(_ content: () -> Content) -> some View {
+        content()
+            .frame(maxWidth: 520)
+            .frame(maxWidth: .infinity)
+            .padding(24)
+    }
+}
+
+/// Keep the overview still when all of it fits, including its padding and the viewport's
+/// safe areas. Re-evaluate after text, content, window or fold-layout changes.
+private struct FittingPanelScrollView<Content: View>: View {
+    @ViewBuilder var content: () -> Content
+    @State private var contentHeight: CGFloat?
+    @State private var viewportHeight: CGFloat?
+
+    private var fits: Bool {
+        guard let contentHeight, let viewportHeight else { return false }
+        return contentHeight <= viewportHeight
+    }
+
+    var body: some View {
         ScrollView {
             content()
-                .frame(maxWidth: 520)
-                .frame(maxWidth: .infinity)
-                .padding(24)
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { contentHeight = $0 }
         }
+        // The proposed viewport size already excludes the navigation and home-indicator
+        // safe areas. Subtracting safeAreaInsets again would incorrectly enable scrolling.
+        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { viewportHeight = $0 }
+        .scrollDisabled(fits)
+        .scrollBounceBehavior(.basedOnSize, axes: .vertical)
     }
 }
 
