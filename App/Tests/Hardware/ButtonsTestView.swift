@@ -28,7 +28,7 @@ struct ButtonsTestView: View {
         Group {
             switch phase {
             case .starting:
-                TestStepScreen(systemImage: "plus.minus", title: L10nKey.testButtons.text(in: language), onCancel: cancel) {
+                TestStepScreen(systemImage: "plusminus", title: L10nKey.testButtons.text(in: language), onCancel: cancel) {
                     ProgressView()
                 } actions: {
                     EmptyView()

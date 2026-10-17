@@ -19,9 +19,10 @@ final class FoldCheckUITests: XCTestCase {
         app.launchArguments = ["-UITestMode", "1", "-FoldMock", "nohinge"]
         app.launch()
         
-        // Tap start inspection
-        let startButton = app.buttons["Start Inspection"]
-        XCTAssertTrue(startButton.exists)
+        // Reads "Start Inspection" with no saved inspections and "Check Again" after one.
+        let startButton = app.buttons["home.start"]
+        XCTAssertTrue(startButton.waitForExistence(timeout: 5))
+        XCTAssertTrue(["Start Inspection", "Check Again"].contains(startButton.label), startButton.label)
     }
     
     func testNavigateToVerify() throws {

@@ -5,6 +5,9 @@ import XCTest
 final class HingeFoldUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
+        // The fold debug overlay's buttons are tapped by position; landscape moves them under
+        // the toolbar's hinge gauge.
+        XCUIDevice.shared.orientation = .portrait
     }
 
     // MARK: T4
@@ -58,10 +61,13 @@ final class HingeFoldUITests: XCTestCase {
         assertRow(app, "hingeSweep", contains: "Unavailable")
     }
 
+    /// Without a hinge the dashboard has no hinge or crease tiles; a full inspection still
+    /// records the hinge test as Not Applicable (AC5, see testFullInspectionWithoutHinge).
     func testHingeTestIsNotApplicableWithoutHinge() throws {
         let app = launch(["-FoldMock", "nohinge"])
-        tap(app.buttons["home.quick.hinge"])
-        assertRow(app, "hingeSweep", contains: "Not Applicable")
+        XCTAssertTrue(app.buttons["home.quick.screen"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["home.quick.hinge"].exists)
+        XCTAssertFalse(app.buttons["home.part.crease"].exists)
     }
 
     // MARK: F5

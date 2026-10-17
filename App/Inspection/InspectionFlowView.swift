@@ -338,7 +338,7 @@ struct TestContainerView: View {
         case .audio: return "speaker.wave.3.fill"
         case .touchID: return "touchid"
         case .sensors: return "gyroscope"
-        case .buttons: return "plus.minus"
+        case .buttons: return "plusminus"
         }
     }
 }

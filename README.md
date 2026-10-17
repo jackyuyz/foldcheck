@@ -235,6 +235,12 @@ Swift Package tests passed on macOS using Xcode 27.1 RC (258 total):
 - Review notes, repeatable verification steps and remaining device/submission checks: [docs/review/m7-validation.md](docs/review/m7-validation.md) and [docs/review/app-review-notes.md](docs/review/app-review-notes.md).
 - Simulator coverage does not replace physical hinge/touch calibration, human VoiceOver testing or App Store Connect configuration.
 
+### Home: health dashboard (design A) ✅
+- The primary panel is a 0–100 score ring with the overall status, how many parts need attention, the last check date, and Start/Check Again; the secondary panel has one tile per part (hinge, crease, screens, touch, cameras, audio, Touch ID, sensors, buttons) with its latest measured result and headline metric. Tapping a tile runs that part's test
+- `DeviceHealth` (TestsKit) builds it from every saved inspection, quick tests included: each part keeps its latest measured result (a later skip never hides it), touch shows the worse of the outer and inner grids, and parts that don't apply to the device (hinge parts without a hinge, Touch ID on Face ID phones) are left out. The score averages the measured parts (Pass 100, Attention 70, Fail 0)
+- Free for everyone, since these are the user's own results; History, compare and PDF reports stay behind the purchase. The last-inspection row shows a status badge rather than a second score, because one inspection's score can differ from the per-part score
+- The hinge, touch and screen tiles keep the `home.quick.*` identifiers of the quick actions they replace
+
 
 ## Languages
 

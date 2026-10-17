@@ -11,17 +11,28 @@ struct HomeView: View {
     @Environment(\.appLanguage) private var language
     /// Only a saved full inspection becomes the "last inspection" on Home (full ones save themselves).
     @Query(StoredSession.latestFullInspection) private var latestFull: [StoredSession]
+    /// Every saved inspection, quick tests included, feeds the per-part dashboard.
+    @Query(StoredSession.newestFirst) private var records: [StoredSession]
     @State private var inspectionRequest: InspectionRequest?
     @State private var showingFoldStats = false
     @State private var showingPaywall = false
+    @State private var foldState: FoldState = .noHinge
     @Environment(Store.self) private var store
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    
+
     var body: some View {
+        // Free for everyone: these are the user's own results. History and compare stay paid.
+        let health = DeviceHealth(
+            sessions: records.compactMap(\.session),
+            context: DeviceInfo.context(foldState: foldState)
+        )
         InspectionPanels {
             VStack(spacing: 24) {
-                headerSection
-                startInspectionButton
+                HealthSummaryPanel(health: health) {
+                    start(TestID.defaultOrder)
+                }
+                if let session = latestFull.first?.session {
+                    lastInspectionLink(session)
+                }
                 Label(L10nKey.homeLocal.text(in: language), systemImage: "lock.shield")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
@@ -29,13 +40,14 @@ struct HomeView: View {
             }
         } secondary: {
             VStack(spacing: 24) {
-                if let session = latestFull.first?.session {
-                    lastResultSection(session)
+                HealthPartsPanel(health: health) { component in
+                    run(component)
                 }
-                quickActionsSection
+                foldStatsCard
             }
         }
         .navigationTitle("FoldCheck")
+        .observeFoldState($foldState)
         .sheet(isPresented: $showingPaywall) {
             PaywallView()
         }
@@ -46,138 +58,71 @@ struct HomeView: View {
             InspectionFlowView(request: request)
         }
     }
-    
-    private var headerSection: some View {
-        VStack(spacing: 8) {
-            Image(systemName: "stethoscope")
-                .font(.system(size: 60))
-                .foregroundStyle(.tint)
-                .accessibilityHidden(true)
-            
-            Text(L10nKey.homeHeadline.text(in: language))
-                .font(.title2.bold())
-                .accessibilityAddTraits(.isHeader)
-            
-            Text(L10nKey.homeSubtitle.text(in: language))
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-        }
-        .padding(.vertical)
-    }
-    
-    private var startInspectionButton: some View {
-        Button {
-            start(TestID.defaultOrder)
-        } label: {
-            Label(L10nKey.homeStart.text(in: language), systemImage: "play.fill")
-                .font(.headline)
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(InspectionStyle.buttonFill, in: RoundedRectangle(cornerRadius: 12))
-                .foregroundStyle(.white)
-        }
-        .accessibilityIdentifier("home.start")
-    }
 
     /// Starts a flow with the device context (model, OS, fold state) as it is right now,
     /// so `-FoldMock` launch arguments decide which tests apply.
     private func start(_ tests: [TestID]) {
         inspectionRequest = .current(tests: tests, foldState: foldStateProvider.state)
     }
-    
-    @ViewBuilder
-    private func lastResultSection(_ session: InspectionSession) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(L10nKey.homeLastInspection.text(in: language))
-                .font(.headline)
-            
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(session.startedAt.formatted(date: .long, time: .omitted, in: language))
-                        .font(.subheadline)
-                    
-                    HStack(spacing: 8) {
-                        ResultBadge(outcome: session.overallStatus)
-                        
-                        if let score = session.overallScore {
-                            Text("\(score)/100")
-                                .font(.caption.bold())
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                }
-                
-                Spacer()
-                
-                NavigationLink {
-                    if store.hasReports {
-                        InspectionSummaryView(session: session)
-                    } else {
-                        PaywallView()
-                    }
-                } label: {
-                    Image(systemName: "chevron.right")
-                        .foregroundStyle(.secondary)
-                        .frame(minWidth: 44, minHeight: 44)
-                }
-                .accessibilityLabel(L10nKey.homeSessionDetails.text(in: language))
-                .accessibilityIdentifier("home.lastInspection")
-            }
-            .padding()
-            .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
+
+    /// A part's tile runs its test; touch picks the grid for the display in use.
+    private func run(_ component: HealthComponent) {
+        switch component {
+        case .touch:
+            let context = DeviceInfo.context(foldState: foldStateProvider.state)
+            start([InspectionPlan.quickTouchTest(for: context)])
+        default:
+            start(component.tests)
         }
     }
-    
-    private var quickActionsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(L10nKey.homeQuickActions.text(in: language))
-                .font(.headline)
-            
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: dynamicTypeSize.isAccessibilitySize ? 1 : 2), spacing: 12) {
-                QuickActionCard(
-                    title: L10nKey.homeHingeCheck.text(in: language),
-                    icon: "arrow.triangle.2.circlepath",
-                    description: L10nKey.homeHingeCheckDetail.text(in: language)
-                ) {
-                    start([.hingeSweep])
+
+    private func lastInspectionLink(_ session: InspectionSession) -> some View {
+        NavigationLink {
+            if store.hasReports {
+                InspectionSummaryView(session: session)
+            } else {
+                PaywallView()
+            }
+        } label: {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(L10nKey.homeLastInspection.text(in: language))
+                        .font(.subheadline.bold())
+                    Text(session.startedAt.formatted(date: .long, time: .omitted, in: language))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
-                .accessibilityIdentifier("home.quick.hinge")
-                
-                QuickActionCard(
-                    title: L10nKey.homeTouchTest.text(in: language),
-                    icon: "hand.tap.fill",
-                    description: L10nKey.homeTouchTestDetail.text(in: language)
-                ) {
-                    let context = DeviceInfo.context(foldState: foldStateProvider.state)
-                    start([InspectionPlan.quickTouchTest(for: context)])
-                }
-                .accessibilityIdentifier("home.quick.touch")
-                
-                QuickActionCard(
-                    title: L10nKey.homeScreenTest.text(in: language),
-                    icon: "rectangle.fill",
-                    description: L10nKey.homeScreenTestDetail.text(in: language)
-                ) {
-                    start([.pixels])
-                }
-                .accessibilityIdentifier("home.quick.screen")
-                
-                QuickActionCard(
-                    title: L10nKey.homeFoldStats.text(in: language),
-                    icon: "chart.bar.fill",
-                    description: L10nKey.homeFoldStatsDetail.text(in: language)
-                ) {
-                    // F5 stats are part of the purchase; counting itself is always on.
-                    if store.hasReports {
-                        showingFoldStats = true
-                    } else {
-                        showingPaywall = true
-                    }
-                }
-                .accessibilityIdentifier("home.quick.foldStats")
+                Spacer()
+                // A badge, not a second score: the ring's per-part score can differ from a
+                // single inspection's.
+                ResultBadge(outcome: session.overallStatus)
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(.secondary)
+            }
+            .padding()
+            .frame(minHeight: 44)
+            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 12))
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(L10nKey.homeSessionDetails.text(in: language))
+        .accessibilityIdentifier("home.lastInspection")
+    }
+
+    private var foldStatsCard: some View {
+        QuickActionCard(
+            title: L10nKey.homeFoldStats.text(in: language),
+            icon: "chart.bar.fill",
+            description: L10nKey.homeFoldStatsDetail.text(in: language)
+        ) {
+            // F5 stats are part of the purchase; counting itself is always on.
+            if store.hasReports {
+                showingFoldStats = true
+            } else {
+                showingPaywall = true
             }
         }
+        .accessibilityIdentifier("home.quick.foldStats")
     }
 }
 

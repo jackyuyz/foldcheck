@@ -17,7 +17,7 @@ final class PolishUITests: XCTestCase {
         try XCTSkipIf(XCUIScreen.screens.count > 1,
                       "Duo RC does not rotate its inner panel through XCUIDevice.orientation; verify with Device Hub. Run this regression on a single-screen iPhone with FoldMock.")
         XCUIDevice.shared.orientation = .landscapeLeft
-        defer { XCUIDevice.shared.orientation = .landscapeLeft }
+        defer { XCUIDevice.shared.orientation = .portrait }  // later tests expect portrait
         let app = launch(extra: ["-touchTapMode", "NO"])
         tap(app.buttons["home.quick.touch"])
         tap(app.buttons["test.start"])
