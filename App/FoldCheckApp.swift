@@ -18,7 +18,7 @@ struct FoldCheckApp: App {
     private let sessionContainer = Self.makeSessionContainer()
     private let viewPreferences: UserDefaults = {
         #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("-ScreenshotFixtures") {
+        if ProcessInfo.processInfo.arguments.contains("-ScreenshotFixtures") || ProcessInfo.processInfo.arguments.contains("-EmptyHistoryFixtures") {
             let defaults = UserDefaults(suiteName: "foldcheck.review")!
             defaults.set(false, forKey: "touchTapMode")
             return defaults
@@ -86,10 +86,12 @@ struct FoldCheckApp: App {
     /// outside the shared app group and with no CloudKit database, so nothing is synced or uploaded.
     private static func makeSessionContainer() -> ModelContainer {
         #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("-ScreenshotFixtures") {
+        if ProcessInfo.processInfo.arguments.contains("-ScreenshotFixtures") || ProcessInfo.processInfo.arguments.contains("-EmptyHistoryFixtures") {
             let configuration = ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
             let container = try! ModelContainer(for: StoredSession.self, configurations: configuration)
-            try! ScreenshotFixtures.populate(container)
+            if !ProcessInfo.processInfo.arguments.contains("-EmptyHistoryFixtures") {
+                try! ScreenshotFixtures.populate(container)
+            }
             return container
         }
         #endif

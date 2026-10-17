@@ -16,19 +16,17 @@ struct HomeView: View {
     @State private var inspectionRequest: InspectionRequest?
     @State private var showingFoldStats = false
     @State private var showingPaywall = false
-    @State private var foldState: FoldState = .noHinge
+    @State private var hasHinge = false
+    @State private var healthCache = DeviceHealthCache()
     @Environment(Store.self) private var store
 
     var body: some View {
-        // Free for everyone: these are the user's own results. History and compare stay paid.
-        let health = DeviceHealth(
-            sessions: records.compactMap(\.session),
-            context: DeviceInfo.context(foldState: foldState)
-        )
         InspectionPanels {
             VStack(spacing: 24) {
-                HealthSummaryPanel(health: health) {
-                    start(TestID.defaultOrder)
+                if let health = healthCache.health {
+                    HealthSummaryPanel(health: health) {
+                        start(TestID.defaultOrder)
+                    }
                 }
                 if let session = latestFull.first?.session {
                     lastInspectionLink(session)
@@ -40,14 +38,29 @@ struct HomeView: View {
             }
         } secondary: {
             VStack(spacing: 24) {
-                HealthPartsPanel(health: health) { component in
-                    run(component)
+                if let health = healthCache.health {
+                    HealthPartsPanel(health: health) { component in
+                        run(component)
+                    }
                 }
                 foldStatsCard
             }
         }
         .navigationTitle("FoldCheck")
-        .observeFoldState($foldState)
+        .onChange(of: records.map(\.payload), initial: true) { _, payloads in
+            refreshHealth(payloads: payloads)
+        }
+        .onChange(of: hasHinge) { _, _ in
+            refreshHealth(payloads: records.map(\.payload))
+        }
+        .task {
+            hasHinge = foldStateProvider.state.hasHinge
+            for await next in foldStateProvider.states() {
+                // Layout observes the full fold state separately. The dashboard only needs
+                // to know whether hinge-dependent parts apply, not every angle sample.
+                if hasHinge != next.hasHinge { hasHinge = next.hasHinge }
+            }
+        }
         .sheet(isPresented: $showingPaywall) {
             PaywallView()
         }
@@ -57,6 +70,10 @@ struct HomeView: View {
         .fullScreenCover(item: $inspectionRequest) { request in
             InspectionFlowView(request: request)
         }
+    }
+
+    private func refreshHealth(payloads: [Data]) {
+        healthCache.update(payloads: payloads, context: DeviceInfo.context(foldState: foldStateProvider.state))
     }
 
     /// Starts a flow with the device context (model, OS, fold state) as it is right now,

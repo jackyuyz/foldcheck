@@ -19,7 +19,6 @@ struct HealthSummaryPanel: View {
                 .accessibilityAddTraits(.isHeader)
 
             HealthScoreRing(score: health.score, status: health.status)
-                .frame(width: 168, height: 168)
 
             VStack(spacing: 6) {
                 if let status = health.status {
@@ -28,6 +27,14 @@ struct HealthSummaryPanel: View {
                         .font(.subheadline)
                         .multilineTextAlignment(.center)
                         .accessibilityIdentifier("home.health.summary")
+                    Text(L10nKey.homeHealthBasis.text(in: language))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                    Text(L10nKey.homeHealthCoverage.text(in: language, health.measured.count, health.items.count))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .accessibilityIdentifier("home.health.coverage")
                     if let checked = health.lastCheckedAt {
                         Text(L10nKey.homeHealthChecked.text(in: language, checked.formatted(date: .long, time: .omitted, in: language)))
                             .font(.footnote)
@@ -69,8 +76,26 @@ struct HealthScoreRing: View {
     let score: Int?
     let status: TestOutcome?
     @Environment(\.appLanguage) private var language
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
+        VStack(spacing: 12) {
+            ring
+                .frame(width: 168, height: 168)
+            if score != nil && dynamicTypeSize.isAccessibilitySize {
+                outOf100
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(L10nKey.homeHealthTitle.text(in: language)))
+        .accessibilityValue(Text(score.map { L10nKey.homeHealthScoreValue.text(in: language, $0) } ?? L10nKey.homeHealthEmpty.text(in: language)))
+        .accessibilityIdentifier("home.health.score")
+    }
+
+    private var ring: some View {
         ZStack {
             Circle()
                 .stroke(Color(.tertiarySystemFill), lineWidth: 14)
@@ -78,21 +103,21 @@ struct HealthScoreRing: View {
                 .trim(from: 0, to: CGFloat(score ?? 0) / 100)
                 .stroke(ringColor, style: StrokeStyle(lineWidth: 14, lineCap: .round))
                 .rotationEffect(.degrees(-90))
-                .animation(.easeOut(duration: 0.5), value: score)
+                .animation(reduceMotion ? nil : .easeOut(duration: 0.5), value: score)
             VStack(spacing: 0) {
                 Text(score.map(String.init) ?? "—")
                     .font(.system(size: 52, weight: .semibold, design: .rounded).monospacedDigit())
-                if score != nil {
-                    Text(L10nKey.summaryOutOf100.text(in: language))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                if score != nil && !dynamicTypeSize.isAccessibilitySize {
+                    outOf100
                 }
             }
         }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(L10nKey.homeHealthTitle.text(in: language)))
-        .accessibilityValue(Text(score.map { L10nKey.homeHealthScoreValue.text(in: language, $0) } ?? L10nKey.homeHealthEmpty.text(in: language)))
-        .accessibilityIdentifier("home.health.score")
+    }
+
+    private var outOf100: some View {
+        Text(L10nKey.summaryOutOf100.text(in: language))
+            .font(.caption)
+            .foregroundStyle(.secondary)
     }
 
     /// Bright system colors for the ring: it's a graphic, and the number and badge carry the
