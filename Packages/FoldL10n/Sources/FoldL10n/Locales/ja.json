@@ -424,5 +424,9 @@
   "verify.unknownKey": "署名は有効、鍵は不明",
   "verify.unreadable": "このファイルには FoldCheck のレポートが含まれていません。",
   "verify.valid": "有効なレポート",
-  "verify.what": "これは何を証明しますか？"
+  "verify.what": "これは何を証明しますか？",
+  "widget.title": "デバイスの状態",
+  "widget.description": "直近の保存済み点検結果を確認。タップして FoldCheck を開きます。",
+  "widget.empty": "FoldCheck を開いて最初の点検を始めましょう。",
+  "widget.savedResults": "保存済みの点検"
 }

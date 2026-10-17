@@ -424,5 +424,9 @@
   "verify.unknownKey": "Valid Signature, Unknown Key",
   "verify.unreadable": "This file doesn’t contain a FoldCheck report.",
   "verify.valid": "Valid Report",
-  "verify.what": "What does this verify?"
+  "verify.what": "What does this verify?",
+  "widget.title": "Device health",
+  "widget.description": "Your latest saved checks, at a glance. Tap to open FoldCheck.",
+  "widget.empty": "Open FoldCheck to run your first check.",
+  "widget.savedResults": "Saved checks"
 }

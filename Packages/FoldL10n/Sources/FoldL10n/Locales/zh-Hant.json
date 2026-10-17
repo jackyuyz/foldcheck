@@ -424,5 +424,9 @@
   "verify.unknownKey": "簽章有效，金鑰未知",
   "verify.unreadable": "此檔案不包含 FoldCheck 報告。",
   "verify.valid": "報告有效",
-  "verify.what": "這能證明什麼？"
+  "verify.what": "這能證明什麼？",
+  "widget.title": "裝置健康",
+  "widget.description": "一眼查看最近儲存的檢查結果，點一下開啟 FoldCheck。",
+  "widget.empty": "開啟 FoldCheck，開始首次檢查。",
+  "widget.savedResults": "已儲存的檢查"
 }

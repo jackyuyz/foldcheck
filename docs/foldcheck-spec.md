@@ -85,6 +85,7 @@
 | F5 | **Fold counter** (paid stats; counting always on while app open) | Counts closed→open cycles and time per display **while FoldCheck is in the foreground**; displayed as "Folds observed by FoldCheck" | Duo |
 | F6 | **Monthly reminder** | Local notification (`UNUserNotificationCenter`) | — |
 | F7 | Paywall, Settings, Help | Honest FAQ ("Why can't you read battery health?") | — |
+| F8 | **Health dashboard & widget** (free) | Dashboard aggregates each applicable part's latest saved measured result; skips do not erase it. A small/medium Home Screen widget and rectangular Lock Screen widget show the saved aggregate and date, and open Home when tapped. No background hardware inspection. See §4.1 | iPhone, iOS 17+ |
 
 **Non-goals:** battery health; reading serial/IMEI; network-based "certificates"; cloud backup; buy/sell marketplace; repair-shop multi-device mode (backlog); measuring crease depth physically (impossible); claims of hinge accuracy in degrees.
 
@@ -122,6 +123,19 @@ Root: Home (Start inspection, Last result, History, Verify report). Inspection =
 
 Offline: fully offline.
 
+### 4.1 Health dashboard and WidgetKit extension (M8)
+
+- The dashboard and widget are free; history details, comparison, PDF export, reminder scheduling and fold statistics retain their purchase gates.
+- Each applicable component keeps its latest saved Pass / Attention / Fail result across full inspections and saved quick checks. Later Skipped / N/A / Unavailable results do not erase a measurement. Touch combines the latest inner and outer results and uses the worse outcome. Mean score: Pass 100, Attention 70, Fail 0; overall status is the worst measured outcome. Unmeasured parts are excluded from the mean.
+- Home explains the aggregate's basis and measured/total count. “Last Full Inspection” is a separate historical inspection, so its status can differ from the aggregate. Cache history decoding and aggregation; hinge angle updates must not repeatedly decode history. At accessibility sizes, the ring's caption moves outside the ring. Respect Reduce Motion.
+- One native WidgetKit extension (`com.jackyu.foldcheck.widgets`), `.systemSmall`, `.systemMedium` and `.accessoryRectangular`, min iOS 17. Both Home Screen sizes include measured/total count so a partial check cannot look complete; Medium additionally includes attention count. Compact families prioritize score, status and saved-check date. Status uses text/icons as well as color; Lock Screen and system tinting may render monochromatically.
+- Empty or unreadable data displays an invitation to open FoldCheck, with no fabricated health score. The widget displays **saved checks**, never a live hardware diagnosis, battery health or lifetime fold count. Use absolute check dates, not a fake live refresh indicator.
+- Tapping opens `foldcheck://home` and selects Home. It does not initiate a test, bypass a paywall or request permissions.
+- The existing App Group `group.com.jackyu.foldcheck` shares only a versioned atomic aggregate file: score, outcome, measured/total/attention counts, latest measured date, language code and schema version. Full SwiftData history, notes, photos, hardware samples, PDFs and signing keys remain private to the app. Widget has its own privacy manifest; no networking, analytics or background hinge/camera/mic collection.
+- The tab root publishes in the foreground after saved records, applicable components or app language change, and retries on foreground entry. Ignore background hinge-context loss so it cannot overwrite a Duo summary; deleting all saved records replaces a stale score with empty data. Writes compare snapshots first, and request `reloadTimelines(ofKind:)` only when changed. Timeline policy is `.never` because values and absolute dates only change with saved data; actual reload timing belongs to iOS. Do not promise instant refresh.
+- The widget follows the app's six-language choice (English until selected); before the first publish it uses English. Unsupported/corrupt snapshot versions fail safely to empty. Once observed, physical hinge capability is retained across transient context loss (no angle is invented). DEBUG screenshot/empty-history fixtures, mocked hinge/UI-test runs and unit-test launches never publish to the real shared snapshot.
+- Host app and extension both need the App Group in distribution provisioning. Ad-hoc simulator builds and rendered attachments do not establish real-device/Sandbox signing or lock-screen privacy validation.
+
 ## 5. UI / design brief
 
 - **Direction:** clinical but friendly: a "vet check-up" for your phone. White/graphite surfaces, precise grid lines, one trust color (suggest deep green for Pass, amber for Attention, red for Fail, always with icons + words).
@@ -131,9 +145,9 @@ Offline: fully offline.
 - **Color & modes:** light/dark; test patterns are absolute colors (not adaptive).
 - **Motion:** minimal; Reduce Motion respected.
 - **Accessibility:** VoiceOver guidance for each test (some tests are visual: provide "Mark as Skipped (needs sighted help)"); touch grid supports an assistive mode (fills by tapping cells instead of swiping); large controls.
-- **Localization:** en + zh-Hans (report in the user's language with an option for English for resale abroad).
+- **Localization:** en + zh-Hans required; implemented catalogs also include es, fr, ja and zh-Hant. Report language can match the app or stay English for resale. Native-speaker review remains pending where noted in the status audit.
 - **Report design:** A4/Letter, 2–4 pages, header with logo + date + report ID, summary table, charts, disclaimer footer, QR.
-- **Screenshots:** touch grid along the crease; hinge sweep chart; PDF report with QR; history compare. **Icon:** a stethoscope tracing a fold line.
+- **Screenshots:** touch grid along the crease; hinge sweep chart; PDF report with QR; history compare; current health dashboard. **Icon:** retain the existing green checkmark icon, explicitly chosen by the user on 2026-10-16. The earlier stethoscope direction and archived explorations are not pending implementation requirements.
 
 ## 6. Technical architecture
 
@@ -214,7 +228,7 @@ Rules:
 - Launch argument `-FoldMock <value>` swaps in `MockFoldStateProvider`. Values: `nohinge`, `closed`, `open`, `half:<deg>`, `sweep:<from>-<to>:<seconds>`, `script:<bundled-json-name>`. It is only honored in DEBUG builds or when `-UITestMode 1` is present.
 - Every hinge-driven interaction must also have a non-hinge control (slider, buttons, drag, or tilt) with identical results. This covers non-Duo devices, VoiceOver users, and App Review on devices without a hinge.
 
-**Modules:** `FoldKit`, `HingeInput` (shared), `TestsKit` (each test as a model + view; protocol below), `HingeAnalysis` (sweep analysis: monotonic segments, gaps, jitter, sample-rate estimation: pure functions), `ReportKit` (canonical JSON, PDF rendering, signing, QR, verify), `Library` (SwiftData sessions), `Store`, `App`.
+**Implemented modules:** `FoldKit`, `FoldL10n` (six JSON catalogs), `TestsKit` (pure test/session models; SwiftUI runners live in App), `HingeAnalysis` (pure sweep analysis), `ReportKit` (canonical JSON, signing, QR, verify; UIKit PDF renderer in App), `Library` (SwiftData sessions and minimal widget snapshots), `Store`, `App`, and the `Widgets` extension. The originally planned standalone shared `HingeInput` extraction is deferred; current manual input is in App. The type/protocol sketch below is the original design sketch; `InspectionSession` is now a Codable value and `Library.StoredSession` is its SwiftData wrapper.
 
 **Key types:**
 ```swift
@@ -228,7 +242,7 @@ protocol InspectionTest { static var id: TestID { get }; static func isApplicabl
 struct ReportEnvelope: Codable { var reportID: UUID; var sha256: String; var signature: String; var publicKey: String; var version: Int }
 ```
 
-**Persistence:** SwiftData sessions; PDFs and attachments in Application Support/Reports; signing key in Secure Enclave (Keychain reference, this-device-only); settings in UserDefaults.
+**Persistence:** SwiftData sessions; PDFs and attachments in Application Support/Reports; signing key in Secure Enclave (Keychain reference, this-device-only); settings in UserDefaults. M8 adds only the aggregate `widget-health-v1.json` in the App Group (iOS: atomic write, protected until first unlock after restart); the widget never opens the private SwiftData store.
 
 **Permissions:**
 - `NSCameraUsageDescription`: "FoldCheck tests your cameras and scans report QR codes. Test images aren't saved unless you attach them to a report." / "FoldCheck 用于测试摄像头并扫描报告二维码。除非你把测试图片附加到报告中，否则不会保存。"
@@ -327,6 +341,7 @@ How to simulate fold states and hinge angles:
 - AC8: Free users can run all tests; report/history/compare require the purchase (StoreKit test).
 - AC9: No network calls (proxy check).
 - AC10: en + zh-Hans complete; report renders in both.
+- AC11 (M8): widget extension builds and embeds with the app; small/medium Home Screen and rectangular Lock Screen families render saved/empty states; a saved check updates the aggregate, deletion clears stale data, language changes propagate, and tapping selects Home. Widget never measures hardware or exposes detailed history. System-host gallery, rendering and deep-link behavior need simulator/device checks as well as snapshot unit tests.
 
 ## 9. App Store review risks
 
@@ -340,17 +355,23 @@ How to simulate fold states and hinge angles:
 
 ## 10. Milestones
 
-| # | Milestone | Tasks | Est. |
+Status audited against the repository on 2026-10-16, starting at `09c5c38`. “Implemented” means code exists, not that physical-device or submission acceptance passed. The M8 addition was explicitly requested after M7; it does not waive the open items below.
+
+| # | Milestone | Repository status | Still open |
 |---|---|---|---|
-| M0 | Spike | Hinge sampling in the simulator (Option-slider) and later on device; brightness per display; camera list; Secure Enclave on device | 0.5 d |
-| M1 | Skeleton | FoldKit + HingeInput (shared), TestsKit protocol, stepper flow, SwiftData, String Catalog, privacy manifest, CI | 1.5 d |
-| M2 | Display & touch tests | T1 (both displays + crease band), T2, T3 (AC3) | 2.5 d |
-| M3 | Hinge test + fold counter | T4 + HingeAnalysis + F5 (AC2, AC7) | 2 d |
-| M4 | Hardware tests | T5–T9 | 2 d |
-| M5 | Reports | PDF, signing, QR, verify (AC4) | 2.5 d |
-| M6 | History, reminders, Store | F4, F6, paywall (AC8) | 1.5 d |
-| M7 | Polish | a11y modes, zh-Hans, screenshots, Review Notes (AC10) | 1 d |
-| | **Total** | | **≈13.5 dev-days** |
+| M0 | Spike | Simulator hinge, display and signing paths exist; **physical spike incomplete** | Actual Duo sampling thresholds, per-display brightness/camera list, proximity, real-device Secure Enclave verification |
+| M1 | Skeleton | Core implemented; **partial against original task list** | No CI workflow in the repo; no standalone shared `HingeInput` package (manual hinge controls currently live in App). Record extraction as deferred, rather than claim the originally proposed shared module shipped |
+| M2 | Display & touch | T1–T3 implemented; AC3 scripted coverage test exists | Physical crease/touch scaling and both-display brightness/transition checks; no full-screen/Split View blocking explanation or iPad compatibility-window warning from §3 is implemented |
+| M3 | Hinge & fold count | T4/HingeAnalysis/F5 implemented, synthetic tests exist | Physical thresholds and long-running foreground validation; never lifetime/background count |
+| M4 | Hardware | T5–T9 baseline implemented; **partial against detailed T5/T6 scope** | Camera code currently uses generic DiscoverySession types; Duo-specific camera discovery/direction-coordinator coverage needs implementation/API/device verification. Camera captures keep numerical stats only (no opt-in captured-photo attachment). No separately routed earpiece step (current audio route explicitly uses loudspeaker). Real hardware checks remain |
+| M5 | Reports | PDF, signing, QR/import verification implemented | Physical signing/scan/import and release signing checks. Verification covers embedded signed data, not all PDF bytes or visible pages |
+| M6 | History/reminders/Store | Features implemented; **purchase acceptance incomplete** | iOS 27 Ask to Buy test hang unresolved; real Sandbox purchase/restore/refund/pending, notification delivery, product setup/Family Sharing |
+| M7 | Polish | UI/a11y options, six catalogs, review drafts and QA screenshots implemented | Human VoiceOver/Reduce Motion review; first-use ≤6 minute test (AC1), actual inspection-data proxy audit (AC9), final Release/store screenshots, real privacy/support contacts, distribution/App Store Connect configuration |
+| M8 | Dashboard widget | Lightweight extension added after dashboard fixes; see §4.1 | Validation and remaining device checks recorded in `docs/review/widget-validation.md`; not an App Store submission |
+
+Further test-plan drift: §8 describes an `-AutoCompleteTests pass` end-to-end hook that is not implemented. Existing tests drive real UI controls instead; do not claim that specific automated full-inspection shortcut exists. Existing AC3 coverage is implemented in `DisplayTouchUITests` and is not part of this gap.
+
+Original estimate for M0–M7 was ≈13.5 dev-days. M8 is an incremental scope addition, not evidence that all remaining acceptance work is complete. See `docs/review/spec-status.md` for source evidence and release priorities.
 
 ## 11. Open questions & assumptions
 
@@ -363,4 +384,4 @@ How to simulate fold states and hinge angles:
 
 
 ---
-*Spec version 1.0 · 2026-10-13 · Prepared for Jack Yu. API facts were checked against Apple developer sources on that date (see the API status table). Items marked UNCONFIRMED or "verify" must be validated in M0 or on a real device.*
+*Spec version 1.1 · updated 2026-10-16 · Prepared for Jack Yu. M8 and repository status audit added. Original hinge API facts were checked on 2026-10-13; WidgetKit extension/timeline/App Group guidance checked against Apple documentation and Xcode 27.1 (27A9275). Items marked UNCONFIRMED or "verify" still require validation.*

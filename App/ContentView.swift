@@ -61,6 +61,10 @@ struct ContentView: View {
             .tag(Tab.settings)
         }
         .observeFoldState($foldState)
+        .modifier(WidgetHealthSync())
+        .onOpenURL { url in
+            if HealthWidget.opensHome(url) { selectedTab = .home }
+        }
         .fullScreenCover(item: $hingeCheckRequest) { request in
             InspectionFlowView(request: request)
         }

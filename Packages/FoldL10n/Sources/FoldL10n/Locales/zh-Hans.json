@@ -424,5 +424,9 @@
   "verify.unknownKey": "签名有效，密钥未知",
   "verify.unreadable": "此文件不包含 FoldCheck 报告。",
   "verify.valid": "报告有效",
-  "verify.what": "这能证明什么？"
+  "verify.what": "这能证明什么？",
+  "widget.title": "设备健康",
+  "widget.description": "一眼查看最近保存的检查结果，点按打开 FoldCheck。",
+  "widget.empty": "打开 FoldCheck，开始首次检查。",
+  "widget.savedResults": "已保存的检查"
 }

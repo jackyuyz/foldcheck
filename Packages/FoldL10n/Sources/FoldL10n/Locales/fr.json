@@ -424,5 +424,9 @@
   "verify.unknownKey": "Signature valide, clé inconnue",
   "verify.unreadable": "Ce fichier ne contient pas de rapport FoldCheck.",
   "verify.valid": "Rapport valide",
-  "verify.what": "Que vérifie ceci ?"
+  "verify.what": "Que vérifie ceci ?",
+  "widget.title": "État de l’appareil",
+  "widget.description": "Consultez les derniers contrôles enregistrés. Touchez pour ouvrir FoldCheck.",
+  "widget.empty": "Ouvrez FoldCheck pour lancer le premier contrôle.",
+  "widget.savedResults": "Contrôles enregistrés"
 }

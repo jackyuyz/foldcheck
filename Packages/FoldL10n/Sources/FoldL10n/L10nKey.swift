@@ -2,6 +2,10 @@ import Foundation
 
 /// Stable localization key. English is the fallback.
 public enum L10nKey: String, CaseIterable, Sendable, Hashable {
+    case widgetTitle = "widget.title"
+    case widgetDescription = "widget.description"
+    case widgetEmpty = "widget.empty"
+    case widgetSavedResults = "widget.savedResults"
     case angleTitle = "angle.title"
     case audioChannelLeft = "audio.channelLeft"
     case audioChannelRight = "audio.channelRight"

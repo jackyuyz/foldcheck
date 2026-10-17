@@ -162,21 +162,25 @@ Crease width, point sizes, and `UIScreen.scale` are still unknown. They are `nil
 
 7. **Pricing validation**: Is $2.99 one-time still the right price point?
 
-## Test Results (M7)
+## Test Results (M8)
 
-Swift Package tests passed on macOS using Xcode 27.1 RC (258 total):
+Swift Package tests passed on macOS using Xcode 27.1 RC, build 27A9275 (269 total):
 
 | Package | Tests | Status |
 |---------|-------|--------|
 | FoldKit | 46 | ✅ Pass |
 | HingeAnalysis | 37 | ✅ Pass |
-| TestsKit | 112 | ✅ Pass |
+| TestsKit | 116 | ✅ Pass |
 | ReportKit | 41 | ✅ Pass |
 | FoldL10n | 10 | ✅ Pass |
-| Library | 6 | ✅ Pass |
+| Library | 13 | ✅ Pass |
 | Store | 6 | ✅ Pass |
 
 ## Implemented Milestones
+
+These headings describe implemented baseline features, not completed release acceptance.
+The [spec status audit](docs/review/spec-status.md) lists remaining CI/shared-module work,
+Duo camera/earpiece/full-screen gaps, physical-device checks and purchase/submission work.
 
 ### M1: Skeleton ✅
 - FoldKit package with fold state management
@@ -241,6 +245,13 @@ Swift Package tests passed on macOS using Xcode 27.1 RC (258 total):
 - Free for everyone, since these are the user's own results; History, compare and PDF reports stay behind the purchase. The last-inspection row shows a status badge rather than a second score, because one inspection's score can differ from the per-part score
 - The hinge, touch and screen tiles keep the `home.quick.*` identifiers of the quick actions they replace
 
+
+### M8: Saved-health widget
+
+- Native iOS 17+ WidgetKit extension: small/medium Home Screen and rectangular Lock Screen widgets. Add FoldCheck through the system widget gallery after opening the app once.
+- Free saved-result summary, score/status and date; both Home Screen sizes show measured-part coverage, and medium also shows the attention count. Tap to open Home. Empty data invites the first check; there is no background hardware scan or lifetime fold count.
+- Only an aggregate JSON snapshot is shared through the existing App Group. Full SwiftData history, notes, attachments, reports and signing keys stay private. Saving/deleting inspections or changing app language requests a WidgetKit reload; iOS controls actual refresh timing.
+- Both App and extension require `group.com.jackyu.foldcheck` in the signing profiles. Generate targets with XcodeGen. Extension sources are in `Widgets/`; snapshot and store are in Library. [Validation and screenshots](docs/review/widget-validation.md).
 
 ## Languages
 

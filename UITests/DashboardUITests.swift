@@ -17,7 +17,8 @@ final class DashboardUITests: XCTestCase {
         XCTAssertTrue(score.waitForExistence(timeout: 5))
         XCTAssertEqual(score.value as? String, "92 out of 100")
         XCTAssertEqual(element(app, "home.health.summary").label, "1 part needs attention")
-        XCTAssertEqual(element(app, "home.health.coverage").label, "Checked 4 of 9 parts")
+        let totalParts = app.buttons["home.part.touchID"].exists ? 9 : 8
+        XCTAssertEqual(element(app, "home.health.coverage").label, "Checked 4 of \(totalParts) parts")
         XCTAssertEqual(app.buttons["home.start"].label, "Check Again")
 
         let hinge = app.buttons["home.quick.hinge"]

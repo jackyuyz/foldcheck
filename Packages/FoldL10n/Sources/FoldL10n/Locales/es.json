@@ -424,5 +424,9 @@
   "verify.unknownKey": "Firma válida, clave desconocida",
   "verify.unreadable": "Este archivo no contiene un informe de FoldCheck.",
   "verify.valid": "Informe válido",
-  "verify.what": "¿Qué comprueba esto?"
+  "verify.what": "¿Qué comprueba esto?",
+  "widget.title": "Estado del dispositivo",
+  "widget.description": "Consulta las últimas comprobaciones guardadas. Toca para abrir FoldCheck.",
+  "widget.empty": "Abre FoldCheck para iniciar la primera comprobación.",
+  "widget.savedResults": "Comprobaciones guardadas"
 }
